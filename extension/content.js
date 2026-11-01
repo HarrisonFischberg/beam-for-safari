@@ -1,9 +1,45 @@
-// Remembers where the last right-click happened so the target video can be resolved later (T003/T004).
-// Page scripts cannot reach this: only messages from the extension itself are handled.
-let lastPoint = null;
-document.addEventListener('contextmenu', (e) => { lastPoint = { x: e.clientX, y: e.clientY }; }, true);
+// Runs in every frame. Handles the 'beam' message from the background: find the video, check it, switch AirPlay
+// on for it, open the picker. Everything up to the picker call is synchronous so Safari treats it as the
+// click's user gesture; the pill is drawn afterwards. Only messages from this extension are handled.
+(() => {
+  const POINT_MAX_AGE_MS = 10000;
+  let lastPoint = null;
+  const encryptedSeen = new WeakSet();
 
-browser.runtime.onMessage.addListener((message, sender) => {
-  if (sender.id !== browser.runtime.id || !message || message.type !== 'beam') return undefined;
-  return Promise.resolve({ ok: false, reason: 'not-implemented', point: lastPoint });
-});
+  document.addEventListener('contextmenu', (e) => { lastPoint = { x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
+  // `encrypted` fires on a <video> that needs DRM keys; it does not bubble, so listen in the capture phase.
+  document.addEventListener('encrypted', (e) => { if (e.target instanceof HTMLVideoElement) encryptedSeen.add(e.target); }, true);
+
+  function describe(el, id) {
+    const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    const visible = r.width > 0 && r.height > 0 && cs.display !== 'none' && cs.visibility !== 'hidden'
+      && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth;
+    return { id, currentSrc: el.currentSrc, playing: !el.paused && !el.ended && el.readyState > 2, visible, rect: { width: r.width, height: r.height } };
+  }
+
+  // Only plain <video> elements in this frame's light DOM are found; videos inside shadow roots are not.
+  function run(srcUrl) {
+    const els = [...document.querySelectorAll('video')];
+    const fresh = lastPoint && Date.now() - lastPoint.t < POINT_MAX_AGE_MS;
+    const hitIds = fresh ? document.elementsFromPoint(lastPoint.x, lastPoint.y).map((e) => els.indexOf(e)).filter((i) => i >= 0) : [];
+    return BeamCast.castFlow({
+      videos: els.map(describe),
+      srcUrl,
+      hitIds,
+      inspect: (id) => BeamCast.factsOf(els[id], { encryptedSeen: encryptedSeen.has(els[id]) }),
+      prepare: (id) => BeamCast.prepare(els[id]),
+      openPicker: (id) => {
+        if (typeof els[id].webkitShowPlaybackTargetPicker !== 'function') throw new Error('AirPlay picker is not available');
+        els[id].webkitShowPlaybackTargetPicker();
+      },
+    });
+  }
+
+  browser.runtime.onMessage.addListener((message, sender) => {
+    if (sender.id !== browser.runtime.id || !message || message.type !== 'beam') return undefined;
+    const result = run(message.srcUrl); // synchronous: still inside the click's gesture
+    if (result.ok) BeamPill.show('Choose your Apple TV…', 'go').catch(() => {});
+    else BeamPill.show(BeamReasons.explain(result.reason).text, 'blocked').catch(() => {});
+    return Promise.resolve({ ok: result.ok, reason: result.reason });
+  });
+})();

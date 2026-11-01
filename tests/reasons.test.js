@@ -46,8 +46,8 @@ test('priority: protected over site-off over media-source over not-ready over no
   assert.equal(classify({ ...all, hasMediaKeys: false, disableRemotePlayback: false, readyState: 4 }), 'no-target');
 });
 
-test('all six reasons have plain-language text, and only the right ones offer a second chance', () => {
-  assert.deepEqual([...CODES].sort(), ['media-source', 'no-target', 'no-video', 'not-ready', 'protected', 'site-off']);
+test('all seven reasons have plain-language text, and only the right ones offer a second chance', () => {
+  assert.deepEqual([...CODES].sort(), ['media-source', 'no-target', 'no-video', 'not-ready', 'picker-failed', 'protected', 'site-off']);
   for (const code of CODES) {
     const m = explain(code);
     assert.ok(m.text.length > 10 && m.text.endsWith('.'), code);
@@ -55,7 +55,7 @@ test('all six reasons have plain-language text, and only the right ones offer a 
   }
   assert.equal(explain('not-ready').action, 'retry');
   assert.equal(explain('site-off').action, 'override');
-  for (const c of ['no-video', 'no-target', 'media-source', 'protected']) assert.equal(explain(c).action, null, c);
+  for (const c of ['no-video', 'no-target', 'media-source', 'protected', 'picker-failed']) assert.equal(explain(c).action, null, c);
   assert.equal(explain('nope'), null);
 });
 

@@ -16,6 +16,7 @@
     'no-target': { text: 'No Apple TV found. Check that it is on and on the same Wi-Fi network.', action: null },
     'media-source': { text: 'This site streams in a way AirPlay cannot send. Use Screen Mirroring in Control Center.', action: null },
     protected: { text: 'This video is protected, so it can only play here.', action: null },
+    'picker-failed': { text: 'Safari could not open the AirPlay picker for this video.', action: null },
   };
 
   // Most final first: a protected or blocked video will not improve by waiting, a not-ready one will.

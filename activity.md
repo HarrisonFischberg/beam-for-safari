@@ -16,3 +16,6 @@
 - replica-architect -> replica/architecture.md (no schema: no database). Blueprint + PRD approved by owner.
 - Permission model: all-sites content script. Loop allowlist written to .claude/settings.local.json (push/gh still ask).
 - Next: 3A design-tool research (web UI: popup, pill), then 3B on Sonnet.
+
+## 2026-10-31 Phase 3A (Opus)
+- Shortlist researched and cached at ~/.claude/design-tools-shortlist.md; project choice in docs/design/tools-research.md. No installs.

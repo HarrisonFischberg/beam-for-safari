@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Beam for Safari",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Send a video on this page to your Apple TV.",
   "default_locale": "en",
   "icons": { "16": "images/icon-16.png", "32": "images/icon-32.png", "48": "images/icon-48.png", "96": "images/icon-96.png", "128": "images/icon-128.png" },
   "permissions": ["contextMenus", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": { "scripts": ["background.js"] },
-  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["lib/resolve.js", "lib/reasons.js", "lib/cast.js", "lib/pill.js", "content.js"], "all_frames": true, "run_at": "document_idle" }],
+  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["lib/resolve.js", "lib/reasons.js", "lib/cast.js", "lib/alternate.js", "lib/companion.js", "lib/pill.js", "content.js"], "all_frames": true, "run_at": "document_idle" }],
   "action": { "default_title": "Beam to Apple TV", "default_popup": "popup.html", "default_icon": { "16": "images/icon-16.png", "32": "images/icon-32.png" } }
 }

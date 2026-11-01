@@ -20,6 +20,8 @@ Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, 
 | 2 | `hls.html` | same | same |
 | 3 | `mse.html` (MediaSource, no HLS alternate) | same | NO picker. Pill says "This site streams in a way AirPlay cannot send. Use Screen Mirroring in Control Center." (Safari cannot AirPlay this stream; verified with Safari's own AirPlay button) |
 | 3b | `mse-alt.html` | same | picker opens and the video plays on the Apple TV |
+| 3c | `mse-hls.html` (0.3.0, MediaSource built from an HLS playlist, like hls.js sites) | press play, right-click, Beam to Apple TV, pick the Apple TV | picker opens; the TV plays the test pattern without flashing; the page video pauses. Stop AirPlay: page video resumes near the same point. If the pill says "Getting this video ready…", Beam again after a second and tell me how often that happens. Popup readout should say "picker called on Beam's HLS copy" |
+| 3d | a real hls.js site (optional) | same | as 3c; tell me the site if it fails |
 | 4 | `site-off.html` | same (this page turns AirPlay off) | picker opens anyway, no "turned off" message |
 | 5 | `overlay.html` | right-click the upper part (the invisible layer) | picker opens |
 | 6 | `iframe.html` | right-click inside the framed video | picker opens |
@@ -29,6 +31,8 @@ Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, 
 | 10 | a real site with video | right-click the video | picker opens |
 
 Tell me, per row: **worked** or what you saw (picker yes/no, pill text). The pill disappears after about 4 seconds. If the menu item is missing, tell me; if a row fails, say which.
+
+Version 0.3.0 adds rows 3c and 3d. Why MediaSource flashes and what changed: `docs/mse-airplay.md`.
 
 ## Not in T004 (comes later)
 

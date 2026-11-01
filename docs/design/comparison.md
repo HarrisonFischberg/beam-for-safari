@@ -20,4 +20,4 @@ Defects found and fixed during the build: concept 1 pill collapsed into a circle
 
 ## Recommendation
 
-Pending: Opus writes this per `references/design-directions.md` step 6. Not chosen or ranked here.
+Owner choice (2026-10-31): 1. Gate. No Opus recommendation was written; the owner picked from the screenshots. Concepts 2 and 3 were removed (worktrees and local branches deleted); screenshots remain here, and their commits (e54b8f5, 4e5129e) are recoverable from the reflog for a short time.

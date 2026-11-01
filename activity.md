@@ -11,3 +11,8 @@
 - Key finding: context-menu gesture forwarding inferred from WebKit source; runtime spike is blueprint task 1. MSE/blob AirPlay UNKNOWN.
 - replica-entrepreneur not invoked (complaints gathered manually from one issue tracker).
 - Sweep clean (--include-replica). Lab deleted with owner yes, 2026-10-31.
+
+## 2026-10-31 Phase 3 (Opus)
+- replica-architect -> replica/architecture.md (no schema: no database). Blueprint + PRD approved by owner.
+- Permission model: all-sites content script. Loop allowlist written to .claude/settings.local.json (push/gh still ask).
+- Next: 3A design-tool research (web UI: popup, pill), then 3B on Sonnet.

@@ -1,6 +1,6 @@
 # beam-for-safari — PRD
 
-Status: DRAFT, awaiting owner approval. Created 2026-10-31. Blueprint: `docs/blueprint.md`; architecture: `replica/architecture.md`.
+Status: APPROVED 2026-10-31. Created 2026-10-31. Blueprint: `docs/blueprint.md`; architecture: `replica/architecture.md`.
 
 ## Purpose
 

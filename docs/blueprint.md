@@ -1,6 +1,6 @@
 # Blueprint: Beam for Safari
 
-Status: AWAITING OWNER APPROVAL (2026-10-31). Inputs: `replica/` and `docs/rea-findings.md` only.
+Status: APPROVED by owner 2026-10-31 (permission model: all-sites content script; loop permissions in .claude/settings.local.json). Inputs: `replica/` and `docs/rea-findings.md` only.
 
 ## Stack decision
 
@@ -63,7 +63,7 @@ beam-for-safari/
 | --- | --- | --- |
 | `contextMenus` | The right-click item | required |
 | `storage` | Two preferences | required |
-| Content script on `<all_urls>`, `all_frames` | Cursor targeting under overlays, in-page shortcut, iframe videos | **Recommended.** Safari shows its own per-site permission prompt; Beam reads only `<video>` elements and the last right-click point, and sends nothing anywhere |
+| Content script on `<all_urls>`, `all_frames` | Cursor targeting under overlays, in-page shortcut, iframe videos | **Chosen by owner 2026-10-31.** Safari shows its own per-site permission prompt; Beam reads only `<video>` elements and the last right-click point, and sends nothing anywhere |
 | Alternative: `activeTab` + `scripting` inject on click | Narrower warning | Loses the in-page shortcut and overlay targeting; gesture survival through `executeScript` unverified (T002 tests it) |
 
 ## Vendors and data flows

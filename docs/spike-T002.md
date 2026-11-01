@@ -97,11 +97,16 @@ Owner-reported in chat, Safari 27.2 / macOS 27.2, background page (round A). No 
 | `mp4` | Y | Y | Y | Y | Y | Y | Y | n/a |
 | `mse` (blob:) | Y | Y | not run | not run | not run | not run | not run | n/a |
 | `mse-alt` | Y | Y | not run | not run | not run | not run | not run | n/a |
-| `hls`, `overlay`, `iframe`, `site-off` | not reported | | | | | | | |
+| `iframe` (P1 only) | not run | Y | not run | n/a | n/a | not run | not run | n/a |
+| `hls`, `overlay`, `site-off` | not reported | | | | | | | |
 
 Observations while running: the first attempt showed no panel because Safari's Allow Unsigned Extensions was off (it resets on every Safari quit); two harness bugs were fixed (stale second "Beam Spike" entry from a failed first build; menu items now created on every background start, not only `onInstalled`). Quitting Safari drops the unsigned extension until the switch is ticked again.
 
 MediaSource: the picker opened for both `mse` (plain `blob:` source) and `mse-alt` (with an HLS alternate), reported by the owner after I asked. Per the decision rule this keeps `mediaSourceUnsupported` false (no change needed to `extension/lib/reasons.js`).
+
+Real-site check (citizenfreepress.com, owner-run): P1 reached the page (panel: "Menu click seen by background: p1 (page) tab 1392 frame 0", messages received 3) but the panel said "no video in this frame", so the picker was never called. Not an AirPlay failure: the clicked frame had no `<video>`. The owner did not say how the video is embedded (URL not yet supplied). Product consequence: when the clicked frame has no video, fall back to the other frames' videos (popup chooser or cast the playing one); thumbnails and lite embeds that only become a `<video>` after a click need a clear "press play first" message.
+
+Cross-origin iframe: P1 from a right-click inside the framed video opens the picker (owner-reported). Frame targeting by the menu's `frameId` works on this Safari.
 
 Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 also works, so a gesture survives at least one microtask hop; P5 works, so an `activeTab`-style model is feasible if ever wanted.
 

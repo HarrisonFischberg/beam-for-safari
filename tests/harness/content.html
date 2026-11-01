@@ -1,7 +1,8 @@
 <!doctype html>
 <!-- Manual harness for extension/content.js in a normal browser: stubs the `browser` API and the AirPlay picker.
      Serve the project root (python3 -m http.server) and open /tests/harness/content.html?case=<name>.
-     Cases: normal, site-off, none, noload, overlay, protected, blob, blob-alt. Drive it with window.__send(srcUrl). -->
+     Cases: normal, site-off, none, noload, overlay, protected, blob, blob-alt, blob-mp4alt, srcobject, mse-hls, mse-hls-ready.
+     mse-hls*: the page fetches an .m3u8 then plays a blob (like hls.js); -ready fakes HLS metadata, which this browser cannot load. Drive it with window.__send(srcUrl). -->
 <html lang="en"><head><meta charset="utf-8"><title>content.js harness</title>
 <style>body{margin:16px;font:14px system-ui}video{width:480px;height:270px;background:#222;display:block}.wrap{position:relative;width:480px}.ov{position:absolute;inset:0 0 40px 0}</style></head>
 <body><h3 id="t"></h3><div id="stage"></div>
@@ -14,16 +15,25 @@ if (c === 'blob' || c === 'blob-alt') { // a real MediaSource video, with or wit
   const v = document.createElement('video'); v.id = 'v'; v.controls = true; const ms = new MediaSource(); const blob = URL.createObjectURL(ms);
   if (c === 'blob') v.src = blob; else { const a = document.createElement('source'); a.src = blob; a.type = 'video/mp4'; const b = document.createElement('source'); b.src = 'x.m3u8'; b.type = 'application/vnd.apple.mpegurl'; v.append(a, b); }
   stage.append(v);
+} else if (c === 'blob-mp4alt') { // blob <source> + MP4 <source>: Safari's own alternate rule accepts any non-blob source
+  const v = document.createElement('video'); v.id = 'v'; const a = document.createElement('source'); a.src = URL.createObjectURL(new MediaSource()); const b = document.createElement('source'); b.src = SRC; b.type = 'video/mp4'; v.append(a, b); stage.append(v);
+} else if (c === 'srcobject') { // MediaSource attached through srcObject leaves currentSrc empty
+  const v = document.createElement('video'); v.id = 'v'; try { v.srcObject = new MediaSource(); } catch (e) { Object.defineProperty(v, 'srcObject', { value: {} }); } stage.append(v);
+} else if (c === 'mse-hls' || c === 'mse-hls-ready') {
+  const v = document.createElement('video'); v.id = 'v'; v.controls = true; stage.append(v);
+  window.__pageReady = fetch('../../fixtures/media/hls/index.m3u8').then((r) => r.text()).then(() => { v.src = URL.createObjectURL(new MediaSource()); });
+  if (c === 'mse-hls-ready') { const d = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'readyState'); Object.defineProperty(HTMLMediaElement.prototype, 'readyState', { get() { return /\.m3u8/.test(this.getAttribute('src') || '') ? 1 : d.get.call(this); } }); }
 } else if (c !== 'none') stage.innerHTML = `<div class="wrap"><video id="v" controls ${c === 'noload' ? '' : 'src="' + SRC + '" preload="auto"'} ${attrs[c] || ''}></video>${c === 'overlay' ? '<div class="ov" id="ov"></div>' : ''}</div>`;
 if (c === 'protected') Object.defineProperty(document.getElementById('v'), 'mediaKeys', { value: {} });
 window.__picked = []; window.__handler = null; window.__shadows = [];
 const __attach = Element.prototype.attachShadow; Element.prototype.attachShadow = function (o) { const r = __attach.call(this, o); window.__shadows.push(r); return r; }; // lets the harness read the closed pill
 window.__pillText = () => { const r = window.__shadows[window.__shadows.length - 1]; const el = r && r.querySelector('.gate-pill'); return el ? { text: el.textContent.trim(), tile: r.querySelector('.gate-tile').className, hostAttached: !!r.host.isConnected } : null; };
-HTMLVideoElement.prototype.webkitShowPlaybackTargetPicker = function () { window.__picked.push({ id: this.id, disableRemotePlayback: this.disableRemotePlayback, airplay: this.getAttribute('x-webkit-airplay'), hadAttr: this.hasAttribute('disableremoteplayback') }); };
+HTMLVideoElement.prototype.webkitShowPlaybackTargetPicker = function () { window.__picked.push({ id: this.id, src: this.getAttribute('src'), disableRemotePlayback: this.disableRemotePlayback, airplay: this.getAttribute('x-webkit-airplay'), hadAttr: this.hasAttribute('disableremoteplayback') }); };
 window.browser = { storage: { local: { get: async () => ({}), set: async () => {} } }, runtime: { id: 'stub', sendMessage: async () => (await (await fetch('../../extension/design/tokens.css')).text()) + '\n' + (await (await fetch('../../extension/design/components.css')).text()), onMessage: { addListener: (fn) => { window.__handler = fn; } } } };
 window.__send = (srcUrl) => window.__handler({ type: 'beam', srcUrl }, { id: 'stub' });
 const load = (s) => new Promise((r) => { const e = document.createElement('script'); e.src = s; e.onload = r; document.body.append(e); });
-(async () => { for (const f of ['resolve', 'reasons', 'cast', 'pill']) await load('../../extension/lib/' + f + '.js'); await load('../../extension/content.js');
+(async () => { for (const f of ['resolve', 'reasons', 'cast', 'alternate', 'companion', 'pill']) await load('../../extension/lib/' + f + '.js'); await load('../../extension/content.js');
   if (c === 'protected') document.getElementById('v').dispatchEvent(new Event('encrypted')); // after content.js is listening
+  if (window.__pageReady) await window.__pageReady;
   window.__ready = true; })();
 </script></body></html>

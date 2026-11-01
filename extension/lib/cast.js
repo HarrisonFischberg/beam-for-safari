@@ -12,10 +12,20 @@
   // an Apple TV, even with Safari's own AirPlay button, so Beam says so instead of opening a picker that fails.
   const MEDIA_SOURCE_UNSUPPORTED = true;
 
-  // An HLS <source> next to a blob: source is what lets Safari AirPlay a MediaSource page (mse-alt fixture works).
+  // Mirrors WebKit's HTMLMediaElement::hasWirelessPlaybackTargetAlternative: Safari only falls back to another
+  // source for AirPlay when the element is loading from <source> children (no src attribute, no srcObject) and one
+  // of them is a non-blob URL. The mse-alt fixture (blob <source> plus an HLS <source>) casts this way.
   function hasAirPlayAlternate(el) {
     if (typeof el.querySelectorAll !== 'function') return false;
-    return Array.prototype.some.call(el.querySelectorAll('source'), (s) => /mpegurl/i.test(s.type || '') || /\.m3u8(\?|#|$)/i.test(s.src || ''));
+    if (el.srcObject) return false;
+    if (typeof el.hasAttribute === 'function' && el.hasAttribute('src')) return false;
+    return Array.prototype.some.call(el.querySelectorAll('source'), (s) => typeof s.src === 'string' && s.src !== '' && s.src.indexOf('blob:') !== 0);
+  }
+
+  // Fed by script rather than a URL Safari can hand to the Apple TV: a MediaSource blob: URL, or srcObject
+  // (ManagedMediaSource and MediaStream can be attached that way, which leaves currentSrc empty).
+  function fedByScript(el) {
+    return Boolean(el.srcObject) || (typeof el.currentSrc === 'string' && el.currentSrc.indexOf('blob:') === 0);
   }
 
   // What classify() needs to know about one video. Two deliberate omissions (docs/spike-T002.md):
@@ -32,7 +42,7 @@
       airplayAttr: null,
       hasMediaKeys: Boolean(el.mediaKeys) && encryptedSeen,
       encrypted: false,
-      srcIsBlob: typeof el.currentSrc === 'string' && el.currentSrc.indexOf('blob:') === 0,
+      srcIsBlob: fedByScript(el),
       hasAirPlayAlternate: hasAirPlayAlternate(el),
       availability: 'unknown',
     };
@@ -56,11 +66,26 @@
   }
 
   // Everything that must happen inside the click's user gesture: no await anywhere on this path.
-  // io: { videos, srcUrl, hitIds, inspect(id), prepare(id), openPicker(id) }  -> { ok, reason?, id? , error? }
+  // io: { videos, srcUrl, hitIds, inspect(id), prepare(id), openPicker(id), fallback?(id), openFallbackPicker?(id) }
+  //   -> { ok, reason?, id?, via?, error? }
+  // fallback(id) answers whether Beam has its own AirPlay-able copy of a MediaSource video's stream:
+  // 'ready', 'loading' or null (lib/companion.js). With 'ready' the picker opens on that copy (via: 'hls').
   function castFlow(io) {
     const id = R.resolveTarget({ videos: io.videos, srcUrl: io.srcUrl, hitIds: io.hitIds });
     if (id === null) return { ok: false, reason: 'no-video' };
     const reason = X.classify(io.inspect(id), { mediaSourceUnsupported: MEDIA_SOURCE_UNSUPPORTED });
+    if (reason === 'media-source' && typeof io.fallback === 'function') {
+      const state = io.fallback(id);
+      if (state === 'loading') return { ok: false, reason: 'stream-loading', id };
+      if (state === 'ready') {
+        try {
+          io.openFallbackPicker(id);
+        } catch (e) {
+          return { ok: false, reason: 'picker-failed', id, error: String(e) };
+        }
+        return { ok: true, id, via: 'hls' };
+      }
+    }
     if (reason) return { ok: false, reason, id };
     io.prepare(id);
     try {
@@ -71,5 +96,5 @@
     return { ok: true, id };
   }
 
-  return { castFlow, factsOf, prepare };
+  return { castFlow, factsOf, prepare, hasAirPlayAlternate, fedByScript };
 });

@@ -112,10 +112,78 @@ test('media-source: a blob video with no HLS alternate is refused untouched; wit
   assert.equal(castFlow(withAlt.io).ok, true);
 });
 
-test('factsOf finds an HLS alternate by type or by .m3u8 url, and nothing else', () => {
+// 0.3.0: any non-blob <source> counts, as in WebKit's hasWirelessPlaybackTargetAlternative (it does not look at the
+// type); 0.2.4 accepted HLS only and so refused a blob + MP4 <source> page that Safari can AirPlay.
+test('factsOf finds a non-blob <source> alternate (HLS by type or url, or MP4), never a blob one', () => {
   const withSources = (list) => ({ readyState: 4, currentSrc: 'blob:http://x/1', querySelectorAll: () => list });
   assert.equal(factsOf(withSources([{ type: 'video/mp4', src: 'blob:http://x/1' }, { type: 'application/vnd.apple.mpegurl', src: 'https://x/a' }])).hasAirPlayAlternate, true);
   assert.equal(factsOf(withSources([{ type: '', src: 'https://x/a.m3u8?t=1' }])).hasAirPlayAlternate, true);
-  assert.equal(factsOf(withSources([{ type: 'video/mp4', src: 'https://x/a.mp4' }])).hasAirPlayAlternate, false);
+  assert.equal(factsOf(withSources([{ type: 'video/mp4', src: 'https://x/a.mp4' }])).hasAirPlayAlternate, true);
+  assert.equal(factsOf(withSources([{ type: 'video/mp4', src: 'blob:http://x/1' }])).hasAirPlayAlternate, false);
   assert.equal(factsOf({ readyState: 4 }).hasAirPlayAlternate, false);
+});
+
+// --- MediaSource fallback (0.3.0): Beam's own HLS copy of the stream ---
+const { hasAirPlayAlternate, fedByScript } = require('../extension/lib/cast.js');
+const blobFacts = () => ({ readyState: 4, srcIsBlob: true, hasAirPlayAlternate: false, availability: 'unknown' });
+function fallbackIo(state, over = {}) {
+  const r = io({ inspect: blobFacts, fallback: (id) => { r.calls.push(['fallback', id]); return state; }, openFallbackPicker: (id) => r.calls.push(['fallback-picker', id]), ...over });
+  return r;
+}
+
+test('MediaSource with a ready HLS copy: picker opens on the copy, the page video is not touched', () => {
+  const { calls, io: i } = fallbackIo('ready');
+  assert.deepEqual(castFlow(i), { ok: true, id: 'a', via: 'hls' });
+  assert.deepEqual(calls, [['fallback', 'a'], ['fallback-picker', 'a']]);
+});
+
+test('MediaSource with the copy still loading: stream-loading, no picker', () => {
+  const { calls, io: i } = fallbackIo('loading');
+  assert.deepEqual(castFlow(i), { ok: false, reason: 'stream-loading', id: 'a' });
+  assert.deepEqual(calls, [['fallback', 'a']]);
+});
+
+test('MediaSource with no playlist found: the media-source explanation, no picker (no flashing)', () => {
+  const { calls, io: i } = fallbackIo(null);
+  assert.deepEqual(castFlow(i), { ok: false, reason: 'media-source', id: 'a' });
+  assert.deepEqual(calls, [['fallback', 'a']]);
+});
+
+test('fallback picker throwing becomes picker-failed', () => {
+  const { io: i } = fallbackIo('ready', { openFallbackPicker: () => { throw new Error('nope'); } });
+  const r = castFlow(i);
+  assert.equal(r.reason, 'picker-failed');
+  assert.match(r.error, /nope/);
+});
+
+test('the fallback is never asked about videos Safari can AirPlay itself', () => {
+  const { calls, io: i } = fallbackIo('ready', { inspect: () => ({ readyState: 4, availability: 'unknown' }) });
+  assert.deepEqual(castFlow(i), { ok: true, id: 'a' });
+  assert.deepEqual(calls, [['prepare', 'a'], ['picker', 'a']]);
+});
+
+test('protected MediaSource video stays refused even with an HLS copy', () => {
+  const { calls, io: i } = fallbackIo('ready', { inspect: () => ({ ...blobFacts(), hasMediaKeys: true }) });
+  assert.equal(castFlow(i).reason, 'protected');
+  assert.deepEqual(calls, []);
+});
+
+const el = ({ src = null, srcObject = null, currentSrc = '', sources = [] } = {}) => ({
+  srcObject, currentSrc, hasAttribute: (n) => n === 'src' && src !== null, querySelectorAll: () => sources.map((s) => ({ src: s })),
+});
+
+test('fedByScript: blob: currentSrc or any srcObject (ManagedMediaSource / MediaStream leave currentSrc empty)', () => {
+  assert.equal(fedByScript(el({ currentSrc: 'blob:https://x/1' })), true);
+  assert.equal(fedByScript(el({ srcObject: {} })), true);
+  assert.equal(fedByScript(el({ currentSrc: 'https://x/a.mp4' })), false);
+  assert.equal(factsOf({ readyState: 4, currentSrc: '', srcObject: {} }).srcIsBlob, true);
+});
+
+test('hasAirPlayAlternate follows WebKit: only <source> loading with a non-blob child counts', () => {
+  assert.equal(hasAirPlayAlternate(el({ sources: ['blob:https://x/1', 'https://x/a.m3u8'] })), true);
+  assert.equal(hasAirPlayAlternate(el({ sources: ['blob:https://x/1', 'https://x/a.mp4'] })), true);
+  assert.equal(hasAirPlayAlternate(el({ sources: ['blob:https://x/1'] })), false);
+  // A src attribute (or srcObject) wins over <source> children, so they are no alternate for Safari.
+  assert.equal(hasAirPlayAlternate(el({ src: 'blob:https://x/1', sources: ['https://x/a.m3u8'] })), false);
+  assert.equal(hasAirPlayAlternate(el({ srcObject: {}, sources: ['https://x/a.m3u8'] })), false);
 });

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="fixture" content="mse-hls">
+<title>Fixture: MediaSource player built from an HLS playlist</title>
+<style>body{font:16px/1.5 -apple-system,system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px}video{width:100%;max-width:640px;background:#000;display:block}small{color:#555}a{color:inherit}</style>
+</head>
+<body>
+<p><a href="index.html">All fixtures</a></p>
+<h1>MediaSource player built from an HLS playlist</h1>
+<p><small>Like hls.js sites: the page fetches an .m3u8 playlist, then plays through MediaSource (blob: src, no HLS alternate). Safari cannot AirPlay the blob, but Beam can AirPlay the playlist the page fetched.</small></p>
+<video id="v" controls playsinline></video><p id="log"><small>starting...</small></p>
+<script>
+const MIME = "video/mp4; codecs=\"avc1.4d401f, mp4a.40.2\"", log = (t) => document.getElementById("log").textContent = t;
+if (!window.MediaSource || !MediaSource.isTypeSupported(MIME)) log("MediaSource or codec not supported here");
+else (async () => {
+  // The playlist fetch is what an hls.js player does first; the fixture then feeds a ready-made fragmented MP4
+  // instead of remuxing the .ts segments, which is enough for Beam: it only needs to see the playlist URL.
+  const playlist = await (await fetch("media/hls/index.m3u8")).text();
+  const ms = new MediaSource(), v = document.getElementById("v");
+  v.src = URL.createObjectURL(ms);
+  ms.addEventListener("sourceopen", async () => {
+    const sb = ms.addSourceBuffer(MIME);
+    sb.addEventListener("updateend", () => { if (ms.readyState === "open") ms.endOfStream(); log("playlist fetched (" + playlist.split("\n").filter((l) => l.endsWith(".ts")).length + " segments), src " + v.currentSrc.slice(0, 12)); });
+    sb.appendBuffer(await (await fetch("media/sample-frag.mp4")).arrayBuffer());
+  }, { once: true });
+})();
+</script>
+</body>
+</html>

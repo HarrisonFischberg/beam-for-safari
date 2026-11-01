@@ -1,6 +1,6 @@
 # T004 checklist: the real Beam in Safari (owner)
 
-Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, right-click > Beam to Apple TV opens the AirPlay picker (row 1, mp4). Rows 2-10 not yet reported. T004 is built and unit/harness tested; only Safari can show that it works. About 10 minutes.
+Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, right-click > Beam to Apple TV opens the AirPlay picker (row 1, mp4). Rows 2-6 reported working by the owner on 0.2.1: hls, mse-alt, iframe, site-off, overlay. Plain `mse.html` did NOT work on 0.2.1 (the readout said picker called) although the spike's untouched call had; 0.2.2 limits the AirPlay override to videos the page opted out. Rows 7-8 (not-ready, no video) not yet reported. T004 is built and unit/harness tested; only Safari can show that it works. About 10 minutes.
 
 ## Setup
 

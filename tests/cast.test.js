@@ -72,13 +72,34 @@ test('factsOf: protected needs MediaKeys AND an encrypted event; blob sources ar
   assert.equal(classify(factsOf({ readyState: 4, mediaKeys: {} }, { encryptedSeen: true })), 'protected');
 });
 
+const fake = (o) => ({ disableRemotePlayback: false, attrs: {}, ...o,
+  hasAttribute(n) { return n in this.attrs; }, getAttribute(n) { return n in this.attrs ? this.attrs[n] : null; },
+  removeAttribute(n) { delete this.attrs[n]; }, setAttribute(n, v) { this.attrs[n] = v; } });
+
 test('prepare overrides every way a page can switch AirPlay off, on that element only', () => {
-  const el = { disableRemotePlayback: true, attrs: { disableremoteplayback: '', 'x-webkit-airplay': 'deny' },
-    removeAttribute(n) { delete this.attrs[n]; }, setAttribute(n, v) { this.attrs[n] = v; } };
-  const other = { disableRemotePlayback: true };
-  prepare(el);
+  const el = fake({ disableRemotePlayback: true, attrs: { disableremoteplayback: '', 'x-webkit-airplay': 'deny' } });
+  const other = fake({ disableRemotePlayback: true });
+  assert.equal(prepare(el), true);
   assert.equal(el.disableRemotePlayback, false);
   assert.equal('disableremoteplayback' in el.attrs, false);
   assert.equal(el.attrs['x-webkit-airplay'], 'allow');
   assert.equal(other.disableRemotePlayback, true);
+});
+
+test('prepare handles each opt-out mechanism on its own', () => {
+  for (const el of [fake({ disableRemotePlayback: true }), fake({ attrs: { disableremoteplayback: '' } }), fake({ attrs: { 'x-webkit-airplay': 'deny' } })]) {
+    assert.equal(prepare(el), true);
+    assert.equal(el.disableRemotePlayback, false);
+    assert.equal(el.attrs['x-webkit-airplay'], 'allow');
+  }
+});
+
+test('prepare leaves a video the page did not opt out alone (regression: mse.html)', () => {
+  const plain = fake({});
+  const allowed = fake({ attrs: { 'x-webkit-airplay': 'allow' } });
+  assert.equal(prepare(plain), false);
+  assert.deepEqual(plain.attrs, {});
+  assert.equal(plain.disableRemotePlayback, false);
+  assert.equal(prepare(allowed), false);
+  assert.deepEqual(allowed.attrs, { 'x-webkit-airplay': 'allow' });
 });

@@ -25,17 +25,20 @@
     const els = [...document.querySelectorAll('video')];
     const fresh = lastPoint && Date.now() - lastPoint.t < POINT_MAX_AGE_MS;
     const hitIds = fresh ? document.elementsFromPoint(lastPoint.x, lastPoint.y).map((e) => els.indexOf(e)).filter((i) => i >= 0) : [];
-    return BeamCast.castFlow({
+    let overrode = false;
+    const result = BeamCast.castFlow({
       videos: els.map(describe),
       srcUrl,
       hitIds,
       inspect: (id) => BeamCast.factsOf(els[id], { encryptedSeen: encryptedSeen.has(els[id]) }),
-      prepare: (id) => BeamCast.prepare(els[id]),
+      prepare: (id) => { overrode = BeamCast.prepare(els[id]); },
       openPicker: (id) => {
         if (typeof els[id].webkitShowPlaybackTargetPicker !== 'function') throw new Error('AirPlay picker is not available');
         els[id].webkitShowPlaybackTargetPicker();
       },
     });
+    result.overrode = overrode;
+    return result;
   }
 
   browser.runtime.onMessage.addListener((message, sender) => {
@@ -48,7 +51,7 @@
       browser.storage.local.set({ contentLast: `threw: ${e && e.message ? e.message : e}`, contentAt: Date.now() }).catch(() => {});
       throw e;
     }
-    browser.storage.local.set({ contentLast: result.ok ? 'picker called' : `refused: ${result.reason}`, contentAt: Date.now() }).catch(() => {});
+    browser.storage.local.set({ contentLast: result.ok ? `picker called${result.overrode ? ' (AirPlay switched back on for this video)' : ''}` : `refused: ${result.reason}`, contentAt: Date.now() }).catch(() => {});
     if (result.ok) BeamPill.show('Choose your Apple TV…', 'go').catch(() => {});
     else BeamPill.show(BeamReasons.explain(result.reason).text, 'blocked').catch(() => {});
     return Promise.resolve({ ok: result.ok, reason: result.reason });

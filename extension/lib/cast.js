@@ -27,12 +27,21 @@
     };
   }
 
-  // Turns AirPlay back on for this one element, whatever the page set. Not undone afterwards: an active
-  // AirPlay session may depend on it. If a site's own player misbehaves in T004 testing, restore here.
+  // True when the page switched AirPlay off for this element, by either mechanism.
+  function optedOut(el) {
+    return el.disableRemotePlayback === true || (typeof el.hasAttribute === 'function' && el.hasAttribute('disableremoteplayback')) || (typeof el.getAttribute === 'function' && el.getAttribute('x-webkit-airplay') === 'deny');
+  }
+
+  // Turns AirPlay back on for this one element, but only when the page turned it off. Touching a video the page
+  // left alone changed how Safari treated MediaSource video in the first T004 build (mse.html stopped working
+  // while the spike's untouched call worked), so the override is limited to what a site actually disabled.
+  // Not undone afterwards: an active AirPlay session may depend on it. Returns whether it changed anything.
   function prepare(el) {
+    if (!optedOut(el)) return false;
     el.disableRemotePlayback = false;
     el.removeAttribute('disableremoteplayback');
     el.setAttribute('x-webkit-airplay', 'allow');
+    return true;
   }
 
   // Everything that must happen inside the click's user gesture: no await anywhere on this path.

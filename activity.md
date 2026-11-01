@@ -19,3 +19,6 @@
 
 ## 2026-10-31 Phase 3A (Opus)
 - Shortlist researched and cached at ~/.claude/design-tools-shortlist.md; project choice in docs/design/tools-research.md. No installs.
+
+## 2026-10-31 Phase 3B (Sonnet)
+- 3 concepts built (ui-1 Gate, ui-2 Canon, ui-3 Test Card) in worktrees, screenshots in docs/design/screenshots. Awaiting owner pick; Opus recommendation pending. Preview servers on 4101-4103 still running.

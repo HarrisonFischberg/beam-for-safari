@@ -24,3 +24,7 @@
 - 3 concepts built (ui-1 Gate, ui-2 Canon, ui-3 Test Card) in worktrees, screenshots in docs/design/screenshots. Awaiting owner pick; Opus recommendation pending. Preview servers on 4101-4103 still running.
 - Owner picked concept 1 Gate. ui-1 merged into feat/beam-v1; ui-2/ui-3 and all concept worktrees removed; preview servers stopped. Next: 3C design system (DESIGN.md, extract, polish) on Sonnet.
 - 3C done: design/system/*, DESIGN.md, sidecar, docs/design/system.md. Next: Phase 4 (Ralph quickstart clone, T001 Xcode project, T002 spike needs owner at the Mac with the Apple TV).
+
+## 2026-10-31 Phase 4, T001 (Sonnet)
+- Ralph: quickstart reviewed, own ralph/ralph.sh written (no license on source; its permissive settings not adopted). Not run: T001 was built in this interactive session because it needs Xcode first-run decisions; later tasks go through ralph.sh.
+- T001: extension/ source + icons (original, generated), converter -> Beam/Beam/Beam.xcodeproj, Debug build SUCCEEDED (exit 0), packaged resources identical to extension/, pluginkit lists app.beamforsafari.Beam.Extension after one launch. Safari Settings listing not verified (needs owner). `/goal` not used (could not verify it exists as a tool here; bounded manually). Elapsed about 25 min.

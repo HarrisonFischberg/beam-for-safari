@@ -1,0 +1,2 @@
+html, body { margin: 0; background: var(--panel); }
+.gate-popup { width: 340px; border: 0; border-radius: 0; box-shadow: none; }

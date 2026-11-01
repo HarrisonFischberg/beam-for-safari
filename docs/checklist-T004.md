@@ -1,6 +1,6 @@
 # T004 checklist: the real Beam in Safari (owner)
 
-Status: NOT RUN. T004 is built and unit/harness tested; only Safari can show that it works. About 10 minutes.
+Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, right-click > Beam to Apple TV opens the AirPlay picker (row 1, mp4). Rows 2-10 not yet reported. T004 is built and unit/harness tested; only Safari can show that it works. About 10 minutes.
 
 ## Setup
 
@@ -9,6 +9,8 @@ Status: NOT RUN. T004 is built and unit/harness tested; only Safari can show tha
    `xcodebuild -project /Users/harrison/projects/beam-for-safari/Beam/Beam/Beam.xcodeproj -scheme Beam -configuration Debug -derivedDataPath /Users/harrison/projects/beam-for-safari/build/DerivedData CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=YES CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= build && open /Users/harrison/projects/beam-for-safari/build/DerivedData/Build/Products/Debug/Beam.app`
 3. Quit Safari (Cmd+Q), reopen, Develop > Allow Unsigned Extensions (password). Settings > Extensions: tick **Beam for Safari**, untick **Beam Spike**, allow on all websites.
 4. Optional: tick **Allow in Private Browsing** and repeat the first test in a private window.
+
+**Needed first (found 2026-10-31):** Safari > Settings > Extensions > Beam for Safari > Edit Websites > Allow on every website. Without it the menu item shows but the click silently does nothing, because the page script is never loaded.
 
 ## Tests (right-click the video unless stated; the menu item is "Beam to Apple TV")
 

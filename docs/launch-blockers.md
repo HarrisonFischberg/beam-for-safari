@@ -39,3 +39,6 @@ Never infer these from a reference app. Never invent them.
 - Spike evidence is owner-reported in chat with no results table (the gesture-active column is missing). Re-run with Copy results if a precise record is wanted.
 - OPEN, NEEDS OWNER: private browsing (not tested; owner must tick Allow in Private Browsing per extension); a real article embed test (citizenfreepress.com homepage has no video; YouTube watch pages and article embeds untested).
 - OPEN, NEEDS OPUS: amend blueprint/architecture for cross-frame fallback, "Try anyway" removal (if the owner agrees) and the private-browsing setup step.
+
+## T004 finding: website permission (2026-10-31, owner-run)
+- Without Safari's per-extension website permission the content script is not injected: the menu item still appears, the click does nothing, and nothing tells the user why. Owner hit this on first run. Product must handle it: T008 setup step "Allow it on websites" (already planned) must be explicit and checked where possible; T006 popup should say "Beam is not allowed on this website yet" when `browser.permissions.contains({ origins: ['<all_urls>'] })` is false or the page script does not answer. NEEDS OPUS to add this to blueprint/architecture; NEEDS TESTING that the permission check works in Safari.

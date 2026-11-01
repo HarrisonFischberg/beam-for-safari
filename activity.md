@@ -55,3 +55,4 @@
 
 ## 2026-10-31 T004 first Safari run (owner)
 - Owner: right-click > Beam to Apple TV showed nothing and did not cast. Cause not yet known. Added the temporary popup diagnostic (version 0.2.0) to locate it. Likeliest causes: Beam not yet allowed on websites in Safari (content script not injected, send fails silently), or the old 0.1.0 stub still loaded.
+- Owner confirmed (2026-10-31): after allowing Beam on websites, Beam to Apple TV opens the picker on the first fixture. Root cause of the earlier silent failure: missing website permission, not a code bug. Rows 2-10 of docs/checklist-T004.md still to run. Open: a missing-permission message in the popup (T006) and an explicit setup step (T008).

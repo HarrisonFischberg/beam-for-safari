@@ -31,3 +31,4 @@ and keep them unless the owner runs `/impeccable hooks off`.
 - Node 24.22.0, Xcode 27.2, safari-web-extension-converter present, Python 3.9.6.
 - Impeccable: /impeccable already in session skill list; no install run. Browser-preview commands apply only to extension/host-app web UI; native screenshots otherwise.
 - REA MCP tools present (rea); not yet exercised.
+- Impeccable init run 2026-10-31: PRODUCT.md written (platform: web). Context launcher ran; no automatic design hook active this session (MANUAL_DETECTOR_REQUIRED), run `impeccable detect --json` once on finished web UI. buildPath not asked (no landing page; app screens are code-first).

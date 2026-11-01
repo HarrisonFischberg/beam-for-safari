@@ -1,6 +1,6 @@
 # T004 checklist: the real Beam in Safari (owner)
 
-Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, right-click > Beam to Apple TV opens the AirPlay picker (row 1, mp4). Rows 2-6 reported working by the owner on 0.2.1: hls, mse-alt, iframe, site-off, overlay. Plain `mse.html` did NOT work on 0.2.1 (the readout said picker called) although the spike's untouched call had; 0.2.2 limits the AirPlay override to videos the page opted out. Rows 7-8 (not-ready, no video) not yet reported. T004 is built and unit/harness tested; only Safari can show that it works. About 10 minutes.
+Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, right-click > Beam to Apple TV opens the AirPlay picker (row 1, mp4). Rows 2-6 reported working by the owner on 0.2.1: hls, mse-alt, iframe, site-off, overlay. Plain `mse.html` could not be cast on 0.2.1 to 0.2.3 (icon flashing); Safari's own AirPlay button fails the same way, so it is a Safari limit and 0.2.4 now explains it instead. Rows 7-8 (not-ready, no video) not yet reported. T004 is built and unit/harness tested; only Safari can show that it works. About 10 minutes.
 
 ## Setup
 
@@ -18,7 +18,8 @@ Status: PARTLY RUN. Owner-reported 2026-10-31: after allowing Beam on websites, 
 | --- | --- | --- | --- |
 | 1 | `mp4.html` | press play, right-click the video, Beam to Apple TV | AirPlay picker opens; a black pill says "Choose your Apple TV…". Pick the Apple TV: video plays on it |
 | 2 | `hls.html` | same | same |
-| 3 | `mse.html` | same | same |
+| 3 | `mse.html` (MediaSource, no HLS alternate) | same | NO picker. Pill says "This site streams in a way AirPlay cannot send. Use Screen Mirroring in Control Center." (Safari cannot AirPlay this stream; verified with Safari's own AirPlay button) |
+| 3b | `mse-alt.html` | same | picker opens and the video plays on the Apple TV |
 | 4 | `site-off.html` | same (this page turns AirPlay off) | picker opens anyway, no "turned off" message |
 | 5 | `overlay.html` | right-click the upper part (the invisible layer) | picker opens |
 | 6 | `iframe.html` | right-click inside the framed video | picker opens |

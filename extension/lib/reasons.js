@@ -1,7 +1,8 @@
 // Decides why a video cannot be beamed and what to tell the user. Pure, like resolve.js.
 // facts: { readyState, disableRemotePlayback, airplayAttr ('allow'|'deny'|null), hasMediaKeys, encrypted,
-//          srcIsBlob, availability ('available'|'not-available'|'unknown') }
-// opts.mediaSourceUnsupported stays false until the T002 spike shows MediaSource/blob videos cannot AirPlay.
+//          srcIsBlob, hasAirPlayAlternate, availability ('available'|'not-available'|'unknown') }
+// opts.mediaSourceUnsupported turns on the `media-source` reason: a blob: (MediaSource) video with no HLS alternate
+// cannot be AirPlayed in Safari 27.2 (owner-verified on the T002 fixtures, Safari's own AirPlay button included).
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
@@ -24,7 +25,7 @@
   function classify(facts, opts = {}) {
     if (facts.hasMediaKeys || facts.encrypted) return 'protected';
     if (facts.disableRemotePlayback || facts.airplayAttr === 'deny') return 'site-off';
-    if (opts.mediaSourceUnsupported && facts.srcIsBlob) return 'media-source';
+    if (opts.mediaSourceUnsupported && facts.srcIsBlob && !facts.hasAirPlayAlternate) return 'media-source';
     if (!(facts.readyState >= 1)) return 'not-ready'; // macOS needs HAVE_METADATA before the picker will open
     if (facts.availability === 'not-available') return 'no-target';
     return null;

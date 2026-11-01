@@ -8,6 +8,16 @@
   const R = typeof require === 'function' ? require('./resolve.js') : root.BeamResolve;
   const X = typeof require === 'function' ? require('./reasons.js') : root.BeamReasons;
 
+  // Verified by the owner on Safari 27.2: a MediaSource video (blob: source) with no HLS alternate cannot be sent to
+  // an Apple TV, even with Safari's own AirPlay button, so Beam says so instead of opening a picker that fails.
+  const MEDIA_SOURCE_UNSUPPORTED = true;
+
+  // An HLS <source> next to a blob: source is what lets Safari AirPlay a MediaSource page (mse-alt fixture works).
+  function hasAirPlayAlternate(el) {
+    if (typeof el.querySelectorAll !== 'function') return false;
+    return Array.prototype.some.call(el.querySelectorAll('source'), (s) => /mpegurl/i.test(s.type || '') || /\.m3u8(\?|#|$)/i.test(s.src || ''));
+  }
+
   // What classify() needs to know about one video. Two deliberate omissions (docs/spike-T002.md):
   //  - the page's AirPlay opt-out (disableRemotePlayback / x-webkit-airplay="deny") is never reported, because
   //    Beam overrides it instead of refusing (owner decision, 2026-10-31);
@@ -23,6 +33,7 @@
       hasMediaKeys: Boolean(el.mediaKeys) && encryptedSeen,
       encrypted: false,
       srcIsBlob: typeof el.currentSrc === 'string' && el.currentSrc.indexOf('blob:') === 0,
+      hasAirPlayAlternate: hasAirPlayAlternate(el),
       availability: 'unknown',
     };
   }
@@ -49,7 +60,7 @@
   function castFlow(io) {
     const id = R.resolveTarget({ videos: io.videos, srcUrl: io.srcUrl, hitIds: io.hitIds });
     if (id === null) return { ok: false, reason: 'no-video' };
-    const reason = X.classify(io.inspect(id));
+    const reason = X.classify(io.inspect(id), { mediaSourceUnsupported: MEDIA_SOURCE_UNSUPPORTED });
     if (reason) return { ok: false, reason, id };
     io.prepare(id);
     try {

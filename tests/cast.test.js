@@ -103,3 +103,19 @@ test('prepare leaves a video the page did not opt out alone (regression: mse.htm
   assert.equal(prepare(allowed), false);
   assert.deepEqual(allowed.attrs, { 'x-webkit-airplay': 'allow' });
 });
+
+test('media-source: a blob video with no HLS alternate is refused untouched; with an HLS alternate it casts', () => {
+  const { calls, io: i } = io({ inspect: () => ({ readyState: 4, srcIsBlob: true, hasAirPlayAlternate: false }) });
+  assert.deepEqual(castFlow(i), { ok: false, reason: 'media-source', id: 'a' });
+  assert.deepEqual(calls, []);
+  const withAlt = io({ inspect: () => ({ readyState: 4, srcIsBlob: true, hasAirPlayAlternate: true }) });
+  assert.equal(castFlow(withAlt.io).ok, true);
+});
+
+test('factsOf finds an HLS alternate by type or by .m3u8 url, and nothing else', () => {
+  const withSources = (list) => ({ readyState: 4, currentSrc: 'blob:http://x/1', querySelectorAll: () => list });
+  assert.equal(factsOf(withSources([{ type: 'video/mp4', src: 'blob:http://x/1' }, { type: 'application/vnd.apple.mpegurl', src: 'https://x/a' }])).hasAirPlayAlternate, true);
+  assert.equal(factsOf(withSources([{ type: '', src: 'https://x/a.m3u8?t=1' }])).hasAirPlayAlternate, true);
+  assert.equal(factsOf(withSources([{ type: 'video/mp4', src: 'https://x/a.mp4' }])).hasAirPlayAlternate, false);
+  assert.equal(factsOf({ readyState: 4 }).hasAirPlayAlternate, false);
+});

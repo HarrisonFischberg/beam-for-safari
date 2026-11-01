@@ -65,3 +65,8 @@ test('copy that also appears in the approved previews stays identical', async ()
   assert.equal(explain('site-off').text, PILL_STATES.siteOff);
   assert.equal(explain('protected').text, PILL_STATES.protected);
 });
+
+test('media-source: an HLS alternate makes a blob source castable again', () => {
+  assert.equal(classify(facts({ srcIsBlob: true, hasAirPlayAlternate: true }), { mediaSourceUnsupported: true }), null);
+  assert.equal(classify(facts({ srcIsBlob: true, hasAirPlayAlternate: false }), { mediaSourceUnsupported: true }), 'media-source');
+});

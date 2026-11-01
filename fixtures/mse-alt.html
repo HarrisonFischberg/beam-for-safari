@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="fixture" content="mse-alt">
+<title>Fixture: MediaSource with an HLS alternate</title>
+<style>body{font:16px/1.5 -apple-system,system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px}video{width:100%;max-width:640px;background:#000;display:block}small{color:#555}a{color:inherit}</style>
+</head>
+<body>
+<p><a href="index.html">All fixtures</a></p>
+<h1>MediaSource with an HLS alternate</h1>
+<p><small>ManagedMediaSource (or MediaSource) plus an HLS source element, the shape Safari requires for AirPlay with ManagedMediaSource.</small></p>
+<video id="v" controls playsinline></video><p id="log"><small>starting...</small></p>
+<script>
+const MIME = "video/mp4; codecs=\"avc1.4d401f, mp4a.40.2\"", log = (t) => document.getElementById("log").textContent = t;
+const MS = window.ManagedMediaSource || window.MediaSource, v = document.getElementById("v");
+if (!MS || !MS.isTypeSupported(MIME)) log("MediaSource or codec not supported here");
+else {
+  const ms = new MS(), a = document.createElement("source"), b = document.createElement("source");
+  a.src = URL.createObjectURL(ms); a.type = "video/mp4";
+  b.src = "media/hls/index.m3u8"; b.type = "application/vnd.apple.mpegurl";
+  v.append(a, b);
+  ms.addEventListener("sourceopen", async () => {
+    const sb = ms.addSourceBuffer(MIME);
+    sb.addEventListener("updateend", () => { if (ms.readyState === "open") ms.endOfStream(); log((window.ManagedMediaSource ? "ManagedMediaSource" : "MediaSource") + ", currentSrc " + v.currentSrc.slice(0, 14)); });
+    sb.appendBuffer(await (await fetch("media/sample-frag.mp4")).arrayBuffer());
+  }, { once: true });
+  if (window.ManagedMediaSource) v.disableRemotePlayback = false;
+}
+</script>
+</body>
+</html>

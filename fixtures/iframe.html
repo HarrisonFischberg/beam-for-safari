@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="fixture" content="iframe">
+<title>Fixture: Cross-origin iframe</title>
+<style>body{font:16px/1.5 -apple-system,system-ui,sans-serif;max-width:720px;margin:24px auto;padding:0 16px}video{width:100%;max-width:640px;background:#000;display:block}small{color:#555}a{color:inherit}</style>
+</head>
+<body>
+<p><a href="index.html">All fixtures</a></p>
+<h1>Cross-origin iframe</h1>
+<p><small>The video lives in an iframe on another origin (port 4202). Tests frame targeting.</small></p>
+<iframe id="f" width="660" height="400" style="border:1px solid #999" allow="autoplay; fullscreen"></iframe><script>document.getElementById("f").src = location.protocol + "//" + location.hostname + ":4202/inner.html";</script>
+</body>
+</html>

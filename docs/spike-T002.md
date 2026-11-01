@@ -1,0 +1,108 @@
+# T002 spike: does a context-menu click open the AirPlay picker?
+
+Status: KIT READY, NOT RUN. Needs the owner at the Mac with the Apple TV. Nothing below is a result yet.
+Built 2026-10-31. Tool versions when built: macOS 27.2, Safari 27.2, Xcode 27.2, ffmpeg 9.0.2, Node 24.22.
+
+## What this decides
+
+1. Does the planned path work: context-menu click -> background sends one message -> content script calls `webkitShowPlaybackTargetPicker()`? (`docs/rea-findings.md` findings 4 and 5, inferred from WebKit source only.)
+2. Background type for the product: non-persistent page or service worker.
+3. Permission model: confirmed all-sites, or whether `activeTab` + `executeScript` (P5) is viable.
+4. Whether MediaSource / `blob:` videos can be AirPlayed (finding 8), which sets `mediaSourceUnsupported` in `extension/lib/reasons.js`.
+5. Whether the per-click "Try anyway" override (P6) works on a site that turned AirPlay off.
+
+## Before you start (about 10 minutes)
+
+1. Apple TV 4K on, on the same Wi-Fi as this Mac. Note the tvOS version: ______
+2. Safari > Settings > Advanced > "Show features for web developers". Then Develop > **Allow Unsigned Extensions** (asks for your password; it resets every time Safari quits).
+3. Terminal 1, leave running:
+   ```bash
+   bash fixtures/serve.sh
+   ```
+   It generates the synthetic media (about 10 MB, ffmpeg needed) and prints a **LAN address** like `http://192.168.8.113:4201/`. Use that address, not `localhost`: the Apple TV fetches the video itself and cannot reach 127.0.0.1. The server is open to your local network while it runs; the files are synthetic. Press Ctrl+C when done.
+4. Terminal 2, round A (background page):
+   ```bash
+   bash spike/build.sh page
+   ```
+   The `BeamSpike` app opens once. In Safari > Settings > Extensions turn on **Beam Spike** (and turn off the main Beam extension while testing), then set it to "Always Allow on Every Website".
+5. Each fixture page shows a small black panel top-right ("Beam spike: <fixture>"). After you trigger a path, the panel asks **Picker opened** or **Did not open**. Press the one that matches what you saw. Press **play** on the video first: macOS only opens the picker once the video has loaded metadata.
+
+## The paths
+
+| Path | How to trigger | What it tests |
+| --- | --- | --- |
+| P0 | Panel button "P0 page click" | Control: a plain click in the page. If this fails, nothing else is meaningful (Apple TV not found?) |
+| P1 | Right-click the video > **Spike P1: send at once** | The planned path. No await before the message |
+| P2 | Right-click > **Spike P2: await, then send** | Negative control: one microtask hop. Expected to fail if gestures are lost |
+| P3 | Toolbar icon > **P3: send at once** (popup) | Popup click -> message (tab id fetched earlier) |
+| P3b | Toolbar icon > **P3b: await tabs.query, then send** | Same, with an await in the click |
+| P4 | Click the video once, then press **Option+Shift+B** | A key press inside the page |
+| P5 | Right-click > **Spike P5: executeScript** | The `activeTab`-style path: background injects the call |
+| P6 | Panel button "P6 override" (site-off page) | Re-enable AirPlay on one video, then open the picker |
+
+## Round A: background page
+
+Open each page from the LAN address. Mark each cell **Y** (picker opened), **N** (did not), or **-** (not run).
+
+| Fixture | P0 | P1 | P2 | P3 | P3b | P4 | P5 | P6 | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `mp4` (all paths) | | | | | | | | n/a | |
+| `hls` | | | | | | | | n/a | |
+| `mse` (blob:) | | | | | | | | n/a | |
+| `mse-alt` (blob + HLS alternate) | | | | | | | | n/a | |
+| `overlay` (right-click the layer, not the controls) | | | | | | | | n/a | |
+| `iframe` (right-click inside the frame) | | | | n/a | n/a | | | n/a | popup only reaches the top frame |
+| `site-off` | | | | | | | | | P6 is the point; P0/P1 expected N |
+
+Also glance at the panel's second line while a page is open: "AirPlay targets: available/not-available". Note anything odd.
+
+## Round B: service worker
+
+```bash
+bash spike/build.sh worker
+```
+Re-enable Beam Spike in Safari Settings (Safari may need a restart, then re-allow unsigned extensions). Repeat only the paths that depend on the background:
+
+| Fixture | P1 | P2 | P5 | Notes |
+| --- | --- | --- | --- | --- |
+| `mp4` | | | | |
+| `iframe` | | | | |
+
+## Getting the results to me
+
+On any fixture page press **Copy results** in the panel (it also fills a text box you can copy by hand), paste it into this file under "Raw results", and tell me. The table also records whether the browser reported an active user gesture at the call (`gesture active at call`), which explains why a path passed or failed.
+
+## Decision rules (applied after the run)
+
+| If | Then |
+| --- | --- |
+| P1 = Y on `mp4` and `hls` | Keep the planned design (T004 as written) |
+| P1 = N, P3 or P4 = Y | Toolbar button and Option+Shift+B become the primary gestures; the menu item stays as a best effort. Escalate to Opus to amend the blueprint |
+| P1 = N and P3 = N and P4 = N | Stop: the design does not work on this Safari. Escalate to Opus |
+| P2 = Y | Gesture survives one hop; relax the "no await" rule to "keep it short" |
+| P5 = Y and P1 = N | `activeTab` + `scripting` model becomes viable (narrower permissions) |
+| Round B P1 differs from round A | Use whichever background type passes; if both pass, use the page |
+| `mse` = Y | Leave `mediaSourceUnsupported` false |
+| `mse` = N and `mse-alt` = Y | Reason `media-source` is real; explain "site streams in a way AirPlay can't send" unless the site supplies an HLS alternate |
+| `mse` = N and `mse-alt` = N | Set `mediaSourceUnsupported` true in `extension/lib/reasons.js` |
+| P6 = Y on `site-off` | Ship "Try anyway" as designed |
+| P6 = N | Replace "Try anyway" with the plain explanation only |
+
+## Results
+
+Not filled yet.
+
+### Raw results
+
+(paste here)
+
+### Decisions
+
+(Opus or Sonnet fills after the run: background type, permission model, mediaSourceUnsupported, override.)
+
+## Limits of this kit
+
+- Fixtures were validated in a non-Safari browser pane (valid MP4, MediaSource buffers 30 s through a blob URL, cross-origin iframe, overlay layering, site-off attributes). HLS and ManagedMediaSource were checked only by `ffprobe` and MIME type, not played.
+- The spike extension was built for both background types and packages correctly. It has not been run in Safari.
+- Whether the Apple TV can play each stream is part of what you are testing; a "did not open" could also mean no Apple TV was found.
+- Synthetic media only; no third-party content.

@@ -34,3 +34,9 @@
 - Fixed a wrong command I had written in prd/CLAUDE/PROMPT: `node --test tests/` fails on Node 24 (directory read as a module); now `node --test tests/*.test.js`.
 - Note: reasons `media-source` stays disabled (opts.mediaSourceUnsupported=false) until the T002 spike; wording for not-ready/site-off/protected equals the approved previews (tested).
 - Not done here: content.js does not call the libs yet (T004).
+
+## 2026-10-31 T002 kit (Sonnet)
+- Built: fixtures/ (Range-capable Node server, ffmpeg media generator, 7 pages), spike/ (BeamSpike Xcode project, page and worker manifests, 6 trigger paths, result capture), docs/spike-T002.md (owner checklist, decision rules). Tests: 26 pass (6 new for the server, incl. Range, 416, MIME, path traversal).
+- Verified: every page and media URL returns 200 with the right type; Range 206; MSE buffered 30s via blob in the browser pane; iframe cross-origin; overlay stack; site-off attributes; both spike variants built and package the right background type (0 non-AppIntents warnings).
+- Found and worked around: converter gives mismatched bundle ids when the app name has a space (app-name now BeamSpike).
+- NOT verified: anything in Safari or on the Apple TV. HLS/ManagedMediaSource only checked by ffprobe/MIME. T002 stays pending until the owner runs it.

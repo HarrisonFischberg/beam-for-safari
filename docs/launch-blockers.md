@@ -37,5 +37,5 @@ Never infer these from a reference app. Never invent them.
 
 ## T002 outcome (2026-10-31)
 - Spike evidence is owner-reported in chat with no results table (the gesture-active column is missing). Re-run with Copy results if a precise record is wanted.
-- OPEN, NEEDS OWNER: private browsing (not tested; owner must tick Allow in Private Browsing per extension); how citizenfreepress.com embeds its video (send the article URL).
+- OPEN, NEEDS OWNER: private browsing (not tested; owner must tick Allow in Private Browsing per extension); a real article embed test (citizenfreepress.com homepage has no video; YouTube watch pages and article embeds untested).
 - OPEN, NEEDS OPUS: amend blueprint/architecture for cross-frame fallback, "Try anyway" removal (if the owner agrees) and the private-browsing setup step.

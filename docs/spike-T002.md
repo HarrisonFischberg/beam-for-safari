@@ -1,6 +1,6 @@
 # T002 spike: does a context-menu click open the AirPlay picker?
 
-Status: KIT READY, NOT RUN. Needs the owner at the Mac with the Apple TV. Nothing below is a result yet.
+Status: ROUND A PARTLY RUN (2026-10-31, owner-reported, no results table yet). Fixtures other than `mp4`, P6 and round B are still open.
 Built 2026-10-31. Tool versions when built: macOS 27.2, Safari 27.2, Xcode 27.2, ffmpeg 9.0.2, Node 24.22.
 
 ## What this decides
@@ -90,7 +90,16 @@ On any fixture page press **Copy results** in the panel (it also fills a text bo
 
 ## Results
 
-Not filled yet.
+Owner-reported in chat, Safari 27.2 / macOS 27.2, background page (round A). No Copy-results table was pasted, so the "gesture active" column is unknown.
+
+| Fixture | P0 | P1 | P2 | P3 | P3b | P4 | P5 | P6 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `mp4` | Y | Y | Y | Y | Y | Y | Y | n/a |
+| `hls`, `mse`, `mse-alt`, `overlay`, `iframe`, `site-off` | not reported | | | | | | | |
+
+Observations while running: the first attempt showed no panel because Safari's Allow Unsigned Extensions was off (it resets on every Safari quit); two harness bugs were fixed (stale second "Beam Spike" entry from a failed first build; menu items now created on every background start, not only `onInstalled`). Quitting Safari drops the unsigned extension until the switch is ticked again.
+
+Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 also works, so a gesture survives at least one microtask hop; P5 works, so an `activeTab`-style model is feasible if ever wanted.
 
 ### Raw results
 

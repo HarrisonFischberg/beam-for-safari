@@ -18,3 +18,9 @@ Never infer these from a reference app. Never invent them.
 - Data types and sensitive data: UNKNOWN
 - Vendors, SDKs, analytics, AI providers, processors: UNKNOWN
 - Retention or deletion exceptions: UNKNOWN
+
+## ASSUMED (intake, 2026-10-31)
+- Reference likes/dislikes not given -> ASSUMED: behavior/protocol knowledge only; alternatives: UI parity, feature-matrix parity.
+- Context-menu click may not count as the user gesture Safari needs for webkitShowPlaybackTargetPicker() -> verify in Phase 2; fallback toolbar button / keyboard shortcut.
+- Distribution: local build now; TestFlight / Mac App Store later (needs privacy labels, review readiness).
+- Business/legal facts (entity, contact, age) UNKNOWN until App Store work.

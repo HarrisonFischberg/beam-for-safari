@@ -31,3 +31,6 @@ Never infer these from a reference app. Never invent them.
 - DEVIATION from blueprint: Xcode 27's converter nests the project at `Beam/Beam/Beam.xcodeproj` and generates an AppKit/storyboard host, not SwiftUI. The extension source stays in `extension/` (referenced in place) instead of `Beam/Beam Extension/Resources`. T008 replaces the host UI with SwiftUI. Opus to ratify or amend `docs/blueprint.md`.
 - Manifest key `persistent` is unsupported by this Safari (converter warning): removed; MV3 background is non-persistent by default.
 - Two build warnings are Apple's `appintentsmetadataprocessor` ("no AppIntents.framework dependency"), not Beam code.
+
+## T002 finding: site opt-out (2026-10-31, owner-reported)
+- Page AirPlay opt-out attributes did not block the picker on Safari 27.2 (P0 and P6 both cast). The owner-approved "Try anyway" override (2026-10-31) may be unnecessary. NEEDS OWNER DECISION before T005 builds the pill buttons; Opus to amend `docs/blueprint.md` and the `site-off` reason.

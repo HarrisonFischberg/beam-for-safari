@@ -98,7 +98,8 @@ Owner-reported in chat, Safari 27.2 / macOS 27.2, background page (round A). No 
 | `mse` (blob:) | Y | Y | not run | not run | not run | not run | not run | n/a |
 | `mse-alt` | Y | Y | not run | not run | not run | not run | not run | n/a |
 | `iframe` (P1 only) | not run | Y | not run | n/a | n/a | not run | not run | n/a |
-| `hls`, `overlay`, `site-off` | not reported | | | | | | | |
+| `site-off` | Y | not run | not run | not run | not run | not run | not run | Y |
+| `hls`, `overlay` | not reported | | | | | | | |
 
 Observations while running: the first attempt showed no panel because Safari's Allow Unsigned Extensions was off (it resets on every Safari quit); two harness bugs were fixed (stale second "Beam Spike" entry from a failed first build; menu items now created on every background start, not only `onInstalled`). Quitting Safari drops the unsigned extension until the switch is ticked again.
 
@@ -107,6 +108,8 @@ MediaSource: the picker opened for both `mse` (plain `blob:` source) and `mse-al
 Real-site check (citizenfreepress.com, owner-run): P1 reached the page (panel: "Menu click seen by background: p1 (page) tab 1392 frame 0", messages received 3) but the panel said "no video in this frame", so the picker was never called. Not an AirPlay failure: the clicked frame had no `<video>`. The owner did not say how the video is embedded (URL not yet supplied). Product consequence: when the clicked frame has no video, fall back to the other frames' videos (popup chooser or cast the playing one); thumbnails and lite embeds that only become a `<video>` after a click need a clear "press play first" message.
 
 Cross-origin iframe: P1 from a right-click inside the framed video opens the picker (owner-reported). Frame targeting by the menu's `frameId` works on this Safari.
+
+Site-off (owner-reported): with `disableremoteplayback` and `x-webkit-airplay="deny"` set on the video, P0 (plain page click) opened the picker and the video cast to the Apple TV; P6 (override first) also worked. So on Safari 27.2 these opt-out attributes do not block `webkitShowPlaybackTargetPicker()`. Consequence: the per-click "Try anyway" override and the `site-off` reason have nothing to fix for these attributes; the picker simply works. Other opt-out styles (a player that hides or blocks AirPlay another way) were not tested. PENDING OWNER DECISION: drop "Try anyway" from v1 (recommended) or keep it as a no-cost fallback; Opus to amend the blueprint and `extension/lib/reasons.js`.
 
 Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 also works, so a gesture survives at least one microtask hop; P5 works, so an `activeTab`-style model is feasible if ever wanted.
 

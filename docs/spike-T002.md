@@ -95,9 +95,13 @@ Owner-reported in chat, Safari 27.2 / macOS 27.2, background page (round A). No 
 | Fixture | P0 | P1 | P2 | P3 | P3b | P4 | P5 | P6 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `mp4` | Y | Y | Y | Y | Y | Y | Y | n/a |
-| `hls`, `mse`, `mse-alt`, `overlay`, `iframe`, `site-off` | not reported | | | | | | | |
+| `mse` (blob:) | Y | Y | not run | not run | not run | not run | not run | n/a |
+| `mse-alt` | Y | Y | not run | not run | not run | not run | not run | n/a |
+| `hls`, `overlay`, `iframe`, `site-off` | not reported | | | | | | | |
 
 Observations while running: the first attempt showed no panel because Safari's Allow Unsigned Extensions was off (it resets on every Safari quit); two harness bugs were fixed (stale second "Beam Spike" entry from a failed first build; menu items now created on every background start, not only `onInstalled`). Quitting Safari drops the unsigned extension until the switch is ticked again.
+
+MediaSource: the picker opened for both `mse` (plain `blob:` source) and `mse-alt` (with an HLS alternate), reported by the owner after I asked. Per the decision rule this keeps `mediaSourceUnsupported` false (no change needed to `extension/lib/reasons.js`).
 
 Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 also works, so a gesture survives at least one microtask hop; P5 works, so an `activeTab`-style model is feasible if ever wanted.
 

@@ -10,9 +10,4 @@
 
 ## References ({{SOURCES}})
 Likes/dislikes not given: ASSUMED "take AirPlay protocol and sender/receiver behavior knowledge only; no UI or code".
-1. https://github.com/openairplay/open-airplay
-2. https://github.com/ozykhan/iina-airplay
-3. https://github.com/fd-/rpiplay
-4. https://github.com/tarek369/screendock
-5. https://github.com/antimof/Uxplay
-Note: rpiplay and UxPlay are AirPlay receivers (the Apple TV side), so relevance to a sender extension is likely low; Phase 2 REA triage confirms. Do not run or install any of them.
+Five public repos, named neutrally after Phase 2B (Source A: media-player casting plugin; B: legacy sender library; C, D: receivers; E: Android receiver). URLs removed by the clean-room sweep; findings in docs/rea-findings.md.

@@ -1,0 +1,17 @@
+feature,area,priority,original,clone,notes
+context menu "Beam to Apple TV" on videos,cast,must,no,no,menus.onClicked gesture -> tabs.sendMessage -> content script webkitShowPlaybackTargetPicker; keep chain synchronous
+system AirPlay picker,cast,must,yes,no,WebKit owns it; we only call it
+pick the right video (cursor target / largest playing / chooser),cast,must,no,no,several videos per page is common
+toolbar popup cast button (fallback),cast,must,yes,no,popup click is a gesture; Source A uses a button in web content
+keyboard shortcut cast,cast,should,no,no,content-script keydown is a real in-page gesture
+status: playing on TV / not casting,state,must,yes,no,boolean only; never name the device
+plain-language unsupported reasons,state,must,partial,no,no metadata yet; site disabled AirPlay; MediaSource-only; DRM; no Apple TV found
+wait for metadata then retry once,cast,should,yes,no,macOS picker requires readyState >= HAVE_METADATA; Source A retries first load once
+cross-origin iframe videos,cast,should,no,no,content script all_frames; menus frameId targeting
+stop casting,cast,should,yes,no,popup Stop; picker Turn off
+host app: enable-in-Safari onboarding,onboarding,must,no,no,SFSafariExtensionManager state + open Safari settings
+in-page confirmation pill,state,could,no,no,reduced-motion aware; auto-dismiss
+device name display,state,skip,no,no,WebKit does not expose it
+DRM video,cast,skip,no,no,guardrail; AirPlay itself refuses
+re-packaging/serving streams from the Mac,cast,skip,yes,no,not needed for page video; LAN exposure (Source A open issue)
+site turned AirPlay off: per-click "Try anyway" override,cast,should,no,no,owner decision 2026-10-31; one video only; never silent

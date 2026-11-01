@@ -136,11 +136,11 @@ Applied from the decision rules above, 2026-10-31 (Sonnet). Evidence is owner-re
 | `mediaSourceUnsupported` | Stays false; the `media-source` reason is not triggered | `mse` and `mse-alt` opened the picker |
 | Frame targeting | Right-click inside a cross-origin iframe reaches that frame; cast from it | iframe P1 |
 | Overlay players | Pointer-based targeting works | overlay P1 |
-| "Try anyway" override and `site-off` reason | NEEDS OWNER DECISION. Recommend dropping from v1: page opt-out attributes did not block the picker, so there is nothing to override | P0 and P6 both cast on site-off |
+| "Try anyway" override and `site-off` reason | DECIDED (owner, 2026-10-31): the owner wants content to cast even when the site tries to prevent it. Replace the button with an automatic override: before calling the picker, Beam sets `disableRemotePlayback = false`, removes the `disableremoteplayback` attribute and sets `x-webkit-airplay="allow"` on the chosen video only (the P6 preparation). No "Try anyway" button and no `site-off` failure message. Protected (DRM) video stays unsupported, with the plain `protected` message; no DRM bypass | P0 and P6 both cast on site-off; the owner's stated goal |
 | Real-world embeds | OPEN. On citizenfreepress.com the clicked frame had no video. Product needs a fallback to other frames and clear "press play first" copy for thumbnail embeds | owner's panel screenshot |
 | Private browsing | NOT TESTED. Safari requires the owner to tick "Allow in Private Browsing" per extension; Beam cannot enable it. Add a line to the host app setup steps | owner request |
 
-Needs Opus to amend `docs/blueprint.md` and `replica/architecture.md`: background fallback across frames, the site-off decision, and the private-browsing setup step. Sonnet must not edit the blueprint.
+Needs Opus to amend `docs/blueprint.md` and `replica/architecture.md`: background fallback across frames, the automatic override replacing "Try anyway" (and the `site-off` reason and its pill/popup states in `DESIGN.md`/previews), and the private-browsing setup step. Side effect to watch in T004: the override changes attributes on the page's own element; restore them after the picker call if a site's player misbehaves. Sonnet must not edit the blueprint.
 
 ## Limits of this kit
 

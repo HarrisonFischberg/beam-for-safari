@@ -33,7 +33,7 @@ Never infer these from a reference app. Never invent them.
 - Two build warnings are Apple's `appintentsmetadataprocessor` ("no AppIntents.framework dependency"), not Beam code.
 
 ## T002 finding: site opt-out (2026-10-31, owner-reported)
-- Page AirPlay opt-out attributes did not block the picker on Safari 27.2 (P0 and P6 both cast). The owner-approved "Try anyway" override (2026-10-31) may be unnecessary. NEEDS OWNER DECISION before T005 builds the pill buttons; Opus to amend `docs/blueprint.md` and the `site-off` reason.
+- Page AirPlay opt-out attributes did not block the picker on Safari 27.2 (P0 and P6 both cast). The owner-approved "Try anyway" override (2026-10-31) may be unnecessary. DECIDED 2026-10-31: no button; Beam applies the override automatically (see `docs/spike-T002.md` Decisions). Opus to amend `docs/blueprint.md`, the `site-off` reason and the design states.
 
 ## T002 outcome (2026-10-31)
 - Spike evidence is owner-reported in chat with no results table (the gesture-active column is missing). Re-run with Copy results if a precise record is wanted.

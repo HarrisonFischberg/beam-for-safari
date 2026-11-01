@@ -45,3 +45,4 @@
 - Owner ran rounds A and B in Safari 27.2 / macOS 27.2 on the Apple TV (tvOS version not reported). Results: P0-P5 and P3b pass on mp4; P1 passes on hls, mse, mse-alt, overlay, iframe; site-off P0 and P6 both cast; round B (service worker) P1/P2/P5 on mp4 and P1 on iframe pass. Real site citizenfreepress.com: no video in the clicked frame. Decisions in docs/spike-T002.md. T002 marked done.
 - Harness fixes during the run: stale duplicate extension from a failed first build removed; menus created on every background start; self-diagnosing panel; overlay fixture strip widened to 90px.
 - Reminder for T004: create menus on every background start, not only onInstalled (also fix extension/background.js).
+- Owner decision on site opt-out (2026-10-31): replace "Try anyway" with an automatic override (the P6 prep before every picker call); DRM video stays unsupported. Opus to amend blueprint/design states.

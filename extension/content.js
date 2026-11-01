@@ -37,7 +37,14 @@
 
   browser.runtime.onMessage.addListener((message, sender) => {
     if (sender.id !== browser.runtime.id || !message || message.type !== 'beam') return undefined;
-    const result = run(message.srcUrl); // synchronous: still inside the click's gesture
+    let result;
+    try {
+      result = run(message.srcUrl); // synchronous: still inside the click's gesture
+    } catch (e) {
+      browser.storage.local.set({ contentLast: `threw: ${e && e.message ? e.message : e}`, contentAt: Date.now() }).catch(() => {});
+      throw e;
+    }
+    browser.storage.local.set({ contentLast: result.ok ? 'picker called' : `refused: ${result.reason}`, contentAt: Date.now() }).catch(() => {});
     if (result.ok) BeamPill.show('Choose your Apple TV…', 'go').catch(() => {});
     else BeamPill.show(BeamReasons.explain(result.reason).text, 'blocked').catch(() => {});
     return Promise.resolve({ ok: result.ok, reason: result.reason });

@@ -52,3 +52,6 @@
 - Decisions applied from T002: automatic override instead of Try anyway; availability event never blocks (flaps, system picker reports no devices); protected needs MediaKeys AND encrypted event; no cross-frame fallback yet (clicked frame only; popup chooser is T006). Unused for now: reasons no-target, site-off, media-source.
 - NOT verified: anything in Safari (picker opening, pill styling in a real page, menu item). Owner checklist: docs/checklist-T004.md. Also not handled: videos inside shadow roots; the gesture-critical path has no await but only the spike proved Safari honours it, not this build.
 - Elapsed about 35 min.
+
+## 2026-10-31 T004 first Safari run (owner)
+- Owner: right-click > Beam to Apple TV showed nothing and did not cast. Cause not yet known. Added the temporary popup diagnostic (version 0.2.0) to locate it. Likeliest causes: Beam not yet allowed on websites in Safari (content script not injected, send fails silently), or the old 0.1.0 stub still loaded.

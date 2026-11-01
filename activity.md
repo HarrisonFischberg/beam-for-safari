@@ -10,4 +10,4 @@
 - Replica recon: replica/recon.md, replica/features.csv. Comparison approved by owner; site opt-out = per-click "Try anyway".
 - Key finding: context-menu gesture forwarding inferred from WebKit source; runtime spike is blueprint task 1. MSE/blob AirPlay UNKNOWN.
 - replica-entrepreneur not invoked (complaints gathered manually from one issue tracker).
-- Sweep clean (--include-replica). Lab deletion pending owner yes.
+- Sweep clean (--include-replica). Lab deleted with owner yes, 2026-10-31.

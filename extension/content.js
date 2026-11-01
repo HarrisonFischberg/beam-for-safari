@@ -9,6 +9,16 @@
   // TEMPORARY dev diagnostic: counts and timestamps only.
   if (window === window.top) browser.storage.local.get('loads').then(({ loads = 0 }) => browser.storage.local.set({ loads: loads + 1, loadAt: Date.now() })).catch(() => {});
 
+  // Listening for these two events is what makes Safari watch for AirPlay devices on this page. The T002 spike
+  // had these listeners and opened the picker on MediaSource video; the first real build did not and failed
+  // there. Kept even though nothing blocks on the values: T005 uses them for the "Playing on Apple TV" state.
+  let availability = 'unknown', onWireless = false;
+  document.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
+    availability = e.availability;
+    browser.storage.local.set({ avail: `${e.availability}` }).catch(() => {}); // TEMPORARY dev diagnostic
+  }, true);
+  document.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', (e) => { onWireless = Boolean(e.target.webkitCurrentPlaybackTargetIsWireless); }, true);
+
   document.addEventListener('contextmenu', (e) => { lastPoint = { x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
   // `encrypted` fires on a <video> that needs DRM keys; it does not bubble, so listen in the capture phase.
   document.addEventListener('encrypted', (e) => { if (e.target instanceof HTMLVideoElement) encryptedSeen.add(e.target); }, true);

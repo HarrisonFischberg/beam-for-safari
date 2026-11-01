@@ -99,7 +99,8 @@ Owner-reported in chat, Safari 27.2 / macOS 27.2, background page (round A). No 
 | `mse-alt` | Y | Y | not run | not run | not run | not run | not run | n/a |
 | `iframe` (P1 only) | not run | Y | not run | n/a | n/a | not run | not run | n/a |
 | `site-off` | Y | not run | not run | not run | not run | not run | not run | Y |
-| `hls`, `overlay` | not reported | | | | | | | |
+| `overlay` (P1 only, right-click the upper area) | not run | Y | not run | not run | not run | not run | not run | n/a |
+| `hls` | not reported | | | | | | | |
 
 Observations while running: the first attempt showed no panel because Safari's Allow Unsigned Extensions was off (it resets on every Safari quit); two harness bugs were fixed (stale second "Beam Spike" entry from a failed first build; menu items now created on every background start, not only `onInstalled`). Quitting Safari drops the unsigned extension until the switch is ticked again.
 
@@ -110,6 +111,8 @@ Real-site check (citizenfreepress.com, owner-run): P1 reached the page (panel: "
 Cross-origin iframe: P1 from a right-click inside the framed video opens the picker (owner-reported). Frame targeting by the menu's `frameId` works on this Safari.
 
 Site-off (owner-reported): with `disableremoteplayback` and `x-webkit-airplay="deny"` set on the video, P0 (plain page click) opened the picker and the video cast to the Apple TV; P6 (override first) also worked. So on Safari 27.2 these opt-out attributes do not block `webkitShowPlaybackTargetPicker()`. Consequence: the per-click "Try anyway" override and the `site-off` reason have nothing to fix for these attributes; the picker simply works. Other opt-out styles (a player that hides or blocks AirPlay another way) were not tested. PENDING OWNER DECISION: drop "Try anyway" from v1 (recommended) or keep it as a no-cost fallback; Opus to amend the blueprint and `extension/lib/reasons.js`.
+
+Overlay (owner-reported): right-clicking the transparent layer and choosing Spike P1 opened the picker. Note: the first overlay fixture covered Safari's play button (free strip 40 px); widened to 90 px.
 
 Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 also works, so a gesture survives at least one microtask hop; P5 works, so an `activeTab`-style model is feasible if ever wanted.
 

@@ -5,7 +5,7 @@ Status: NOT RUN. T004 is built and unit/harness tested; only Safari can show tha
 ## Setup
 
 1. Terminal 1 (leave running): `bash /Users/harrison/projects/beam-for-safari/fixtures/serve.sh` (prints the LAN address; use it, not localhost).
-2. Terminal 2: `bash /Users/harrison/projects/beam-for-safari/spike/build.sh page` is **not** needed. Build and open the real app instead:
+2. Terminal 2: build and open the real Beam app (not the spike):
    `xcodebuild -project /Users/harrison/projects/beam-for-safari/Beam/Beam/Beam.xcodeproj -scheme Beam -configuration Debug -derivedDataPath /Users/harrison/projects/beam-for-safari/build/DerivedData CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=YES CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= build && open /Users/harrison/projects/beam-for-safari/build/DerivedData/Build/Products/Debug/Beam.app`
 3. Quit Safari (Cmd+Q), reopen, Develop > Allow Unsigned Extensions (password). Settings > Extensions: tick **Beam for Safari**, untick **Beam Spike**, allow on all websites.
 4. Optional: tick **Allow in Private Browsing** and repeat the first test in a private window.

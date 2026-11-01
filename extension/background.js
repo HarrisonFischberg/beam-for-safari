@@ -14,9 +14,11 @@ const diag = (o) => browser.storage.local.set(o).catch(() => {});
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId !== MENU_ID || !tab) return;
-  browser.tabs.sendMessage(tab.id, { type: 'beam', srcUrl: info.srcUrl }, { frameId: info.frameId || 0 })
-    .catch((e) => diag({ bgErr: `send failed: ${e && e.message ? e.message : e}` }));
-  diag({ bgLast: `menu click, frame ${info.frameId || 0}`, bgAt: Date.now(), bgErr: '' });
+  diag({ bgLast: `menu click, frame ${info.frameId || 0}`, bgAt: Date.now(), bgErr: '', bgReply: 'waiting' });
+  browser.tabs.sendMessage(tab.id, { type: 'beam', srcUrl: info.srcUrl }, { frameId: info.frameId || 0 }).then(
+    (r) => diag({ bgReply: r === undefined ? 'no answer (nothing in the page handled it)' : JSON.stringify(r) }),
+    (e) => diag({ bgReply: '', bgErr: `send failed: ${e && e.message ? e.message : e}` })
+  );
 });
 
 // Content scripts cannot read the extension's stylesheets directly, so they ask for the pill styles here.

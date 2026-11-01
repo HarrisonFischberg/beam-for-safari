@@ -6,6 +6,9 @@
   let lastPoint = null;
   const encryptedSeen = new WeakSet();
 
+  // TEMPORARY dev diagnostic: counts and timestamps only.
+  if (window === window.top) browser.storage.local.get('loads').then(({ loads = 0 }) => browser.storage.local.set({ loads: loads + 1, loadAt: Date.now() })).catch(() => {});
+
   document.addEventListener('contextmenu', (e) => { lastPoint = { x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
   // `encrypted` fires on a <video> that needs DRM keys; it does not bubble, so listen in the capture phase.
   document.addEventListener('encrypted', (e) => { if (e.target instanceof HTMLVideoElement) encryptedSeen.add(e.target); }, true);
@@ -37,6 +40,7 @@
 
   browser.runtime.onMessage.addListener((message, sender) => {
     if (sender.id !== browser.runtime.id || !message || message.type !== 'beam') return undefined;
+    browser.storage.local.set({ msgAt: Date.now() }).catch(() => {});
     let result;
     try {
       result = run(message.srcUrl); // synchronous: still inside the click's gesture

@@ -1,6 +1,6 @@
 # T002 spike: does a context-menu click open the AirPlay picker?
 
-Status: ROUND A PARTLY RUN (2026-10-31, owner-reported, no results table yet). Fixtures other than `mp4`, P6 and round B are still open.
+Status: RUN (2026-10-31, owner-reported in chat; no Copy-results table was pasted, so the "gesture active" evidence is missing). Decisions below. Open items: private browsing, how the citizenfreepress video is embedded, and the "Try anyway" decision.
 Built 2026-10-31. Tool versions when built: macOS 27.2, Safari 27.2, Xcode 27.2, ffmpeg 9.0.2, Node 24.22.
 
 ## What this decides
@@ -114,6 +114,8 @@ Site-off (owner-reported): with `disableremoteplayback` and `x-webkit-airplay="d
 
 Overlay (owner-reported): right-clicking the transparent layer and choosing Spike P1 opened the picker. Note: the first overlay fixture covered Safari's play button (free strip 40 px); widened to 90 px.
 
+Round B (service worker, owner-reported): "everything worked perfect" for P1, P2 and P5 on `mp4` and P1 on `iframe`. I did not get explicit confirmation that the panel's status line read "(worker)"; it does not change the decision (the page background is the verified default either way).
+
 Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 also works, so a gesture survives at least one microtask hop; P5 works, so an `activeTab`-style model is feasible if ever wanted.
 
 ### Raw results
@@ -122,7 +124,23 @@ Provisional reading (mp4 only): the planned path P1 works on this Safari; P2 als
 
 ### Decisions
 
-(Opus or Sonnet fills after the run: background type, permission model, mediaSourceUnsupported, override.)
+Applied from the decision rules above, 2026-10-31 (Sonnet). Evidence is owner-reported.
+
+| Question | Decision | Basis |
+| --- | --- | --- |
+| Does the planned path work? | Yes. Keep T004 as written: menu click, one message to the clicked frame, content script calls the picker | P1 passed on mp4, hls, mse, mse-alt, overlay, iframe, in both background types |
+| Gesture across an await | One microtask hop survives (P2). Keep the rule "send first, no storage or network round trip before the send"; do not rely on longer chains | P2 passed; only one hop was tested |
+| Background type | Non-persistent background page (current manifest) | Both types pass; page is the simpler default |
+| Permission model | Keep all-sites content script (owner-approved). `activeTab` + `scripting` (P5) is a verified fallback if App Store review objects to the broad permission | P5 passed |
+| Toolbar popup and in-page shortcut | Both viable fallbacks (P3, P3b, P4 passed) | owner-reported |
+| `mediaSourceUnsupported` | Stays false; the `media-source` reason is not triggered | `mse` and `mse-alt` opened the picker |
+| Frame targeting | Right-click inside a cross-origin iframe reaches that frame; cast from it | iframe P1 |
+| Overlay players | Pointer-based targeting works | overlay P1 |
+| "Try anyway" override and `site-off` reason | NEEDS OWNER DECISION. Recommend dropping from v1: page opt-out attributes did not block the picker, so there is nothing to override | P0 and P6 both cast on site-off |
+| Real-world embeds | OPEN. On citizenfreepress.com the clicked frame had no video. Product needs a fallback to other frames and clear "press play first" copy for thumbnail embeds | owner's panel screenshot |
+| Private browsing | NOT TESTED. Safari requires the owner to tick "Allow in Private Browsing" per extension; Beam cannot enable it. Add a line to the host app setup steps | owner request |
+
+Needs Opus to amend `docs/blueprint.md` and `replica/architecture.md`: background fallback across frames, the site-off decision, and the private-browsing setup step. Sonnet must not edit the blueprint.
 
 ## Limits of this kit
 

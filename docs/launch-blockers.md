@@ -34,3 +34,8 @@ Never infer these from a reference app. Never invent them.
 
 ## T002 finding: site opt-out (2026-10-31, owner-reported)
 - Page AirPlay opt-out attributes did not block the picker on Safari 27.2 (P0 and P6 both cast). The owner-approved "Try anyway" override (2026-10-31) may be unnecessary. NEEDS OWNER DECISION before T005 builds the pill buttons; Opus to amend `docs/blueprint.md` and the `site-off` reason.
+
+## T002 outcome (2026-10-31)
+- Spike evidence is owner-reported in chat with no results table (the gesture-active column is missing). Re-run with Copy results if a precise record is wanted.
+- OPEN, NEEDS OWNER: private browsing (not tested; owner must tick Allow in Private Browsing per extension); how citizenfreepress.com embeds its video (send the article URL).
+- OPEN, NEEDS OPUS: amend blueprint/architecture for cross-frame fallback, "Try anyway" removal (if the owner agrees) and the private-browsing setup step.

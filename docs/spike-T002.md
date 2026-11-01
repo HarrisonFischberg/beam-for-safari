@@ -100,7 +100,7 @@ Owner-reported in chat, Safari 27.2 / macOS 27.2, background page (round A). No 
 | `iframe` (P1 only) | not run | Y | not run | n/a | n/a | not run | not run | n/a |
 | `site-off` | Y | not run | not run | not run | not run | not run | not run | Y |
 | `overlay` (P1 only, right-click the upper area) | not run | Y | not run | not run | not run | not run | not run | n/a |
-| `hls` | not reported | | | | | | | |
+| `hls` (P1 only) | not run | Y | not run | not run | not run | not run | not run | n/a |
 
 Observations while running: the first attempt showed no panel because Safari's Allow Unsigned Extensions was off (it resets on every Safari quit); two harness bugs were fixed (stale second "Beam Spike" entry from a failed first build; menu items now created on every background start, not only `onInstalled`). Quitting Safari drops the unsigned extension until the switch is ticked again.
 

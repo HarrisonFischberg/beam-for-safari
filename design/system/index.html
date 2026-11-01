@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beam: Gate components</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); }
+main { max-width: 1100px; margin: 0 auto; padding: 32px 24px 48px; display: grid; gap: 32px; }
+h2 { font: var(--text-title); margin: 0 0 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.cell { display: grid; gap: 6px; justify-items: start; width: 240px; }
+.cell small { color: var(--ink-sub); font: var(--text-label); }
+.cell .gate-btn.primary, .cell .gate-item { width: 240px; }
+.dark { background: var(--sign); padding: 12px; border-radius: var(--radius-md); }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw { width: 110px; font: var(--text-label); } .sw i { display: block; height: 40px; border-radius: var(--radius-sm); border: 1px solid var(--line); margin-bottom: 4px; }
+.frame { position: relative; width: 340px; height: 90px; background: #26282D; border-radius: 10px; }
+.forced :is(.hover, .hov) { }
+</style>
+</head>
+<body class="gate-base">
+<main>
+  <section><h2>Color roles</h2><div class="swatches" id="sw"></div></section>
+  <section><h2>Primary button</h2><div class="row">
+    <div class="cell"><button class="gate-btn primary">Beam to Apple TV</button><small>default</small></div>
+    <div class="cell"><button class="gate-btn primary" style="background:var(--signal-hover)">Beam to Apple TV</button><small>hover</small></div>
+    <div class="cell"><button class="gate-btn primary" id="focusme">Beam to Apple TV</button><small>focus-visible (Tab to it)</small></div>
+    <div class="cell"><button class="gate-btn primary" style="transform:scale(.985)">Beam to Apple TV</button><small>active</small></div>
+    <div class="cell"><button class="gate-btn primary" disabled>Beam to Apple TV</button><small>disabled</small></div>
+    <div class="cell"><button class="gate-btn primary" aria-busy="true">Choose your Apple TV…</button><small>busy (label kept, ring added)</small></div>
+  </div></section>
+  <section><h2>Ghost button and link</h2><div class="row">
+    <div class="cell"><button class="gate-btn ghost">Stop</button><small>ghost default</small></div>
+    <div class="cell"><button class="gate-btn ghost" style="border-color:var(--ink)">Stop</button><small>ghost hover</small></div>
+    <div class="cell"><button class="gate-btn ghost" disabled>Stop</button><small>ghost disabled (set via attribute)</small></div>
+    <div class="cell"><button class="gate-link">Try anyway</button><small>link</small></div>
+  </div></section>
+  <section><h2>List item</h2><div class="row">
+    <div class="cell"><button class="gate-item" role="radio" aria-checked="false"><span class="gate-thumb"></span><span class="gate-meta"><b>Sample: Harbour at dawn</b><span>example.org · 12:04</span></span><span class="gate-radio"></span></button><small>default</small></div>
+    <div class="cell"><button class="gate-item" role="radio" aria-checked="true"><span class="gate-thumb"></span><span class="gate-meta"><b>Sample: Harbour at dawn</b><span>example.org · 12:04</span></span><span class="gate-radio"></span></button><small>selected</small></div>
+    <div class="cell"><button class="gate-item" role="radio" aria-checked="false" disabled><span class="gate-thumb"></span><span class="gate-meta"><b>Sample: A very long title that has to truncate cleanly at the edge</b><span>example.org · 12:04</span></span><span class="gate-radio"></span></button><small>disabled, long title truncates</small></div>
+  </div></section>
+  <section><h2>Sign header and tiles</h2><div class="row">
+    <div class="gate-popup" style="width:300px"><div class="gate-sign"><span class="gate-tile"><span class="gate-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 5l7 7-7 7"/></svg></span></span><div><h3>Ready to beam</h3><p>Apple TV · Ready</p></div></div></div>
+    <div class="gate-popup" style="width:300px"><div class="gate-sign"><span class="gate-tile blocked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.5v.01"/></svg></span><div><h3>No Apple TV found</h3><p>Apple TV · No Apple TV</p></div></div></div>
+  </div></section>
+  <section><h2>Pill</h2><div class="row">
+    <div class="frame"><div class="gate-pill" role="status" style="animation:none"><span class="gate-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 5l7 7-7 7"/></svg></span><span>Choose your Apple TV…</span></div></div>
+    <div class="frame"><div class="gate-pill" role="status" style="animation:none"><span class="gate-tile blocked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.5v.01"/></svg></span><span>The video has not loaded yet.</span><button>Try again</button></div></div>
+  </div></section>
+  <section><h2>Steps</h2><div class="row"><ol class="gate-steps" style="width:320px"><li>Open Safari Settings…</li><li class="done">Turn on Beam under Extensions</li></ol></div></section>
+  <section><h2>Empty</h2><div class="row"><div class="gate-popup" style="width:300px"><div class="gate-body"><div class="gate-empty">Nothing to beam</div></div></div></div></section>
+</main>
+<script>
+const roles = ['signal','signal-hover','signal-ink','sign','sign-done','paper','panel','ink','ink-sub','line','selected','ok','focus'];
+document.getElementById('sw').innerHTML = roles.map(r => `<div class="sw"><i style="background:var(--${r})"></i>--${r}</div>`).join('');
+</script>
+</body>
+</html>

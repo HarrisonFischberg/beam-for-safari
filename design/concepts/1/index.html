@@ -3,80 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Beam: concept 1, Gate</title>
+<title>Beam: Gate preview</title>
+<link rel="stylesheet" href="../../system/tokens.css">
+<link rel="stylesheet" href="../../system/components.css">
 <style>
-:root {
-  --bg: #F5F5F7; --panel: #FFFFFF; --ink: #1D1D1F; --sub: #5A5A60; --line: #D9D9DE;
-  --sign: #14130F; --sign-ink: #FFFFFF; --accent: #FFD60A; --accent-ink: #14130F;
-  --ok: #1E7A3C; --focus: #0A5FD6; --sel: #FFF6C2; --thumb-ink: #FFFFFF;
-  --sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
-}
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#1C1C1E; --panel:#2A2A2D; --ink:#F5F5F7; --sub:#B4B4BB; --line:#3C3C41; --ok:#5FD37F; --focus:#6CA8FF; --sel:#3A3520; } }
-:root[data-theme="dark"] { --bg:#1C1C1E; --panel:#2A2A2D; --ink:#F5F5F7; --sub:#B4B4BB; --line:#3C3C41; --ok:#5FD37F; --focus:#6CA8FF; --sel:#3A3520; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 13px/1.4 var(--sys); font-variant-numeric: tabular-nums; }
+body { margin: 0; background: var(--paper); }
 main { max-width: 1440px; margin: 0 auto; padding: 32px 40px 48px; display: grid; gap: 40px; }
-h2 { font: 600 15px var(--sys); margin: 0 0 14px; }
+h2 { font: var(--text-title); margin: 0 0 14px; }
+.sample { color: var(--ink-sub); font: var(--text-label); margin: 0 0 10px; }
 .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
-.sample { color: var(--sub); font-size: 12px; margin: 0 0 10px; }
-
-/* popup */
-.popup { width: 340px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.12); }
-.sign { background: var(--sign); color: var(--sign-ink); display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
-.tile { width: 44px; height: 44px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; flex: none; }
-.tile svg { width: 26px; height: 26px; }
-.arrow { animation: nudge 1.8s cubic-bezier(.16,1,.3,1) infinite; }
-@keyframes nudge { 0%,100% { transform: translateX(-2px); } 50% { transform: translateX(3px); } }
-.sign h3 { margin: 0; font: 700 17px/1.2 var(--sys); }
-.sign p { margin: 2px 0 0; font-size: 13px; color: #E6E6EA; }
-.sign .stop { margin-left: auto; }
-.body { padding: 12px 16px 16px; display: grid; gap: 10px; }
-.detail { margin: 0; color: var(--sub); }
-.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.item[aria-checked="true"] { background: var(--sel); border-color: var(--ink); }
-.thumb { width: 40px; height: 40px; border-radius: 6px; display: grid; place-items: center; flex: none; background: #3B5B8C; color: var(--thumb-ink); }
-.item:nth-child(2) .thumb { background: #8C5B3B; } .item:nth-child(3) .thumb { background: #2F7A5C; }
-.thumb svg { width: 14px; height: 14px; }
-.meta { min-width: 0; flex: 1; } .meta b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.meta span { color: var(--sub); font-size: 12px; }
-.radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); flex: none; display: grid; place-items: center; }
-.item[aria-checked="true"] .radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
-.btn { font: 700 14px var(--sys); min-height: 44px; border-radius: 8px; border: 1px solid transparent; padding: 0 16px; cursor: pointer; transition: background-color .15s ease-out, transform .15s ease-out; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); width: 100%; }
-.btn.primary:hover { background: #FFE24D; } .btn.primary:active { transform: scale(.985); }
-.btn.primary:disabled { background: var(--line); color: var(--sub); cursor: not-allowed; }
-.btn.ghost { background: transparent; border-color: var(--line); color: var(--ink); font-weight: 600; }
-.sign .btn.ghost { border-color: #6A6A70; color: #fff; min-height: 36px; }
-.link { background: none; border: 0; color: var(--ink); font: 600 13px var(--sys); text-decoration: underline; text-underline-offset: 3px; min-height: 44px; cursor: pointer; justify-self: start; padding: 0; }
-:is(.btn, .item, .link):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.empty { display: grid; justify-items: center; gap: 4px; padding: 14px 0 4px; color: var(--sub); text-align: center; }
-
-/* pill over a video frame */
 .frame { position: relative; width: 340px; height: 200px; border-radius: 10px; background: #26282D; overflow: hidden; }
 .frame i { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 4px; border-radius: 2px; background: #5A5D66; }
 .frame i::before { content: ""; position: absolute; inset: 0 60% 0 0; background: #fff; border-radius: 2px; }
-.pill { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); display: flex; align-items: center; gap: 8px; background: var(--sign); color: #fff; border-radius: 22px; border: 1px solid rgba(255,255,255,.3); padding: 8px 14px 8px 8px; font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,.35); animation: rise .24s cubic-bezier(.16,1,.3,1) both; }
-.pill .tile { width: 24px; height: 24px; border-radius: 50%; align-self: flex-start; } .pill .tile svg { width: 14px; height: 14px; }
-.pill button { background: none; border: 0; color: var(--accent); font: 700 13px var(--sys); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 24px; padding: 0 4px; }
-@keyframes rise { from { opacity: 0; transform: translate(-50%, 6px); } }
-
-/* host window */
-.win { width: 560px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,.18); }
+.win { width: 560px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-surface); }
 .bar { height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid var(--line); }
 .bar span { width: 12px; height: 12px; border-radius: 50%; background: #FF5F57; } .bar span:nth-child(2) { background: #FEBC2E; } .bar span:nth-child(3) { background: #28C840; }
-.hostbody { padding: 24px; display: grid; gap: 16px; }
-.hostbody header { display: flex; gap: 14px; align-items: center; } .hostbody .tile { width: 56px; height: 56px; border-radius: 12px; }
-.hostbody h3 { margin: 0; font: 700 20px/1.2 var(--sys); } .hostbody p { margin: 2px 0 0; color: var(--sub); }
-.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: s; }
-.steps li { counter-increment: s; display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--sign); color: #fff; border-radius: 8px; font-weight: 600; }
-.steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 800; }
-.steps li.done { background: #35342E; } .steps li.done::before { content: "\2713"; background: var(--ok); color: #fff; }
-.hostbody .btn.primary { width: auto; justify-self: start; }
-@media (prefers-reduced-motion: reduce) { .arrow, .pill { animation: none; } .btn { transition: none; } }
+.hostbody { padding: var(--space-5); display: grid; gap: var(--space-4); }
+.hostbody header { display: flex; gap: 14px; align-items: center; }
+.hostbody .gate-tile { width: 56px; height: 56px; border-radius: var(--radius-lg); }
+.hostbody h3 { margin: 0; font: var(--text-host); } .hostbody p { margin: 2px 0 0; color: var(--ink-sub); }
+.hostbody .gate-btn.primary { width: auto; justify-self: start; }
 </style>
 </head>
-<body>
+<body class="gate-base">
 <main>
   <section><h2>Toolbar popup</h2><p class="sample">Sample data only. Five states.</p><div class="row" id="popups"></div></section>
   <section><h2>In-page status</h2><p class="sample">Shown over the video that was chosen.</p><div class="row" id="pills"></div></section>
@@ -85,32 +35,32 @@ h2 { font: 600 15px var(--sys); margin: 0 0 14px; }
 <script type="module">
 import { POPUP_STATES, PILL_STATES, HOST_STATES, HOST_STEPS } from '../shared/data.js';
 const q = new URLSearchParams(location.search).get('theme'); if (q) document.documentElement.dataset.theme = q;
-const ico = {
-  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg>',
-  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l6 6L20 6"/></svg>',
-  play: '<svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3 1.5l9 5.5-9 5.5z"/></svg>',
-};
+const S = (d, w = 3) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ico = { arrow: S('<path d="M4 12h15M13 5l7 7-7 7"/>'), check: S('<path d="M4 12l6 6L20 6"/>'), warn: S('<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.5v.01"/>', 2.5),
+  play: '<svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3 1.5l9 5.5-9 5.5z"/></svg>' };
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BLOCKED = ['noVideo', 'siteOff', 'noTarget'];
 function popup(key) {
-  const s = POPUP_STATES[key], on = !!s.onTV, sel = s.onTV || s.blocked || (s.videos[0] && s.videos[0].id);
-  const items = s.videos.map(v => `<li><button class="item" role="radio" aria-checked="${v.id === sel}"><span class="thumb">${ico.play}</span><span class="meta"><b>${esc(v.title)}</b><span>${esc(v.site)} · ${v.duration}${v.playing ? ' · playing' : ''}</span></span><span class="radio"></span></button></li>`).join('');
-  const list = s.videos.length ? `<ul class="list" role="radiogroup" aria-label="Videos on this page">${items}</ul>` : `<div class="empty"><b>Nothing to beam</b></div>`;
-  const action = on ? '' : key === 'siteOff' ? '<button class="btn primary">Try anyway</button>' : `<button class="btn primary"${s.videos.length && key !== 'noTarget' ? '' : ' disabled'}>Beam to Apple TV</button>`;
-  return `<article class="popup" aria-label="${esc(s.label)}"><div class="sign"><span class="tile">${on ? ico.check : `<span class="arrow">${ico.arrow}</span>`}</span><div><h3>${esc(s.headline)}</h3><p>Apple TV · ${esc(s.label)}</p></div>${on ? '<button class="btn ghost stop">Stop</button>' : ''}</div><div class="body"><p class="detail">${esc(s.detail)}</p>${list}${action}</div></article>`;
+  const s = POPUP_STATES[key], on = !!s.onTV, bad = BLOCKED.includes(key), sel = s.onTV || s.blocked || (s.videos[0] && s.videos[0].id);
+  const items = s.videos.map(v => `<li><button class="gate-item" role="radio" aria-checked="${v.id === sel}"><span class="gate-thumb">${ico.play}</span><span class="gate-meta"><b>${esc(v.title)}</b><span>${esc(v.site)} · ${v.duration}${v.playing ? ' · playing' : ''}</span></span><span class="gate-radio"></span></button></li>`).join('');
+  const list = s.videos.length ? `<ul class="gate-list" role="radiogroup" aria-label="Videos on this page">${items}</ul>` : `<div class="gate-empty">Nothing to beam</div>`;
+  const action = on ? '' : key === 'siteOff' ? '<button class="gate-btn primary">Try anyway</button>' : `<button class="gate-btn primary"${s.videos.length && key !== 'noTarget' ? '' : ' disabled'}>Beam to Apple TV</button>`;
+  const tile = on ? `<span class="gate-tile">${ico.check}</span>` : bad ? `<span class="gate-tile blocked">${ico.warn}</span>` : `<span class="gate-tile"><span class="gate-arrow">${ico.arrow}</span></span>`;
+  return `<article class="gate-popup" aria-label="${esc(s.label)}"><div class="gate-sign">${tile}<div><h3>${esc(s.headline)}</h3><p>Apple TV · ${esc(s.label)}</p></div>${on ? '<button class="gate-btn ghost">Stop</button>' : ''}</div><div class="gate-body"><p class="gate-detail">${esc(s.detail)}</p>${list}${action}</div></article>`;
 }
 function pill(key) {
-  const on = key === 'onTV', retry = key === 'notReady' ? '<button>Try again</button>' : key === 'siteOff' ? '<button>Try anyway</button>' : '';
-  return `<div class="frame"><i></i><div class="pill" role="status"><span class="tile">${on ? ico.check : ico.arrow}</span><span>${esc(PILL_STATES[key])}</span>${retry}</div></div>`;
+  const on = key === 'onTV', bad = ['notReady', 'siteOff', 'protected'].includes(key), retry = key === 'notReady' ? '<button>Try again</button>' : key === 'siteOff' ? '<button>Try anyway</button>' : '';
+  return `<div class="frame"><i></i><div class="gate-pill" role="status"><span class="gate-tile${bad ? ' blocked' : ''}">${on ? ico.check : bad ? ico.warn : ico.arrow}</span><span>${esc(PILL_STATES[key])}</span>${retry}</div></div>`;
 }
 function host(key) {
   const h = HOST_STATES[key], done = key === 'on';
-  const steps = HOST_STEPS.map((t, i) => `<li class="${done || (i === 0 && false) ? 'done' : ''}">${esc(t)}</li>`).join('');
-  return `<article class="win" aria-label="Beam window"><div class="bar"><span></span><span></span><span></span></div><div class="hostbody"><header><span class="tile">${ico.arrow}</span><div><h3>${esc(h.headline)}</h3><p>${esc(h.detail)}</p></div></header><ol class="steps">${steps}</ol><button class="btn primary">${esc(h.action)}</button></div></article>`;
+  const steps = HOST_STEPS.map(t => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('');
+  return `<article class="win" aria-label="Beam window"><div class="bar"><span></span><span></span><span></span></div><div class="hostbody"><header><span class="gate-tile">${ico.arrow}</span><div><h3>${esc(h.headline)}</h3><p>${esc(h.detail)}</p></div></header><ol class="gate-steps">${steps}</ol><button class="gate-btn primary">${esc(h.action)}</button></div></article>`;
 }
 document.getElementById('popups').innerHTML = Object.keys(POPUP_STATES).map(popup).join('');
 document.getElementById('pills').innerHTML = Object.keys(PILL_STATES).map(pill).join('');
 document.getElementById('hosts').innerHTML = Object.keys(HOST_STATES).map(host).join('');
-document.querySelectorAll('.item').forEach(b => b.addEventListener('click', () => { const g = b.closest('[role=radiogroup]'); g.querySelectorAll('.item').forEach(x => x.setAttribute('aria-checked', x === b)); }));
+document.querySelectorAll('.gate-item').forEach(b => b.addEventListener('click', () => { b.closest('[role=radiogroup]').querySelectorAll('.gate-item').forEach(x => x.setAttribute('aria-checked', x === b)); }));
 </script>
 </body>
 </html>

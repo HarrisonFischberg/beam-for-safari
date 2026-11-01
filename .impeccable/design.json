@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T01:41:17.213Z",
+  "title": "Design System: Beam for Safari",
+  "extensions": {
+    "colorMeta": {
+      "signal": {
+        "role": "primary",
+        "displayName": "Signal Yellow",
+        "canonical": "#FFD60A",
+        "tonalRamp": [
+          "#220000",
+          "#411900",
+          "#613900",
+          "#825B00",
+          "#A57D00",
+          "#C9A100",
+          "#EFC600",
+          "#FFEC3D"
+        ]
+      },
+      "sign": {
+        "role": "neutral",
+        "displayName": "Signage Black",
+        "canonical": "#14130F",
+        "tonalRamp": [
+          "#0C0B08",
+          "#262521",
+          "#43423D",
+          "#62615C",
+          "#84827D",
+          "#A6A59F",
+          "#CBC9C3",
+          "#F0EEE9"
+        ]
+      },
+      "ok": {
+        "role": "secondary",
+        "displayName": "Done Green",
+        "canonical": "#1E7A3C",
+        "tonalRamp": [
+          "#001600",
+          "#003300",
+          "#005316",
+          "#157437",
+          "#409757",
+          "#65BB79",
+          "#8AE19C",
+          "#AFFFC1"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus Blue",
+        "canonical": "#0A5FD6",
+        "tonalRamp": [
+          "#0B005D",
+          "#000082",
+          "#0032A7",
+          "#0058CE",
+          "#2F7CF6",
+          "#53A1FF",
+          "#77C7FF",
+          "#9CEEFF"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Title",
+        "purpose": "Sign headline."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Detail text and list titles."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Site names, durations, small status."
+      }
+    },
+    "shadows": [
+      {
+        "name": "surface",
+        "value": "0 8px 24px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.12)",
+        "purpose": "Popup and window."
+      },
+      {
+        "name": "pill",
+        "value": "0 4px 14px rgba(0,0,0,.35)",
+        "purpose": "In-page pill, with a 1px white 30% edge."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "All state transitions."
+      },
+      {
+        "name": "state",
+        "value": "150ms",
+        "purpose": "Hover, press, selection."
+      },
+      {
+        "name": "enter",
+        "value": "240ms",
+        "purpose": "Pill rise."
+      },
+      {
+        "name": "nudge",
+        "value": "1800ms",
+        "purpose": "Ready-arrow loop; removed under Reduce Motion."
+      }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one live action, full width in the popup.",
+      "html": "<button class=\"ds-btn\">Beam to Apple TV</button>",
+      "css": ".ds-btn{background:#FFD60A;color:#14130F;font:700 14px/1.2 -apple-system,system-ui,sans-serif;min-height:44px;width:100%;padding:0 16px;border:1px solid transparent;border-radius:8px;cursor:pointer;transition:background-color .15s cubic-bezier(.16,1,.3,1)}.ds-btn:hover{background:#FFE24D}.ds-btn:focus-visible{outline:3px solid #0A5FD6;outline-offset:2px}.ds-btn:active{transform:scale(.985)}"
+    },
+    {
+      "name": "Sign Header",
+      "kind": "custom",
+      "refersTo": "sign",
+      "description": "Black state slab with glyph tile, headline and status.",
+      "html": "<div class=\"ds-sign\"><span class=\"ds-tile\"><svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h15M13 5l7 7-7 7\"/></svg></span><div><h3>Ready to beam</h3><p>Apple TV · Ready</p></div></div>",
+      "css": ".ds-sign{background:#14130F;color:#fff;display:flex;align-items:center;gap:12px;padding:14px 16px;font:13px/1.4 -apple-system,system-ui,sans-serif}.ds-sign h3{margin:0;font:700 17px/1.2 -apple-system,system-ui,sans-serif}.ds-sign p{margin:2px 0 0;color:#E6E6EA}.ds-tile{width:44px;height:44px;border-radius:8px;background:#FFD60A;color:#14130F;display:grid;place-items:center}"
+    },
+    {
+      "name": "Video Row",
+      "kind": "custom",
+      "refersTo": "list-item-selected",
+      "description": "Selectable radio row for one video.",
+      "html": "<button class=\"ds-row\" role=\"radio\" aria-checked=\"true\"><span class=\"ds-thumb\"></span><span><b>Sample: Harbour at dawn</b><small>example.org · 12:04</small></span></button>",
+      "css": ".ds-row{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:4px 8px;background:#FFF6C2;border:1px solid #1D1D1F;border-radius:8px;font:13px/1.4 -apple-system,system-ui,sans-serif;text-align:left;cursor:pointer}.ds-row:focus-visible{outline:3px solid #0A5FD6;outline-offset:2px}.ds-row b{display:block;font-weight:600}.ds-row small{color:#5A5A60;font-size:12px}.ds-thumb{width:40px;height:40px;border-radius:6px;background:#3B5B8C}"
+    },
+    {
+      "name": "Pill",
+      "kind": "chip",
+      "refersTo": "pill",
+      "description": "In-page status over the chosen video.",
+      "html": "<div class=\"ds-pill\"><span class=\"ds-ptile\"><svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h15M13 5l7 7-7 7\"/></svg></span>Playing on Apple TV</div>",
+      "css": ".ds-pill{display:inline-flex;align-items:center;gap:8px;background:#14130F;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:22px;padding:8px 14px 8px 8px;font:600 13px/1.4 -apple-system,system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.35)}.ds-ptile{width:24px;height:24px;border-radius:50%;background:#FFD60A;color:#14130F;display:grid;place-items:center}.ds-ptile svg{width:14px;height:14px}"
+    },
+    {
+      "name": "Step Tile",
+      "kind": "custom",
+      "refersTo": "sign",
+      "description": "Numbered setup step in the host window.",
+      "html": "<div class=\"ds-step\"><span>1</span>Open Safari Settings…</div>",
+      "css": ".ds-step{display:flex;align-items:center;gap:12px;background:#14130F;color:#fff;border-radius:8px;padding:10px 12px;font:600 13px/1.4 -apple-system,system-ui,sans-serif}.ds-step span{width:28px;height:28px;border-radius:6px;background:#FFD60A;color:#14130F;display:grid;place-items:center;font-weight:800}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Gate Sign",
+    "overview": "Beam looks like the sign over an airport gate: a black slab with one bright arrow, telling you where something is going and whether it is on its way. Nothing is decorative. The sign carries the state in words (\"Ready to beam\", \"Playing on Apple TV\", \"No Apple TV found\") and the arrow carries it in shape: go arrow, check, or warning. The rest of the surface is plain paper and native macOS controls, so Beam feels like part of Safari rather than an overlay on it.\n\nThe system is dense and calm: 13 px body, 44 px targets, one signal colour. It is used mid-task for a few seconds, so every element earns its place or goes.",
+    "keyCharacteristics": [
+      "Black sign header with a square glyph tile on every surface that reports a state.",
+      "One live colour, signal yellow, reserved for the arrow tile, the primary action and step numbers.",
+      "System font, two weights of emphasis (600, 700), tabular numerals for durations.",
+      "Light and dark follow macOS; the sign and the pill stay black in both."
+    ],
+    "rules": [
+      {
+        "name": "The One Signal Rule",
+        "body": "Yellow marks the single live thing on a surface. If two elements are yellow, one of them is wrong.",
+        "section": "colors"
+      },
+      {
+        "name": "The Honest Arrow Rule",
+        "body": "The go-arrow appears only when casting can start. Blocked states use the white warning tile, never the arrow.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "All labels are sentence case. No uppercase labels, no eyebrows above headings.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dark-Edge Rule",
+        "body": "Anything black that can sit on a dark video gets a light hairline edge.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do say the state in words first; the arrow and colour repeat it.",
+      "Do keep text on Signal Yellow in Signage Black (13:1).",
+      "Do keep every control at least 44 px tall and keyboard reachable with a visible 3 px focus ring.",
+      "Do respect Reduce Motion by dropping the arrow nudge, ring spin, pill rise and hover transitions."
+    ],
+    "donts": [
+      "Don't use the go-arrow or yellow for a blocked or failed state.",
+      "Don't use opacity to show a completed or disabled state; use a solid colour.",
+      "Don't put the Apple TV's name anywhere; WebKit does not provide it.",
+      "Don't add gradients, glass, uppercase labels, eyebrows, or numbered sections beyond the real setup steps."
+    ]
+  }
+}

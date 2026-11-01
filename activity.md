@@ -23,3 +23,4 @@
 ## 2026-10-31 Phase 3B (Sonnet)
 - 3 concepts built (ui-1 Gate, ui-2 Canon, ui-3 Test Card) in worktrees, screenshots in docs/design/screenshots. Awaiting owner pick; Opus recommendation pending. Preview servers on 4101-4103 still running.
 - Owner picked concept 1 Gate. ui-1 merged into feat/beam-v1; ui-2/ui-3 and all concept worktrees removed; preview servers stopped. Next: 3C design system (DESIGN.md, extract, polish) on Sonnet.
+- 3C done: design/system/*, DESIGN.md, sidecar, docs/design/system.md. Next: Phase 4 (Ralph quickstart clone, T001 Xcode project, T002 spike needs owner at the Mac with the Apple TV).

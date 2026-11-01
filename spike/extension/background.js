@@ -2,9 +2,11 @@
 const bg = typeof window === 'undefined' ? 'worker' : 'page';
 const ITEMS = [['p1', 'Spike P1: send at once'], ['p2', 'Spike P2: await, then send'], ['p5', 'Spike P5: executeScript']];
 
-browser.runtime.onInstalled.addListener(() => {
+// Created on every background start, not only onInstalled: that event may not fire for a development build.
+browser.contextMenus.removeAll().then(() => {
   for (const [id, title] of ITEMS) browser.contextMenus.create({ id, title, contexts: ['video', 'page'] });
 });
+const note = (o) => browser.storage.local.set(o).catch(() => {});
 
 function pickerFromInjectedScript() {
   const v = document.querySelector('video');
@@ -14,22 +16,24 @@ function pickerFromInjectedScript() {
 }
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
-  if (!tab) return;
+  if (!tab) { note({ bgLast: `${info.menuItemId}: no tab`, bgErr: '' }); return; }
   const frameId = info.frameId || 0, opts = { frameId };
+  const fail = (e) => note({ bgErr: `${info.menuItemId} send failed: ${e && e.message ? e.message : e}` });
+  note({ bgLast: `${info.menuItemId} (${bg}) tab ${tab.id} frame ${frameId}`, bgErr: '' });
   if (info.menuItemId === 'p1') {
     // No await before the send, so Safari can forward the click as a user gesture.
-    browser.tabs.sendMessage(tab.id, { type: 'spike', path: 'P1', bg, srcUrl: info.srcUrl }, opts).catch(() => {});
+    browser.tabs.sendMessage(tab.id, { type: 'spike', path: 'P1', bg, srcUrl: info.srcUrl }, opts).catch(fail);
   } else if (info.menuItemId === 'p2') {
     (async () => {
       await Promise.resolve(); // the negative control: one microtask hop before sending
-      browser.tabs.sendMessage(tab.id, { type: 'spike', path: 'P2', bg, srcUrl: info.srcUrl }, opts).catch(() => {});
+      browser.tabs.sendMessage(tab.id, { type: 'spike', path: 'P2', bg, srcUrl: info.srcUrl }, opts).catch(fail);
     })();
   } else if (info.menuItemId === 'p5') {
     (async () => {
       let r;
       try { [{ result: r }] = await browser.scripting.executeScript({ target: { tabId: tab.id, frameIds: [frameId] }, func: pickerFromInjectedScript }); }
       catch (e) { r = { err: String(e) }; }
-      browser.tabs.sendMessage(tab.id, { type: 'ask', path: 'P5', bg, note: (r && r.err) || `readyState ${r && r.ready}`, active: r ? r.active : null }, opts).catch(() => {});
+      browser.tabs.sendMessage(tab.id, { type: 'ask', path: 'P5', bg, note: (r && r.err) || `readyState ${r && r.ready}`, active: r ? r.active : null }, opts).catch(fail);
     })();
   }
 });

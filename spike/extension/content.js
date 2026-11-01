@@ -6,7 +6,7 @@
   const frame = isTop ? 'top' : 'iframe';
   const vids = () => [...document.querySelectorAll('video')];
   const ua = () => (navigator.userActivation ? { active: navigator.userActivation.isActive, been: navigator.userActivation.hasBeenActive } : { active: null, been: null });
-  let pending = null, avail = 'unknown', wireless = false;
+  let pending = null, avail = 'unknown', wireless = false, received = 0;
 
   function callPicker(path, bg, srcUrl, prep) {
     const v = vids();
@@ -50,9 +50,9 @@
   }
   async function refresh() {
     if (!root) return;
-    const { results = [] } = await browser.storage.local.get('results');
+    const { results = [], bgLast = 'none yet', bgErr = '' } = await browser.storage.local.get(['results', 'bgLast', 'bgErr']);
     q('cnt').textContent = `${results.length} saved`;
-    q('st').textContent = `AirPlay targets: ${avail}; on wireless target: ${wireless}`;
+    q('st').textContent = `AirPlay targets: ${avail}; on wireless target: ${wireless}. Menu click seen by background: ${bgLast}. Messages received here: ${received}.${bgErr ? ' ERROR: ' + bgErr : ''}`;
   }
   function ask(path, bg, note, a) {
     ensurePanel(); if (!root) return;
@@ -77,9 +77,11 @@
 
   browser.runtime.onMessage.addListener((m, sender) => {
     if (sender.id !== browser.runtime.id || !m) return undefined;
+    received++; ensurePanel(); refresh();
     if (m.type === 'spike') return Promise.resolve(callPicker(m.path, m.bg, m.srcUrl));
     if (m.type === 'ask') { ask(m.path, m.bg, m.note, { active: m.active }); return Promise.resolve({ ok: true }); }
     return undefined;
   });
+  browser.storage.onChanged.addListener(() => refresh());
   if (isTop) ensurePanel();
 })();

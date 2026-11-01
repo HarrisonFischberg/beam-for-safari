@@ -8,6 +8,6 @@
   "permissions": ["contextMenus", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": { "scripts": ["background.js"] },
-  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["content.js"], "all_frames": true, "run_at": "document_idle" }],
+  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["lib/resolve.js", "lib/reasons.js", "content.js"], "all_frames": true, "run_at": "document_idle" }],
   "action": { "default_title": "Beam to Apple TV", "default_popup": "popup.html", "default_icon": { "16": "images/icon-16.png", "32": "images/icon-32.png" } }
 }

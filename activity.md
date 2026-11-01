@@ -28,3 +28,9 @@
 ## 2026-10-31 Phase 4, T001 (Sonnet)
 - Ralph: quickstart reviewed, own ralph/ralph.sh written (no license on source; its permissive settings not adopted). Not run: T001 was built in this interactive session because it needs Xcode first-run decisions; later tasks go through ralph.sh.
 - T001: extension/ source + icons (original, generated), converter -> Beam/Beam/Beam.xcodeproj, Debug build SUCCEEDED (exit 0), packaged resources identical to extension/, pluginkit lists app.beamforsafari.Beam.Extension after one launch. Safari Settings listing not verified (needs owner). `/goal` not used (could not verify it exists as a tool here; bounded manually). Elapsed about 25 min.
+
+## 2026-10-31 T003 (Sonnet)
+- extension/lib/resolve.js, reasons.js (UMD: classic content script or Node). tests/: 20 pass (`node --test tests/*.test.js`, real output above). Mutation check: 3 deliberate breaks caught (2, 2, 1 failures), originals restored. Loaded both libs in a bare vm context: globals BeamResolve and BeamReasons set. Manifest content_scripts now loads them before content.js; Debug build SUCCEEDED, packaged resources identical to extension/.
+- Fixed a wrong command I had written in prd/CLAUDE/PROMPT: `node --test tests/` fails on Node 24 (directory read as a module); now `node --test tests/*.test.js`.
+- Note: reasons `media-source` stays disabled (opts.mediaSourceUnsupported=false) until the T002 spike; wording for not-ready/site-off/protected equals the approved previews (tested).
+- Not done here: content.js does not call the libs yet (T004).

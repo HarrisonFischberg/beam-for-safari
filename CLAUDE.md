@@ -22,7 +22,7 @@ loop, Impeccable. Verify each before claiming use: `docs/tool-environment.md`.
 
 | Check | Command |
 | --- | --- |
-| tests | `node --test tests/` (none yet; T003) |
+| tests | `node --test tests/*.test.js` (20 tests; node 24 needs the glob, a bare directory fails) |
 | types | n/a (plain JS; Swift is compiled by the build) |
 | lint | n/a for now |
 | build | `xcodebuild -project Beam/Beam/Beam.xcodeproj -scheme Beam -configuration Debug -derivedDataPath build/DerivedData CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=YES CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= build` |

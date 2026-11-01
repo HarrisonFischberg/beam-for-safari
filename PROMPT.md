@@ -6,7 +6,7 @@ Each fresh session:
 2. Pick exactly one dependency-ready task from `prd.md` whose status is `pending`. Tasks marked "needs owner" (T002) are never picked: record a blocker and stop.
 3. Set a bounded `/goal` quoting that task's acceptance criteria and the verification command whose real output decides it. Lean limit: 3 turns. Slot: about 40 minutes; if exhausted, mark the task ABANDONED with the reason in `activity.md` and stop.
 4. Implement only that task. Extension UI must consume `design/system/tokens.css` and `components.css`; do not restyle.
-5. Run the task's verification command plus `node --test tests/` once tests exist. Quote real output in `activity.md`.
+5. Run the task's verification command plus `node --test tests/*.test.js` once tests exist. Quote real output in `activity.md`.
 6. Update the task's status in `prd.md` (`done`, `blocked`, or `ABANDONED`) with an evidence path.
 7. Commit only this task's files on the current branch. Never push, never open PRs, never run `gh`.
 8. Append a dated entry to `activity.md`: what changed, commands, results, blockers, elapsed time.

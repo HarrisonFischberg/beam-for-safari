@@ -34,18 +34,21 @@
   });
 })();
 
-// Popup behavior arrives with T006. For now: the extension version and a temporary developer readout, so a failed
-// cast can be traced without opening Safari's inspectors. Codes, counts and timestamps only.
-(async () => {
-  const s = await browser.storage.local.get(['bgLast', 'bgAt', 'bgErr', 'bgReply', 'contentLast', 'contentAt', 'loads', 'loadAt', 'msgAt', 'avail']);
-  const ago = (t) => (t ? `${Math.round((Date.now() - t) / 1000)}s ago` : 'never');
-  document.getElementById('diag').textContent = [
-    `Version ${browser.runtime.getManifest().version}.`,
-    `Background saw: ${s.bgLast || 'nothing yet'}, ${ago(s.bgAt)}.`,
-    `Background reply: ${s.bgErr ? 'ERROR ' + s.bgErr : s.bgReply || 'none'}.`,
-    `Page script loaded on ${s.loads || 0} page(s), last ${ago(s.loadAt)}.`,
-    `A message last reached a page ${ago(s.msgAt)}.`,
-    `AirPlay devices reported by Safari: ${s.avail || 'no event received'}.`,
-    `Page script result: ${s.contentLast || 'none yet'}, ${ago(s.contentAt)}.`,
-  ].join(' ');
+// Debug logs: copy the report, then open an email to support with it filled in. The user presses Send.
+(() => {
+  const btn = document.getElementById('debug-logs');
+  const status = document.getElementById('debug-status');
+  btn.addEventListener('click', async () => {
+    const version = browser.runtime.getManifest().version;
+    let saved = {};
+    try { saved = await browser.storage.local.get([...BeamDebugLog.KEYS, BeamTheme.STORAGE_KEY]); } catch (e) { /* report what we have */ }
+    const text = BeamDebugLog.report(saved, { version, userAgent: navigator.userAgent, style: BeamTheme.normalize(saved[BeamTheme.STORAGE_KEY]), now: Date.now() });
+    let copied = false;
+    try { await navigator.clipboard.writeText(text); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
+    const url = BeamDebugLog.mailto(text, version);
+    try { await browser.tabs.create({ url }); } catch (e) { window.open(url); }
+    status.textContent = copied
+      ? 'Logs copied. Your mail app is opening with them filled in: press Send. If it does not open, paste them into an email to support@rarecreatures.app.'
+      : 'Your mail app is opening with the logs filled in: press Send.';
+  });
 })();

@@ -6,7 +6,7 @@
   let lastPoint = null;
   const encryptedSeen = new WeakSet();
 
-  // TEMPORARY dev diagnostic: counts and timestamps only.
+  // Debug log fields (lib/debuglog.js): counts and timestamps only.
   if (window === window.top) browser.storage.local.get('loads').then(({ loads = 0 }) => browser.storage.local.set({ loads: loads + 1, loadAt: Date.now() })).catch(() => {});
 
   // Listening for these two events is what makes Safari watch for AirPlay devices on this page. The T002 spike
@@ -15,7 +15,7 @@
   let availability = 'unknown', onWireless = false;
   document.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
     availability = e.availability;
-    browser.storage.local.set({ avail: `${e.availability}` }).catch(() => {}); // TEMPORARY dev diagnostic
+    browser.storage.local.set({ avail: `${e.availability}` }).catch(() => {}); // debug log field
   }, true);
   document.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', (e) => { onWireless = Boolean(e.target.webkitCurrentPlaybackTargetIsWireless); }, true);
 

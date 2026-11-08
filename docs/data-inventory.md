@@ -16,3 +16,10 @@ No data collected, stored or transmitted by Beam code. Extension requests `conte
 
 - Style preference (`beamStyle`: `signal` or `violet`), added in 0.2.6: stored on the device in the extension's
   local storage and the popup's localStorage. Never sent anywhere. No new vendor.
+
+## 0.2.7 Copy debug logs
+- The popup's "Copy debug logs and email support" button turns the diagnostic fields above (codes, counts, timestamps,
+  never page addresses) plus Beam's version, the browser's user agent and the chosen style into a short report.
+  It copies the report to the clipboard and opens the user's own mail app with a draft to support@rarecreatures.app.
+  Nothing is sent unless the user presses Send. Recipient: Rare Creatures support mailbox. No new vendor in Beam.
+  These fields replace the always-visible developer readout, which is gone from the popup.

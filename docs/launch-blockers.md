@@ -26,7 +26,7 @@ Never infer these from a reference app. Never invent them.
 - Business/legal facts (entity, contact, age) UNKNOWN until App Store work.
 
 ## T001 findings (2026-10-31, Sonnet)
-- ASSUMED bundle identifier `app.beamforsafari.Beam` (no domain owned/confirmed). Change before TestFlight: needs your reverse-DNS id and Apple Developer team ID.
+- RESOLVED 2026-11-08: bundle IDs `app.rarecreatures.beam` / `app.rarecreatures.beam.extension`, team `KTV2G3Z883` (same team as the owner's other apps). TestFlight via `./release.sh --live`.
 - ASSUMED ad-hoc signing (`CODE_SIGN_IDENTITY=-`, no team). Safari lists unsigned/ad-hoc extensions only with Develop > Allow Unsigned Extensions (resets each Safari launch). NEEDS OWNER to confirm the extension appears in Safari Settings > Extensions.
 - DEVIATION from blueprint: Xcode 27's converter nests the project at `Beam/Beam/Beam.xcodeproj` and generates an AppKit/storyboard host, not SwiftUI. The extension source stays in `extension/` (referenced in place) instead of `Beam/Beam Extension/Resources`. T008 replaces the host UI with SwiftUI. Opus to ratify or amend `docs/blueprint.md`.
 - Manifest key `persistent` is unsupported by this Safari (converter warning): removed; MV3 background is non-persistent by default.

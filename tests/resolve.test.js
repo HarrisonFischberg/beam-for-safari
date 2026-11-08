@@ -63,3 +63,16 @@ test('ids may be falsy (0) and still resolve', () => {
   assert.equal(resolveTarget({ videos, srcUrl: 'https://example.org/0.mp4' }), 0);
   assert.equal(resolveTarget({ videos, hitIds: [0] }), 0);
 });
+
+const { videoUnderPoint } = require('../extension/lib/resolve.js');
+
+test('videoUnderPoint: a video under an overlay counts (BitChute play button over the video)', () => {
+  assert.equal(videoUnderPoint([{ localName: 'button' }, { localName: 'video' }, { localName: 'div' }]), true);
+  assert.equal(videoUnderPoint([{ tagName: 'VIDEO' }]), true);
+});
+
+test('videoUnderPoint: no video under the point leaves the page alone', () => {
+  assert.equal(videoUnderPoint([{ localName: 'div' }, { localName: 'body' }, { localName: 'html' }]), false);
+  assert.equal(videoUnderPoint([]), false);
+  assert.equal(videoUnderPoint(null), false);
+});

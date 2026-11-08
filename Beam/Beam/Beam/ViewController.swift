@@ -9,7 +9,7 @@ import Cocoa
 import SafariServices
 import WebKit
 
-let extensionBundleIdentifier = "app.beamforsafari.Beam.Extension"
+let extensionBundleIdentifier = "app.rarecreatures.beam.extension"
 
 class ViewController: NSViewController, WKNavigationDelegate, WKScriptMessageHandler {
 

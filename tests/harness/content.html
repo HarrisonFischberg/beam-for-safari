@@ -1,7 +1,7 @@
 <!doctype html>
 <!-- Manual harness for extension/content.js in a normal browser: stubs the `browser` API and the AirPlay picker.
      Serve the project root (python3 -m http.server) and open /tests/harness/content.html?case=<name>.
-     Cases: normal, site-off, none, noload, overlay, protected, blob, blob-alt. Drive it with window.__send(srcUrl). -->
+     Cases: normal, site-off, none, noload, overlay, protected, blob, blob-alt, blocker (a player that cancels right-click, like BitChute's). Drive it with window.__send(srcUrl). -->
 <html lang="en"><head><meta charset="utf-8"><title>content.js harness</title>
 <style>body{margin:16px;font:14px system-ui}video{width:480px;height:270px;background:#222;display:block}.wrap{position:relative;width:480px}.ov{position:absolute;inset:0 0 40px 0}</style></head>
 <body><h3 id="t"></h3><div id="stage"></div>
@@ -9,12 +9,14 @@
 const c = new URLSearchParams(location.search).get('case') || 'normal';
 document.getElementById('t').textContent = 'case: ' + c;
 const SRC = '../../fixtures/media/sample.mp4', stage = document.getElementById('stage');
-const attrs = { normal: '', 'site-off': 'disableremoteplayback x-webkit-airplay="deny"', noload: '', overlay: '', protected: '' };
+const attrs = { normal: '', 'site-off': 'disableremoteplayback x-webkit-airplay="deny"', noload: '', overlay: '', protected: '', blocker: '' };
 if (c === 'blob' || c === 'blob-alt') { // a real MediaSource video, with or without an HLS alternate (no data needed: the check runs before readiness)
   const v = document.createElement('video'); v.id = 'v'; v.controls = true; const ms = new MediaSource(); const blob = URL.createObjectURL(ms);
   if (c === 'blob') v.src = blob; else { const a = document.createElement('source'); a.src = blob; a.type = 'video/mp4'; const b = document.createElement('source'); b.src = 'x.m3u8'; b.type = 'application/vnd.apple.mpegurl'; v.append(a, b); }
   stage.append(v);
-} else if (c !== 'none') stage.innerHTML = `<div class="wrap"><video id="v" controls ${c === 'noload' ? '' : 'src="' + SRC + '" preload="auto"'} ${attrs[c] || ''}></video>${c === 'overlay' ? '<div class="ov" id="ov"></div>' : ''}</div>`;
+} else if (c !== 'none') stage.innerHTML = `<div class="wrap"><video id="v" controls ${c === 'noload' ? '' : 'src="' + SRC + '" preload="auto"'} ${attrs[c] || ''}></video>${c === 'overlay' || c === 'blocker' ? '<div class="ov" id="ov"></div>' : ''}</div>${c === 'blocker' ? '<p id="away">text away from the video</p>' : ''}`;
+window.__menus = []; // blocker case: what each right-click did
+if (c === 'blocker') { const block = (e) => e.preventDefault(); document.querySelector('.wrap').oncontextmenu = block; document.getElementById('away').oncontextmenu = block; window.addEventListener('contextmenu', (e) => window.__menus.push(e.defaultPrevented ? 'cancelled' : 'menu')); }
 if (c === 'protected') Object.defineProperty(document.getElementById('v'), 'mediaKeys', { value: {} });
 window.__picked = []; window.__handler = null; window.__shadows = [];
 const __attach = Element.prototype.attachShadow; Element.prototype.attachShadow = function (o) { const r = __attach.call(this, o); window.__shadows.push(r); return r; }; // lets the harness read the closed pill

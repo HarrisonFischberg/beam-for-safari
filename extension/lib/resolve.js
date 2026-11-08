@@ -36,5 +36,11 @@
     return visible.reduce((best, v) => (area(v) > area(best) ? v : best)).id;
   }
 
-  return { resolveTarget };
+  // True when a video sits anywhere under the right-click point. `stack` is document.elementsFromPoint(x, y):
+  // players put overlays (play buttons, control bars) on top, so the video itself is rarely the event target.
+  function videoUnderPoint(stack) {
+    return Array.isArray(stack) && stack.some((el) => Boolean(el) && String(el.localName || el.tagName || '').toLowerCase() === 'video');
+  }
+
+  return { resolveTarget, videoUnderPoint };
 });

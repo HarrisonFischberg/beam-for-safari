@@ -1,4 +1,5 @@
-# Beam for Safari: macOS TestFlight lanes. Run through ./release.sh; see release/README.md.
+# Beam for Safari: macOS TestFlight and App Store lanes. Run through ./release.sh; see release/README.md.
+# App Store listing, age rating and screenshots: store/mac/.
 # Auth: App Store Connect API key from ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (never in git).
 default_platform(:mac)
 
@@ -7,6 +8,26 @@ APP_ID = "app.rarecreatures.beam"
 EXT_ID = "app.rarecreatures.beam.extension"
 NAMES = ["Beam for Safari", "Beam to Apple TV", "Beam: AirPlay for Safari"] # first free name wins
 SKU = "beam-for-safari"
+STORE = "#{ROOT}/store/mac"
+
+# The App Store needs these before a submission; deliver can't check the URLs or that screenshots exist.
+def check_listing
+  require "deliver"
+  require "net/http"
+  meta = "#{STORE}/metadata/en-US"
+  missing = %w[subtitle description keywords support_url privacy_url].reject { |f| File.size?("#{meta}/#{f}.txt") }
+  if Deliver::Loader.load_app_screenshots("#{STORE}/screenshots", false).empty?
+    missing << "Mac screenshots (2880x1800) in store/mac/screenshots/en-US"
+  end
+  %w[support_url privacy_url].each do |f|
+    next unless File.size?("#{meta}/#{f}.txt")
+    url = File.read("#{meta}/#{f}.txt").strip
+    code = (Net::HTTP.get_response(URI(url)).code rescue "no answer")
+    missing << "#{url} (#{f}) answers #{code}" unless code.start_with?("2", "3")
+  end
+  UI.user_error!("store/mac is not ready for the App Store: #{missing.join('; ')}") if missing.any?
+  UI.success("store/mac listing is ready")
+end
 
 platform :mac do
   before_all do |_lane, options|
@@ -47,5 +68,40 @@ platform :mac do
   lane :beta do |options|
     setup unless options[:dry_run]
     sh("#{ROOT}/scripts/archive-testflight.sh", *("--no-upload" if options[:dry_run]))
+  end
+
+  desc "Check store/mac, archive, upload, push the listing and submit for review (automatic release)"
+  desc "dry_run:true checks the listing and archives only"
+  lane :release do |options|
+    check_listing
+    build = File.read("#{ROOT}/BUILD_NUMBER").strip # archive-testflight.sh bumps it after the upload
+    beta(options)
+    next if options[:dry_run]
+    version = JSON.parse(File.read("#{ROOT}/extension/manifest.json"))["version"]
+    app = Spaceship::ConnectAPI::App.find(APP_ID)
+    FastlaneCore::BuildWatcher.wait_for_build_processing_to_be_complete(
+      app_id: app.id, platform: "osx", app_version: version, build_version: build, poll_interval: 30,
+      return_spaceship_testflight_build: false # the legacy TestFlight object needs an Apple ID login, not an API key
+    )
+    deliver(
+      platform: "osx",
+      app_version: version,
+      build_number: build,
+      metadata_path: "#{STORE}/metadata",
+      screenshots_path: "#{STORE}/screenshots",
+      overwrite_screenshots: true,
+      app_rating_config_path: "#{STORE}/age-rating.json",
+      submission_information: {
+        add_id_info_uses_idfa: false,
+        export_compliance_uses_encryption: false,
+        content_rights_contains_third_party_content: false
+      },
+      submit_for_review: true,
+      automatic_release: true,
+      precheck_include_in_app_purchases: false,
+      force: true # no HTML preview prompt
+    )
+    UI.success("Beam #{version} (#{build}) submitted: https://appstoreconnect.apple.com/apps/#{app.id}/distribution, " \
+               "live at https://apps.apple.com/app/id#{app.id} once approved")
   end
 end

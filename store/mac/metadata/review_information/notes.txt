@@ -1,0 +1,8 @@
+Beam is a Safari Web Extension. The app only shows how to turn the extension on; the feature runs inside Safari.
+
+To test:
+1. Open Beam once, then Safari > Settings > Extensions: tick Beam for Safari and allow it on all websites.
+2. Open a page with an HTML5 video (for example an MP4 file in a <video> tag), press play, right-click the video and choose "Beam to Apple TV".
+3. Safari's AirPlay picker opens. Choosing an Apple TV or other AirPlay receiver on the same network plays the video there.
+
+Without an AirPlay receiver on the network, Beam shows "No Apple TV found. Check that it is on and on the same Wi-Fi network." Beam collects no data and makes no network requests.

@@ -2,6 +2,9 @@
 
 | # | Blocker | Type (missing fact / failed check / legal review / approval) | Owner | Needed for | Status |
 | --- | --- | --- | --- | --- | --- |
+| 1 | Mac App Store screenshots (2880x1800) in `store/mac/screenshots/en-US/` | missing fact | owner | App Store | open (2026-11-08) |
+| 2 | Support and privacy pages at rarecreatures.app/apps/beam-for-safari (`store/mac/metadata/en-US/*_url.txt`); both 404 today | missing fact | owner | App Store | open (2026-11-08) |
+| 3 | App Privacy answers ("Data Not Collected"), price and availability in App Store Connect | approval | owner | App Store | open (2026-11-08) |
 
 ## Unknown business and legal inputs
 

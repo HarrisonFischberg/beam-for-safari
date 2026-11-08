@@ -1,0 +1,12 @@
+Beam sends the video you're watching in Safari to your Apple TV.
+
+Right-click a video and choose Beam to Apple TV. Safari's own AirPlay picker opens for that video, you pick your Apple TV, and it plays there.
+
+• Works on page videos even when the site has no AirPlay button of its own, or has turned AirPlay off for the video.
+• Works on videos in embedded frames too.
+• When a video can't be sent, Beam says why in plain words: the video hasn't loaded yet, it's protected, no Apple TV was found on your network, or the site streams in a way AirPlay can't send (then use Screen Mirroring).
+• Never tries to get around protected (DRM) video.
+
+Private by design: Beam collects nothing, has no account and makes no network connections of its own. Your Apple TV is chosen in Safari's AirPlay picker.
+
+To start, open Beam once, then turn it on in Safari Settings > Extensions and allow it on websites. You need an Apple TV (or another AirPlay receiver) on the same Wi-Fi network as your Mac.

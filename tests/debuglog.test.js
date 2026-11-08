@@ -28,3 +28,9 @@ test('mailto goes to support with the report in the body, encoded', () => {
   assert.ok(body.includes('line 1\nA&B ?='));
   assert.equal(decodeURIComponent(url.split('subject=')[1].split('&')[0]), 'Beam 0.2.7 debug logs');
 });
+
+test('mailto puts what the user typed before the report', () => {
+  const url = mailto('Beam debug log', '0.2.7', '  The menu item does nothing  ');
+  const body = decodeURIComponent(url.split('&body=')[1]);
+  assert.ok(body.startsWith('The menu item does nothing\n\nBeam debug log'));
+});

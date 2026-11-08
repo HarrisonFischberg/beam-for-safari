@@ -23,3 +23,9 @@ No data collected, stored or transmitted by Beam code. Extension requests `conte
   It copies the report to the clipboard and opens the user's own mail app with a draft to support@rarecreatures.app.
   Nothing is sent unless the user presses Send. Recipient: Rare Creatures support mailbox. No new vendor in Beam.
   These fields replace the always-visible developer readout, which is gone from the popup.
+
+## Send Debug Logs (2026-11-08)
+- The popup's "Copy debug logs and email support" became "Send Debug Logs to support@rarecreatures.app" with a
+  "What went wrong?" field. What the user types goes first in the same draft, before the report above. While typed it is
+  kept in extension storage (`supportDraft`) so it survives the popup closing; it is removed when the draft opens.
+  Nothing is sent unless the user presses Send in their mail app. No new vendor.

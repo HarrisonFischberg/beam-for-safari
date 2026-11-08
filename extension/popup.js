@@ -34,10 +34,19 @@
   });
 })();
 
-// Debug logs: copy the report, then open an email to support with it filled in. The user presses Send.
+// Send Debug Logs: copy the report, then open an email to support with the user's note and it filled in.
+// The user presses Send. The note is kept in storage while typed: the popup closes when the mail app opens.
 (() => {
+  const DRAFT_KEY = 'supportDraft';
   const btn = document.getElementById('debug-logs');
   const status = document.getElementById('debug-status');
+  const problem = document.getElementById('problem');
+  const showDraft = (text) => { problem.value = text; btn.disabled = !text.trim(); };
+  browser.storage.local.get(DRAFT_KEY).then((s) => { if (typeof s[DRAFT_KEY] === 'string' && !problem.value) showDraft(s[DRAFT_KEY]); }).catch(() => {});
+  problem.addEventListener('input', () => {
+    showDraft(problem.value);
+    browser.storage.local.set({ [DRAFT_KEY]: problem.value }).catch(() => {});
+  });
   btn.addEventListener('click', async () => {
     const version = browser.runtime.getManifest().version;
     let saved = {};
@@ -45,8 +54,10 @@
     const text = BeamDebugLog.report(saved, { version, userAgent: navigator.userAgent, style: BeamTheme.normalize(saved[BeamTheme.STORAGE_KEY]), now: Date.now() });
     let copied = false;
     try { await navigator.clipboard.writeText(text); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
-    const url = BeamDebugLog.mailto(text, version);
+    const url = BeamDebugLog.mailto(text, version, problem.value);
     try { await browser.tabs.create({ url }); } catch (e) { window.open(url); }
+    showDraft('');
+    browser.storage.local.remove(DRAFT_KEY).catch(() => {});
     status.textContent = copied
       ? 'Logs copied. Your mail app is opening with them filled in: press Send. If it does not open, paste them into an email to support@rarecreatures.app.'
       : 'Your mail app is opening with the logs filled in: press Send.';

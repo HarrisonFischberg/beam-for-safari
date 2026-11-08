@@ -22,9 +22,11 @@
         <li><button type="button" class="gate-item" role="radio" aria-checked="true" data-style="signal" id="style-signal"><span class="gate-swatch signal" aria-hidden="true"></span><span class="gate-meta"><b>Signal Blue</b><span>Calm blue, red when live</span></span><span class="gate-radio" aria-hidden="true"></span></button></li>
         <li><button type="button" class="gate-item" role="radio" aria-checked="false" data-style="violet" id="style-violet"><span class="gate-swatch violet" aria-hidden="true"></span><span class="gate-meta"><b>Night Violet</b><span>Dark, with an amber Beam button</span></span><span class="gate-radio" aria-hidden="true"></span></button></li>
       </ul>
-      <p class="gate-group-label">Help</p>
-      <button type="button" class="gate-btn ghost" id="debug-logs">Copy debug logs and email support</button>
-      <p class="gate-detail" id="debug-status" role="status">Opens your mail app with the logs filled in, addressed to support@rarecreatures.app. They hold Beam's version and error codes, never the pages you visit.</p>
+      <p class="gate-group-label">Send Debug Logs to support@rarecreatures.app</p>
+      <label class="gate-detail" for="problem">What went wrong?</label>
+      <textarea id="problem" rows="3"></textarea>
+      <button type="button" class="gate-btn ghost" id="debug-logs" disabled>Send Debug Logs</button>
+      <p class="gate-detail" id="debug-status" role="status">Opens your mail app with what you wrote and the logs filled in. They hold Beam's version and error codes, never the pages you visit. Nothing is sent until you press Send.</p>
     </div>
   </article>
   <script src="popup.js"></script>

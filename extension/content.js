@@ -19,7 +19,15 @@
   }, true);
   document.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', (e) => { onWireless = Boolean(e.target.webkitCurrentPlaybackTargetIsWireless); }, true);
 
-  document.addEventListener('contextmenu', (e) => { lastPoint = { x: e.clientX, y: e.clientY, t: Date.now() }; }, true);
+  // Some players cancel the right-click so Safari never shows its menu, and Beam's item lives in that menu.
+  // BitChute's Video.js/Nuevo player sets `oncontextmenu = e => e.preventDefault()` on its wrapper. Over a video,
+  // the page does not get to see the right-click at all: this listener is on window in the capture phase, so it
+  // runs before the page's own handlers, and stopping propagation there leaves the event uncancelled. Away from
+  // videos the page keeps its right-click behaviour.
+  window.addEventListener('contextmenu', (e) => {
+    lastPoint = { x: e.clientX, y: e.clientY, t: Date.now() };
+    if (BeamResolve.videoUnderPoint(document.elementsFromPoint(e.clientX, e.clientY))) e.stopImmediatePropagation();
+  }, true);
   // `encrypted` fires on a <video> that needs DRM keys; it does not bubble, so listen in the capture phase.
   document.addEventListener('encrypted', (e) => { if (e.target instanceof HTMLVideoElement) encryptedSeen.add(e.target); }, true);
 

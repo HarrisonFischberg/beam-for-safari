@@ -48,6 +48,7 @@
               ],
             },
             { "path": "Icon.png", "target-membership": [ "Beam/resources" ] },
+            { "path": "Icon-dark.png", "target-membership": [ "Beam/resources" ] },
             { "path": "Style.css", "target-membership": [ "Beam/resources" ] },
             { "path": "Script.js", "target-membership": [ "Beam/resources" ] },
           ],

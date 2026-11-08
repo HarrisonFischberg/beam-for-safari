@@ -30,3 +30,16 @@ browser.runtime.onMessage.addListener((message, sender) => {
   }
   return cssText;
 });
+
+// Toolbar icon follows the Mac's appearance: the manifest names the light glyph, and this swaps in the dark one
+// while the system is in Dark Mode (and back on change). Safari's toolbar has no theme_icons support to do it for us.
+(function followAppearance() {
+  if (typeof matchMedia !== 'function' || !browser.action || !browser.action.setIcon) return;
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  const set = () => {
+    const v = mq.matches ? 'dark' : 'light';
+    browser.action.setIcon({ path: { 16: `images/toolbar-${v}-16.png`, 32: `images/toolbar-${v}-32.png`, 64: `images/toolbar-${v}-64.png` } }).catch(() => {});
+  };
+  set();
+  if (mq.addEventListener) mq.addEventListener('change', set);
+})();

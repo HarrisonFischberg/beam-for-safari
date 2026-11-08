@@ -1,0 +1,26 @@
+// Regenerates every Beam icon PNG from the SVG sources in design/icons/ (Night Projector, light and dark).
+// Needs Playwright with Chromium: `node scripts/make-icons.js` from the repo root.
+const { chromium } = require('playwright');
+const fs = require('fs');
+const path = require('path');
+const src = (n) => 'data:image/svg+xml;base64,' + fs.readFileSync(path.join('design/icons', n)).toString('base64');
+const appset = 'Beam/Beam/Beam/Assets.xcassets/AppIcon.appiconset';
+const jobs = [];
+for (const [variant, file] of [['', 'app-light.svg'], ['-dark', 'app-dark.svg']]) {
+  for (const s of [16, 32, 128, 256, 512]) for (const k of [1, 2]) jobs.push([file, s * k, `${appset}/mac-icon-${s}@${k}x${variant}.png`]);
+  jobs.push([file, 128, `Beam/Beam/Beam/Resources/Icon${variant}.png`]);
+}
+for (const s of [16, 32, 48, 96, 128]) jobs.push(['app-light.svg', s, `extension/images/icon-${s}.png`]);
+for (const v of ['light', 'dark']) for (const s of [16, 32, 64]) jobs.push([`toolbar-${v}.svg`, s, `extension/images/toolbar-${v}-${s}.png`]);
+(async () => {
+  const b = await chromium.launch();
+  const p = await b.newPage();
+  for (const [file, px, out] of jobs) {
+    await p.setViewportSize({ width: px, height: px });
+    await p.setContent(`<html><body style="margin:0;background:transparent"><img src="${src(file)}" width="${px}" height="${px}" style="display:block"></body></html>`);
+    await p.waitForFunction(() => document.images[0].complete);
+    await p.screenshot({ path: out, omitBackground: true });
+  }
+  await b.close();
+  console.log(`wrote ${jobs.length} files`);
+})();

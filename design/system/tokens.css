@@ -1,23 +1,27 @@
-/* Beam design system tokens: Gate direction. Source of truth for color, type, space, shape, depth, motion.
-   Mirrored in DESIGN.md frontmatter; change both together. */
+/* Beam design system tokens. Source of truth for color, type, space, shape, depth, motion.
+   Two styles: Signal Blue (the base tokens below, the default) and Night Violet (.beam-violet, always dark).
+   The user picks one in the toolbar popup; extension/lib/theme.js applies it. Mirrored in DESIGN.md; change both together. */
 :root {
-  /* color roles */
-  --signal: #FFD60A;      /* the one live element: arrow tile, primary action, step number */
-  --signal-hover: #FFE24D;
-  --signal-ink: #14130F;  /* text on signal */
-  --sign: #14130F;        /* signage black: headers, pills, step tiles */
+  /* color roles: Signal Blue */
+  --signal: #2F6BFF;      /* the one live element: arrow tile, primary action, step number */
+  --signal-hover: #1F5AEB;
+  --signal-ink: #FFFFFF;  /* text on signal (4.5:1) */
+  --signal-on-sign: #8FB0FF; /* signal-coloured text on the sign slab (8.1:1) */
+  --sign: #141A2B;        /* header slab, pills, step tiles */
   --sign-ink: #FFFFFF;
-  --sign-sub: #E6E6EA;
-  --sign-done: #35342E;   /* completed step tile; solid, never opacity */
-  --paper: #F5F5F7;       /* page ground */
+  --sign-sub: #C9D2EA;
+  --sign-done: #2A3350;   /* completed step tile; solid, never opacity */
+  --live: #FF302F;        /* accent: only the "playing on your TV" state */
+  --support: #6D85C1;     /* supporting shade: device thumbnails, icons */
+  --paper: #F3F5FA;       /* page ground */
   --panel: #FFFFFF;       /* popup, window body */
-  --ink: #1D1D1F;
-  --ink-sub: #5A5A60;
-  --line: #D9D9DE;
-  --selected: #FFF6C2;
+  --ink: #141A2B;
+  --ink-sub: #4A5470;
+  --line: #D5DAE6;
+  --selected: #EAF0FF;
   --ok: #1E7A3C;
   --focus: #0A5FD6;
-  --thumb-1: #3B5B8C; --thumb-2: #8C5B3B; --thumb-3: #2F7A5C; --thumb-ink: #FFFFFF;
+  --thumb-1: #4F67A3; --thumb-2: #3A4F86; --thumb-3: #6D85C1; --thumb-ink: #FFFFFF;
 
   /* type */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
@@ -45,6 +49,19 @@
   --dur-state: 150ms; --dur-enter: 240ms; --dur-nudge: 1800ms;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --paper:#1C1C1E; --panel:#2A2A2D; --ink:#F5F5F7; --ink-sub:#B4B4BB; --line:#3C3C41; --selected:#3A3520; --ok:#5FD37F; --focus:#6CA8FF; }
+  :root:not([data-theme="light"]) { --paper:#14171F; --panel:#1E2230; --ink:#F3F5FA; --ink-sub:#AEB8D4; --line:#343B52; --selected:#1F2B4D; --ok:#5FD37F; --focus:#8FB0FF; }
 }
-:root[data-theme="dark"] { --paper:#1C1C1E; --panel:#2A2A2D; --ink:#F5F5F7; --ink-sub:#B4B4BB; --line:#3C3C41; --selected:#3A3520; --ok:#5FD37F; --focus:#6CA8FF; }
+:root[data-theme="dark"] { --paper:#14171F; --panel:#1E2230; --ink:#F3F5FA; --ink-sub:#AEB8D4; --line:#343B52; --selected:#1F2B4D; --ok:#5FD37F; --focus:#8FB0FF; }
+
+/* Night Violet: violet sets the room, amber marks the one action that matters. Dark in both system appearances.
+   The class is doubled so it outranks the dark-mode block above (0,2,0) when it sits on <html>. It never uses
+   :root, because the pill rewrites :root to :host and a :host compound here would be an invalid selector. */
+.beam-violet.beam-violet {
+  --signal: #FFAF4D; --signal-hover: #FFC170; --signal-ink: #2A1600; --signal-on-sign: #FFFFFF;
+  --sign: #5B32D6; --sign-ink: #FFFFFF; --sign-sub: #E8E0FF; --sign-done: #2A2145;
+  --live: #FFAF4D; --support: #9582CA;
+  --paper: #15121F; --panel: #1F1A2E; --ink: #EDE9F7; --ink-sub: #B4A9D6; --line: #3A3156; --selected: #2E2550;
+  --ok: #5FD37F; --focus: #B79BFF;
+  --thumb-1: #7A68B0; --thumb-2: #5B32D6; --thumb-3: #2A2145;
+  color-scheme: dark;
+}

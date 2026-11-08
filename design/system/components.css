@@ -1,4 +1,4 @@
-/* Beam components: Gate. Every control has default, hover, focus-visible, active, disabled; async ones have busy.
+/* Beam components (gate- prefix kept from the first direction). Every control has default, hover, focus-visible, active, disabled; async ones have busy.
    Classes are prefixed gate- so the extension popup, the in-page pill (Shadow DOM) and the preview can share them. */
 .gate-base { font: var(--text-body); color: var(--ink); font-variant-numeric: tabular-nums; }
 .gate-base *, .gate-base *::before, .gate-base *::after { box-sizing: border-box; }
@@ -6,7 +6,7 @@
 /* tile: square glyph holder. ready = signal arrow, live = signal check, blocked = paper warning */
 .gate-tile { width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--signal); color: var(--signal-ink); display: grid; place-items: center; flex: none; }
 .gate-tile svg { width: 26px; height: 26px; }
-.gate-tile.blocked { background: #FFFFFF; color: #14130F; }
+.gate-tile.blocked { background: #FFFFFF; color: #141A2B; }
 .gate-arrow { display: grid; animation: gate-nudge var(--dur-nudge) var(--ease-out) infinite; }
 @keyframes gate-nudge { 0%, 100% { transform: translateX(-2px); } 50% { transform: translateX(3px); } }
 
@@ -55,11 +55,17 @@ li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
 :is(.gate-btn, .gate-item, .gate-link):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .gate-sign :is(.gate-btn):focus-visible, .gate-pill :is(button):focus-visible { outline-color: #fff; }
 
+/* style switcher (toolbar popup): two swatch rows; the swatches are fixed brand colours, not tokens */
+.gate-swatch { width: 40px; height: 40px; border-radius: var(--radius-sm); flex: none; border: 1px solid var(--line); }
+.gate-swatch.signal { background: linear-gradient(90deg, #2F6BFF 0 60%, #FF302F 60% 80%, #6D85C1 80%); }
+.gate-swatch.violet { background: linear-gradient(90deg, #7B4DFF 0 60%, #FFAF4D 60% 80%, #9582CA 80%); }
+.gate-group-label { margin: 0; font: var(--text-label); color: var(--ink-sub); text-transform: uppercase; letter-spacing: .06em; }
+
 /* pill: in-page status over the chosen video; Try again / Try anyway live here (a real gesture) */
 .gate-pill { position: absolute; top: var(--space-3); left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 24px); display: flex; align-items: center; gap: var(--space-2); background: var(--sign); color: var(--sign-ink); border: var(--edge-on-dark); border-radius: var(--radius-pill); padding: var(--space-2) 14px var(--space-2) var(--space-2); font: var(--text-strong); box-shadow: var(--shadow-pill); animation: gate-rise var(--dur-enter) var(--ease-out) both; }
 .gate-pill .gate-tile { width: 24px; height: 24px; border-radius: 50%; align-self: flex-start; }
 .gate-pill .gate-tile svg { width: 14px; height: 14px; }
-.gate-pill button { background: none; border: 0; color: var(--signal); font: 700 13px/1.2 var(--font); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 24px; padding: 0 var(--space-1); position: relative; }
+.gate-pill button { background: none; border: 0; color: var(--signal-on-sign); font: 700 13px/1.2 var(--font); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 24px; padding: 0 var(--space-1); position: relative; }
 .gate-pill button::after { content: ""; position: absolute; inset: -10px -6px; } /* 44 px hit area without growing the pill */
 @keyframes gate-rise { from { opacity: 0; transform: translate(-50%, 6px); } }
 

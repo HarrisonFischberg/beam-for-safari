@@ -1,18 +1,21 @@
 ---
 name: Beam for Safari
-description: A gate sign for your video: one black panel says where it is going, one yellow action sends it.
+description: A sign for your video: one dark panel says where it is going, one signal-coloured action sends it. Two styles, Signal Blue (default) and Night Violet.
 colors:
-  signal: "#FFD60A"
-  signal-hover: "#FFE24D"
-  signal-ink: "#14130F"
-  sign: "#14130F"
-  sign-done: "#35342E"
-  paper: "#F5F5F7"
+  signal: "#2F6BFF"
+  signal-hover: "#1F5AEB"
+  signal-ink: "#FFFFFF"
+  signal-on-sign: "#8FB0FF"
+  sign: "#141A2B"
+  sign-done: "#2A3350"
+  live: "#FF302F"
+  support: "#6D85C1"
+  paper: "#F3F5FA"
   panel: "#FFFFFF"
-  ink: "#1D1D1F"
-  ink-sub: "#5A5A60"
-  line: "#D9D9DE"
-  selected: "#FFF6C2"
+  ink: "#141A2B"
+  ink-sub: "#4A5470"
+  line: "#D5DAE6"
+  selected: "#EAF0FF"
   ok: "#1E7A3C"
   focus: "#0A5FD6"
 typography:
@@ -105,34 +108,35 @@ The system is dense and calm: 13 px body, 44 px targets, one signal colour. It i
 
 **Key Characteristics:**
 - Black sign header with a square glyph tile on every surface that reports a state.
-- One live colour, signal yellow, reserved for the arrow tile, the primary action and step numbers.
+- One live colour (Signal Blue, or amber in Night Violet), reserved for the arrow tile, the primary action and step numbers.
 - System font, two weights of emphasis (600, 700), tabular numerals for durations.
 - Light and dark follow macOS; the sign and the pill stay black in both.
 
 ## Colors
 
-A signage palette: near-black, white, one yellow, and a green that only ever means done.
+Beam ships two styles. The user switches between them in the toolbar popup (Style); the choice is stored as
+`beamStyle` in extension storage and applies to the popup and the in-page pill. Tokens: `extension/design/tokens.css`
+(Signal Blue is the base `:root` tokens; Night Violet is the `.beam-violet` class). Each palette is a main colour, an
+accent at +137.5 degrees of hue, and a supporting shade at 40% of the main colour's saturation.
 
-### Primary
-- **Signal Yellow** (#FFD60A): the arrow tile, the primary button, completed-step numbers excepted. It never carries text on its own; text on it is Signage Black.
-- **Signal Hover** (#FFE24D): hover state of the primary button only.
+### Signal Blue (default)
+- **Signal Blue** (#2F6BFF): the arrow tile, the primary button, step numbers. Text on it is white (4.5:1); hover darkens to #1F5AEB.
+- **Live Red** (#FF302F): accent, reserved for the "playing on your TV" state. Never a button fill with small text on it.
+- **Slate** (#6D85C1): supporting shade for device thumbnails and icons. Not used for small text on white (3.6:1).
+- **Sign Navy** (#141A2B): header slab and pill. Signal-coloured text on it uses #8FB0FF (8.1:1).
+- Follows the system appearance: neutrals switch to dark values in Dark Mode.
 
-### Secondary
-- **Done Green** (#1E7A3C light, #5FD37F dark): completed step checks and nothing else.
+### Night Violet
+- **Violet** (#7B4DFF brand, #5B32D6 for the header slab so white and #E8E0FF text pass): icon, header, dark surfaces.
+- **Amber** (#FFAF4D): the one action that matters on a surface: the arrow tile and the primary button, with #2A1600 text (9.5:1).
+- **Lavender** (#9582CA): supporting shade for thumbnails, borders and icons; #B4A9D6 for secondary text.
+- Always dark, whatever the system appearance.
 
-### Neutral
-- **Signage Black** (#14130F): the sign header, the pill, step tiles. Same in both themes.
-- **Done Black** (#35342E): a completed step tile. A solid colour, never reduced opacity.
-- **Paper** (#F5F5F7 light, #1C1C1E dark): page ground.
-- **Panel** (#FFFFFF light, #2A2A2D dark): popup and window body.
-- **Ink** (#1D1D1F light, #F5F5F7 dark) and **Ink Sub** (#5A5A60 light, #B4B4BB dark): primary and secondary text, both at least 4.8:1 on Panel.
-- **Line** (#D9D9DE light, #3C3C41 dark): hairlines and disabled fills.
-- **Selected** (#FFF6C2 light, #3A3520 dark): the chosen video row.
-- **Focus Blue** (#0A5FD6 light, #6CA8FF dark): focus rings only.
+### Shared
+- **OK Green** (#1E7A3C light, #5FD37F dark) only ever means done.
 
 ### Named Rules
-**The One Signal Rule.** Yellow marks the single live thing on a surface. If two elements are yellow, one of them is wrong.
-**The Honest Arrow Rule.** The go-arrow appears only when casting can start. Blocked states use the white warning tile, never the arrow.
+**The One Signal Rule.** The signal colour marks the single live thing on a surface. If two elements carry it, one of them is wrong.
 
 ## Typography
 
@@ -169,7 +173,7 @@ Square-ish and sturdy: 8 px on controls and tiles, 12 px on surfaces, 6 px on th
 
 ### Buttons
 - **Shape:** rounded rectangle (8 px), 44 px high.
-- **Primary:** Signal Yellow fill, Signage Black text, full width in the popup. Hover lightens to Signal Hover; active scales to 0.985; disabled turns to Line fill with Ink Sub text.
+- **Primary:** Signal fill and signal-ink text, full width in the popup. Hover lightens to Signal Hover; active scales to 0.985; disabled turns to Line fill with Ink Sub text.
 - **Busy:** keeps its label and adds a 14 px ring (static under Reduce Motion).
 - **Ghost:** transparent with a Line border; on the sign it is white-on-black with a grey border. Disabled uses a dashed border.
 - **Focus:** 3 px Focus Blue ring, 2 px offset (white on black surfaces).
@@ -178,27 +182,27 @@ Square-ish and sturdy: 8 px on controls and tiles, 12 px on surfaces, 6 px on th
 - Black slab, 14 px by 16 px padding, tile left, headline plus a status line "Apple TV · <state>". Stop sits at the right edge only while casting.
 
 ### Tile
-- 44 px rounded square. Ready: yellow with an arrow that nudges 5 px every 1.8 s. Live: yellow with a check. Blocked: white with a black warning triangle.
+- 44 px rounded square. Ready: signal colour with an arrow that nudges 5 px every 1.8 s. Live: signal colour with a check. Blocked: white with a black warning triangle.
 
 ### List item (video row)
 - 48 px row, 40 px thumbnail, title (600) over site and duration, radio at right. Selected: Selected fill and an Ink border. Disabled: dashed border and Ink Sub text. Titles truncate with an ellipsis.
 
 ### Pill
-- Black rounded rectangle on the video, tile at left, one or two lines of text, optional Try again or Try anyway link in yellow. Enters with a 240 ms rise; under Reduce Motion it appears instantly.
+- Black rounded rectangle on the video, tile at left, one or two lines of text, optional Try again or Try anyway link in signal-on-sign. Enters with a 240 ms rise; under Reduce Motion it appears instantly.
 
 ### Steps (host window)
-- Black tiles with a yellow number; completed steps use Done Black and a green check.
+- Sign tiles with a signal-coloured number; completed steps use Done Black and a green check.
 
 ## Do's and Don'ts
 
 ### Do:
 - **Do** say the state in words first; the arrow and colour repeat it.
-- **Do** keep text on Signal Yellow in Signage Black (13:1).
+- **Do** keep text on the signal colour in signal-ink: white on Signal Blue (4.5:1), #2A1600 on amber (9.5:1).
 - **Do** keep every control at least 44 px tall and keyboard reachable with a visible 3 px focus ring.
 - **Do** respect Reduce Motion by dropping the arrow nudge, ring spin, pill rise and hover transitions.
 
 ### Don't:
-- **Don't** use the go-arrow or yellow for a blocked or failed state.
+- **Don't** use the go-arrow or the signal colour for a blocked or failed state.
 - **Don't** use opacity to show a completed or disabled state; use a solid colour.
 - **Don't** put the Apple TV's name anywhere; WebKit does not provide it.
 - **Don't** add gradients, glass, uppercase labels, eyebrows, or numbered sections beyond the real setup steps.

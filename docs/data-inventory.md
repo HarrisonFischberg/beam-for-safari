@@ -13,3 +13,6 @@ No data collected, stored or transmitted by Beam code. Extension requests `conte
 
 ## 2026-11-08 TestFlight distribution
 - New vendor/data flow: Apple App Store Connect / TestFlight. The release script uploads the signed app build (no user data) using the team's App Store Connect API key, read from the owner's shell environment and never stored in the repo. Beam itself still makes no network calls and collects nothing.
+
+- Style preference (`beamStyle`: `signal` or `violet`), added in 0.2.6: stored on the device in the extension's
+  local storage and the popup's localStorage. Never sent anywhere. No new vendor.

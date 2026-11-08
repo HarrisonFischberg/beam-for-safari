@@ -69,3 +69,4 @@
   so the page never cancels it. Away from videos, pages keep their own right-click. New `BeamResolve.videoUnderPoint` + 2 unit tests (42 pass);
   harness case `blocker` checked in headless Chromium: over the video the event is no longer cancelled, away from it the page still cancels it.
 - Not yet checked in real Safari on BitChute.
+- Owner confirmed (2026-11-08) on TestFlight 0.2.5 (2): Beam works on the BitChute video page.

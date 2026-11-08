@@ -18,17 +18,23 @@
     return cssPromise;
   }
 
-  // tone: 'go' (yellow arrow tile) or 'blocked' (white warning tile). Text is set with textContent only.
+  // tone: 'go' (signal arrow tile) or 'blocked' (white warning tile). Text is set with textContent only.
+  // The style the user picked in the toolbar popup (lib/theme.js); unknown or unreadable means Signal Blue.
+  function loadStyle() {
+    return browser.storage.local.get(BeamTheme.STORAGE_KEY).then((s) => s[BeamTheme.STORAGE_KEY], () => undefined);
+  }
+
   async function show(text, tone, ms = 4000) {
-    const css = await loadCss();
+    const [css, style] = await Promise.all([loadCss(), loadStyle()]);
     hide();
     host = document.createElement('div');
     host.style.cssText = 'position:fixed;top:0;left:0;right:0;height:0;z-index:2147483647;pointer-events:none';
     const shadow = host.attachShadow({ mode: 'closed' });
-    const style = document.createElement('style');
-    style.textContent = css;
+    const sheet = document.createElement('style');
+    sheet.textContent = css;
     const wrap = document.createElement('div');
     wrap.className = 'gate-base';
+    BeamTheme.apply(wrap, style);
     const pill = document.createElement('div');
     pill.className = 'gate-pill';
     pill.setAttribute('role', 'status');
@@ -39,7 +45,7 @@
     label.textContent = text;
     pill.append(tile, label);
     wrap.append(pill);
-    shadow.append(style, wrap);
+    shadow.append(sheet, wrap);
     document.documentElement.append(host);
     timer = setTimeout(hide, ms);
   }

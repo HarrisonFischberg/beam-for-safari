@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="design/tokens.css">
 <link rel="stylesheet" href="design/components.css">
 <link rel="stylesheet" href="popup.css">
+<script src="lib/theme.js"></script>
 </head>
 <body class="gate-base">
   <article class="gate-popup" aria-label="Beam">
@@ -14,7 +15,14 @@
       <span class="gate-tile"><span class="gate-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg></span></span>
       <div><h3 id="headline">Beam to Apple TV</h3><p id="status">Right-click a video to start.</p></div>
     </div>
-    <div class="gate-body"><p class="gate-detail" id="diag" aria-label="Developer diagnostic"></p></div>
+    <div class="gate-body">
+      <p class="gate-group-label" id="style-label">Style</p>
+      <ul class="gate-list" role="radiogroup" aria-labelledby="style-label">
+        <li><button type="button" class="gate-item" role="radio" aria-checked="true" data-style="signal" id="style-signal"><span class="gate-swatch signal" aria-hidden="true"></span><span class="gate-meta"><b>Signal Blue</b><span>Calm blue, red when live</span></span><span class="gate-radio" aria-hidden="true"></span></button></li>
+        <li><button type="button" class="gate-item" role="radio" aria-checked="false" data-style="violet" id="style-violet"><span class="gate-swatch violet" aria-hidden="true"></span><span class="gate-meta"><b>Night Violet</b><span>Dark, with an amber Beam button</span></span><span class="gate-radio" aria-hidden="true"></span></button></li>
+      </ul>
+      <p class="gate-detail" id="diag" aria-label="Developer diagnostic"></p>
+    </div>
   </article>
   <script src="popup.js"></script>
 </body>

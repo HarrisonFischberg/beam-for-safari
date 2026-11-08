@@ -25,7 +25,7 @@ HTMLVideoElement.prototype.webkitShowPlaybackTargetPicker = function () { window
 window.browser = { storage: { local: { get: async () => ({}), set: async () => {} } }, runtime: { id: 'stub', sendMessage: async () => (await (await fetch('../../extension/design/tokens.css')).text()) + '\n' + (await (await fetch('../../extension/design/components.css')).text()), onMessage: { addListener: (fn) => { window.__handler = fn; } } } };
 window.__send = (srcUrl) => window.__handler({ type: 'beam', srcUrl }, { id: 'stub' });
 const load = (s) => new Promise((r) => { const e = document.createElement('script'); e.src = s; e.onload = r; document.body.append(e); });
-(async () => { for (const f of ['resolve', 'reasons', 'cast', 'pill']) await load('../../extension/lib/' + f + '.js'); await load('../../extension/content.js');
+(async () => { for (const f of ['resolve', 'reasons', 'cast', 'theme', 'pill']) await load('../../extension/lib/' + f + '.js'); await load('../../extension/content.js');
   if (c === 'protected') document.getElementById('v').dispatchEvent(new Event('encrypted')); // after content.js is listening
   window.__ready = true; })();
 </script></body></html>

@@ -1,0 +1,51 @@
+# Beam for Safari: macOS TestFlight lanes. Run through ./release.sh; see release/README.md.
+# Auth: App Store Connect API key from ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (never in git).
+default_platform(:mac)
+
+ROOT = File.expand_path("..", __dir__)
+APP_ID = "app.rarecreatures.beam"
+EXT_ID = "app.rarecreatures.beam.extension"
+NAMES = ["Beam for Safari", "Beam to Apple TV", "Beam: AirPlay for Safari"] # first free name wins
+SKU = "beam-for-safari"
+
+platform :mac do
+  before_all do |_lane, options|
+    next if options[:dry_run]
+    app_store_connect_api_key(key_id: ENV.fetch("ASC_KEY_ID"), issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+                              key_filepath: File.expand_path(ENV.fetch("ASC_KEY_PATH")))
+  end
+
+  desc "Register both bundle IDs and create the App Store Connect app record. Safe to rerun."
+  lane :setup do
+    { APP_ID => "Beam", EXT_ID => "Beam Extension" }.each do |id, name|
+      if Spaceship::ConnectAPI::BundleId.find(id)
+        UI.message("bundle ID #{id}: already registered")
+      else
+        Spaceship::ConnectAPI::BundleId.create(name: name, identifier: id,
+                                               platform: Spaceship::ConnectAPI::BundleIdPlatform::MAC_OS)
+        UI.success("bundle ID #{id}: registered")
+      end
+    end
+    if Spaceship::ConnectAPI::App.find(APP_ID)
+      UI.message("app record for #{APP_ID}: already exists")
+      next
+    end
+    created = NAMES.any? do |name|
+      Spaceship::ConnectAPI::App.create(name: name, version_string: "1.0", sku: SKU, primary_locale: "en-US",
+                                        bundle_id: APP_ID, platforms: [Spaceship::ConnectAPI::Platform::MAC_OS])
+      UI.success("app record created: #{name}")
+      true
+    rescue => e
+      UI.important("could not create the app as \"#{name}\": #{e.message}")
+      false
+    end
+    created || UI.user_error!("No app record created. Create it by hand: App Store Connect > Apps > + > New App, " \
+                              "platform macOS, bundle ID #{APP_ID}, SKU #{SKU}. Then rerun ./release.sh.")
+  end
+
+  desc "Archive the Mac app and upload it to TestFlight; dry_run:true archives only"
+  lane :beta do |options|
+    setup unless options[:dry_run]
+    sh("#{ROOT}/scripts/archive-testflight.sh", *("--no-upload" if options[:dry_run]))
+  end
+end

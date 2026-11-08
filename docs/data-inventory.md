@@ -10,3 +10,6 @@ No data collected, stored or transmitted by Beam code. Extension requests `conte
 - `fixtures/serve.mjs` serves synthetic media on ports 4201/4202 to the local network while the owner runs it; stop with Ctrl+C. No third-party content, no logging of requests.
 - `spike/` extension (BeamSpike, throwaway, never shipped) stores test answers in `browser.storage.local` only. No network calls, no vendors. Delete after the spike.
 - TEMPORARY dev diagnostic (extension 0.2.0): background and content script write codes/counts (last menu click frame, send error text, picker called or refusal reason, timestamps) to storage.local; the toolbar popup shows them. No page addresses stored. Remove with the real popup in T006.
+
+## 2026-11-08 TestFlight distribution
+- New vendor/data flow: Apple App Store Connect / TestFlight. The release script uploads the signed app build (no user data) using the team's App Store Connect API key, read from the owner's shell environment and never stored in the repo. Beam itself still makes no network calls and collects nothing.

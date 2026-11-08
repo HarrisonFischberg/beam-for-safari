@@ -9,7 +9,7 @@ browser.contextMenus.removeAll().then(() => {
   browser.contextMenus.create({ id: MENU_ID, title: browser.i18n.getMessage('menuBeam'), contexts: ['video', 'page'] });
 });
 
-// TEMPORARY dev diagnostic (removed with the real popup, T006): codes and counts only, never page addresses.
+// Debug log fields, shown only in the "Copy debug logs" report (lib/debuglog.js): codes and counts only, never page addresses.
 const diag = (o) => browser.storage.local.set(o).catch(() => {});
 
 browser.contextMenus.onClicked.addListener((info, tab) => {

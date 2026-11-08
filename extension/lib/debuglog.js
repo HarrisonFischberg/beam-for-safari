@@ -32,9 +32,10 @@
     ].join('\n');
   }
 
-  function mailto(text, version) {
+  // problem: what the user typed under "What went wrong?"; it leads the email.
+  function mailto(text, version, problem = '') {
     const subject = `Beam ${version} debug logs`;
-    const body = `What happened (optional):\n\n\n${text}\n`;
+    const body = `${problem.trim()}\n\n${text}\n`;
     return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 

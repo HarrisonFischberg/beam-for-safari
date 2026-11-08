@@ -1,3 +1,6 @@
 html, body { margin: 0; background: var(--panel); }
 .gate-popup { width: 340px; border: 0; border-radius: 0; box-shadow: none; }
 #debug-logs { width: 100%; }
+#problem { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 8px 10px; min-height: 64px; resize: vertical; }
+#problem:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+#debug-logs:disabled { color: var(--ink-sub); cursor: not-allowed; }

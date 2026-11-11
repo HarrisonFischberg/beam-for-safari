@@ -1,6 +1,6 @@
 ---
 name: Beam for Safari
-description: A sign for your video: one dark panel says where it is going, one signal-coloured action sends it. Two styles, Signal Blue (default) and Night Violet.
+description: A wayfinding sign for your video. A dark slab with a flush arrow field says where it is going; the arrow stops at a wall when it cannot go. Two styles, Signal Blue (default) and Night Violet.
 colors:
   signal: "#2F6BFF"
   signal-hover: "#1F5AEB"
@@ -45,10 +45,10 @@ typography:
     fontWeight: 400
     lineHeight: 1.4
 rounded:
+  xs: "4px"
   sm: "6px"
   md: "8px"
   lg: "12px"
-  pill: "22px"
 spacing:
   xs: "4px"
   sm: "8px"
@@ -76,12 +76,17 @@ components:
   sign:
     backgroundColor: "{colors.sign}"
     textColor: "#FFFFFF"
-    padding: "14px 16px"
-  tile:
+    padding: "0"
+  arrow-field:
     backgroundColor: "{colors.signal}"
     textColor: "{colors.signal-ink}"
-    rounded: "{rounded.md}"
-    size: "44px"
+    rounded: "0"
+    width: "64px on the popup sign, 40px on the in-page sign, 48px in the host window"
+  arrow-field-blocked:
+    backgroundColor: "#FFFFFF"
+    textColor: "#141A2B"
+  button-compact:
+    height: "36px"
   list-item:
     backgroundColor: "{colors.panel}"
     textColor: "{colors.ink}"
@@ -92,25 +97,25 @@ components:
   pill:
     backgroundColor: "{colors.sign}"
     textColor: "#FFFFFF"
-    typography: "{typography.body}"
-    rounded: "{rounded.pill}"
+    typography: "700 13px/1.35"
+    rounded: "{rounded.md}"
 ---
 
 # Design System: Beam for Safari
 
 ## Overview
 
-**Creative North Star: "The Gate Sign"**
+**Creative North Star: "Wayfinder"**
 
-Beam looks like the sign over an airport gate: a black slab with one bright arrow, telling you where something is going and whether it is on its way. Nothing is decorative. The sign carries the state in words ("Ready to beam", "Playing on Apple TV", "No Apple TV found") and the arrow carries it in shape: go arrow, check, or warning. The rest of the surface is plain paper and native macOS controls, so Beam feels like part of Safari rather than an overlay on it.
+Beam looks like a wayfinding sign: a dark slab with a flush, full-height arrow field at its left edge, the way a terminal or road sign carries its arrow. The words say the state ("Choose your Apple TV…", "This video is protected, so it can only play here."); the arrow field repeats it in shape and colour. When the video can go, the field is the signal colour with the arrow. When it cannot, the field is white and the arrow is stopped at a wall: the video stays here. Nothing is decorative. The rest of the surface is plain paper and quiet controls, so Beam feels like part of Safari rather than an overlay on it.
 
-The system is dense and calm: 13 px body, 44 px targets, one signal colour. It is used mid-task for a few seconds, so every element earns its place or goes.
+The same sign appears on all three surfaces: the in-page sign over the video, the header of the toolbar popup, and the host window's on/off state.
 
 **Key Characteristics:**
-- Black sign header with a square glyph tile on every surface that reports a state.
-- One live colour (Signal Blue, or amber in Night Violet), reserved for the arrow tile, the primary action and step numbers.
-- System font, two weights of emphasis (600, 700), tabular numerals for durations.
-- Light and dark follow macOS; the sign and the pill stay black in both.
+- Dark sign slab with a flush arrow field on every surface that reports a state.
+- One live colour (Signal Blue, or amber in Night Violet), reserved for the arrow field.
+- System font, three weights of emphasis (500, 600, 700), sentence case everywhere.
+- Light and dark follow macOS; the sign stays dark in both. Increase Contrast and Reduce Motion are honoured.
 
 ## Colors
 
@@ -120,15 +125,15 @@ Beam ships two styles. The user switches between them in the toolbar popup (Styl
 accent at +137.5 degrees of hue, and a supporting shade at 40% of the main colour's saturation.
 
 ### Signal Blue (default)
-- **Signal Blue** (#2F6BFF): the arrow tile, the primary button, step numbers. Text on it is white (4.5:1); hover darkens to #1F5AEB.
-- **Live Red** (#FF302F): accent, reserved for the "playing on your TV" state. Never a button fill with small text on it.
+- **Signal Blue** (#2F6BFF): the arrow field. The white arrow on it is 4.498:1, enough for a glyph but not for small text; where a filled control carries a label (the host window button) it uses #1F5AEB (5.6:1).
+- **Live Red** (#FF302F): reserved for a "playing on your TV" state, which the shipped build does not have yet. Never a button fill with small text on it.
 - **Slate** (#6D85C1): supporting shade for device thumbnails and icons. Not used for small text on white (3.6:1).
 - **Sign Navy** (#141A2B): header slab and pill. Signal-coloured text on it uses #8FB0FF (8.1:1).
 - Follows the system appearance: neutrals switch to dark values in Dark Mode.
 
 ### Night Violet
 - **Violet** (#7B4DFF brand, #5B32D6 for the header slab so white and #E8E0FF text pass): icon, header, dark surfaces.
-- **Amber** (#FFAF4D): the one action that matters on a surface: the arrow tile and the primary button, with #2A1600 text (9.5:1).
+- **Amber** (#FFAF4D): the arrow field, with a #2A1600 arrow (9.5:1).
 - **Lavender** (#9582CA): supporting shade for thumbnails, borders and icons; #B4A9D6 for secondary text.
 - Always dark, whatever the system appearance.
 
@@ -146,63 +151,72 @@ accent at +137.5 degrees of hue, and a supporting shade at 40% of the main colou
 
 ### Hierarchy
 - **Title** (700, 17px, 1.2): the sign headline on the popup.
-- **Host** (700, 20px, 1.2): the host window headline.
-- **Button** (700, 14px, 1.2): primary and ghost button labels.
+- **Host** (700, 17px, 1.2): the host window sign's heading.
+- **Sign** (700, 13px, 1.35): the words on the in-page sign.
+- **Button** (600, 13px): the popup's Send Debug Logs button; (700, 14px, 1.2) for the unused primary.
+- **Group** (600, 12px, 16px line): section labels in the popup, sentence case.
 - **Body** (400, 13px, 1.4): detail text, list titles at weight 600; keep lines under about 45 characters in the popup.
-- **Label** (400, 12px, 1.4): site names, durations, small status text.
+- **Label** (400, 12px, 16px line): site names, durations, small status text.
 
 ### Named Rules
 **The Sentence Case Rule.** All labels are sentence case. No uppercase labels, no eyebrows above headings.
 
 ## Layout
 
-Popup 340 px wide, host window 560 px, pill sized to its text (max width of the video minus 24 px). Spacing follows a 4 px base: 4, 8, 12, 16, 24. Groups are tight (6 to 10 px between rows), sections are separated by 12 to 16 px. Every control is at least 44 px tall; where the visual is smaller (pill links) an invisible pseudo-element extends the hit area. The popup is one column and never scrolls horizontally. Not yet built or tested: lists longer than five videos should scroll inside the popup, which the extension build (T006) must add.
+Popup 340 px wide, host window 425 by 325 px, in-page sign sized to its text (at most 420 px, and never wider than the page minus 24 px). Spacing follows a 4 px base: 4, 8, 12, 16, 24. Gaps grow with the grouping level: 6 to 8 px inside a group, 20 px between the popup's two sections, which a rule also separates. The popup is a Mac pointer surface, so its controls are 36 px (`--control`); 44 px (`--target`) stays the size for anything that may be touched. The popup is one column and never scrolls horizontally.
 
 ## Elevation & Depth
 
-Depth is a soft ambient shadow on floating surfaces only (`0 8px 24px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.12)` on the popup and window; `0 4px 14px rgba(0,0,0,.35)` on the pill) plus a 1 px white-30% edge on the pill so it stays visible over dark video. Rows and buttons are flat.
+Depth is a soft shadow on the in-page sign only (`0 6px 18px rgba(0,0,0,.4)`) plus a 1 px white-30% edge so it stays visible over dark video. Rows and buttons are flat. Hover and pressed states are alpha overlays (`--hover`, `--press`) over whatever is underneath, never a replacement fill, so a selected row stays selected while held.
 
 ### Named Rules
-**The Dark-Edge Rule.** Anything black that can sit on a dark video gets a light hairline edge.
+**The Dark-Edge Rule.** Anything dark that can sit on a dark ground gets a light hairline edge. With Increase Contrast it becomes a solid 2 px white edge.
 
 ## Shapes
 
-Square-ish and sturdy: 8 px on controls and tiles, 12 px on surfaces, 6 px on thumbnails, 22 px on the pill (a rounded rectangle, not a capsule, so multi-line text never turns circular). The glyph tile is always a rounded square; only the 24 px tile inside the pill is a circle.
+Square and sturdy. Signs, rows and controls are 8 px; parts inside them (the swatch in a style card) are 4 px; the arrow field has no radius of its own and is clipped by its sign. Nothing is rounder than 8 px.
 
 ## Components
 
+### Sign (popup header, in-page sign, host window)
+- Dark slab; the arrow field is flush left and full height. Popup: 64 px field, headline (700, 17 px) and one status line. In-page: 40 px field, one or two lines at 700 13 px. Host window: 48 px field, a real heading ("Beam is on", "Beam is off", "Turn on Beam") over the sentence.
+- Go: signal-coloured field with the arrow. Blocked or off: white field with the arrow stopped at a wall. The glyphs are inline SVG in the markup (`lib/pill.js`, `popup.html`, `Main.html`); the host page's Content-Security-Policy blocks `data:` images.
+- The popup arrow nudges twice when the popup opens, then rests.
+
+### Style cards (popup)
+- Two cards side by side in a radio group. Each shows a small copy of the sign that style puts on a video, then the name, a one-line description and a radio.
+- Default: Line border. Hover: Ink Sub border and the hover overlay. Pressed: press overlay. Selected: Selected fill, Ink border doubled to 2 px, radio filled. Focus: 3 px Focus ring, 2 px offset. One tab stop; arrow keys move and choose.
+
 ### Buttons
-- **Shape:** rounded rectangle (8 px), 44 px high.
-- **Primary:** Signal fill and signal-ink text, full width in the popup. Hover lightens to Signal Hover; active scales to 0.985; disabled turns to Line fill with Ink Sub text.
-- **Busy:** keeps its label and adds a 14 px ring (static under Reduce Motion).
-- **Ghost:** transparent with a Line border; on the sign it is white-on-black with a grey border. Disabled uses a dashed border.
-- **Focus:** 3 px Focus Blue ring, 2 px offset (white on black surfaces).
+- **Ghost (Send Debug Logs):** 36 px, Line border, 600 weight. Hover: Ink border and hover overlay. Pressed: press overlay and scale 0.985. Disabled: solid Paper fill with Ink Sub text; never a dashed outline or opacity.
+- **Primary and link:** kept in `components.css` for later states; not on a shipped surface.
+- **Host window button:** a 28 px push button. Filled (#1F5AEB, white text 5.6:1) while there is something to turn on; a bordered plain button once Beam is on.
 
-### Sign header
-- Black slab, 14 px by 16 px padding, tile left, headline plus a status line "Apple TV · <state>". Stop sits at the right edge only while casting.
+### Text area
+- Line border, 8 px radius; Ink Sub border on hover; 3 px Focus ring.
 
-### Tile
-- 44 px rounded square. Ready: signal colour with an arrow that nudges 5 px every 1.8 s. Live: signal colour with a check. Blocked: white with a black warning triangle.
+### In-page sign
+- Enters with a 240 ms rise; under Reduce Motion it appears instantly. Drawn in a closed Shadow DOM, so page styles cannot reach it and Beam's cannot leak.
+- A Try again or Try anyway link, when a state has one, sits at the right edge in signal-on-sign and never wraps.
 
-### List item (video row)
-- 48 px row, 40 px thumbnail, title (600) over site and duration, radio at right. Selected: Selected fill and an Ink border. Disabled: dashed border and Ink Sub text. Titles truncate with an ellipsis.
+## Accessibility
 
-### Pill
-- Black rounded rectangle on the video, tile at left, one or two lines of text, optional Try again or Try anyway link in signal-on-sign. Enters with a 240 ms rise; under Reduce Motion it appears instantly.
-
-### Steps (host window)
-- Sign tiles with a signal-coloured number; completed steps use Done Black and a green check.
+- Measured contrast: sign text 17.3:1 (Signal Blue) and 7.3:1 (Night Violet); status line 11.5:1 and 5.8:1; secondary text at least 6.4:1 on every surface it sits on; focus ring at least 5.8:1. The arrow on the Signal Blue field is 4.498:1, which is why it is a glyph and never small text.
+- Increase Contrast: borders move to Ink, secondary text to near-Ink, the sign's edge becomes solid.
+- Reduce Motion: the arrow nudge, the sign's rise and all transitions are removed.
+- State is never colour alone: the field changes colour and glyph, and the words say it.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** say the state in words first; the arrow and colour repeat it.
-- **Do** keep text on the signal colour in signal-ink: white on Signal Blue (4.5:1), #2A1600 on amber (9.5:1).
-- **Do** keep every control at least 44 px tall and keyboard reachable with a visible 3 px focus ring.
-- **Do** respect Reduce Motion by dropping the arrow nudge, ring spin, pill rise and hover transitions.
+- **Do** say the state in words first; the arrow field repeats it.
+- **Do** keep the arrow field flush and full height on every sign.
+- **Do** keep every control keyboard reachable with a visible 3 px focus ring.
+- **Do** use inline SVG for glyphs.
 
 ### Don't:
 - **Don't** use the go-arrow or the signal colour for a blocked or failed state.
-- **Don't** use opacity to show a completed or disabled state; use a solid colour.
+- **Don't** put small text on Signal Blue; white on it is 4.498:1.
+- **Don't** use opacity or a dashed outline to show a completed or disabled state; use a solid colour.
 - **Don't** put the Apple TV's name anywhere; WebKit does not provide it.
-- **Don't** add gradients, glass, uppercase labels, eyebrows, or numbered sections beyond the real setup steps.
+- **Don't** add gradients, glass, uppercase labels, eyebrows, or corners rounder than 8 px.

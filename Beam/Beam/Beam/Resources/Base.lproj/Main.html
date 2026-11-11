@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
@@ -10,10 +10,21 @@
     <script src="../Script.js" defer></script>
 </head>
 <body>
-    <picture><source srcset="../Icon-dark.png" media="(prefers-color-scheme: dark)"><img src="../Icon.png" width="128" height="128" alt="Beam Icon"></picture>
-    <p class="state-unknown">You can turn on Beam’s extension in Safari Extensions preferences.</p>
-    <p class="state-on">Beam’s extension is currently on. You can turn it off in Safari Extensions preferences.</p>
-    <p class="state-off">Beam’s extension is currently off. You can turn it on in Safari Extensions preferences.</p>
+    <picture><source srcset="../Icon-dark.png" media="(prefers-color-scheme: dark)"><img src="../Icon.png" width="72" height="72" alt="Beam Icon"></picture>
+    <!-- The sign: an arrow field (go when the extension is on, stopped at a wall when it is off) and the state in words.
+         The glyphs are inline SVG because the Content-Security-Policy above blocks data: images. -->
+    <div class="sign">
+        <span class="field" aria-hidden="true">
+            <svg class="go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 5l7 7-7 7"/></svg>
+            <svg class="stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h11M9.5 7l5 5-5 5M20.5 5v14"/></svg>
+        </span>
+        <div>
+            <h1><span class="state-unknown">Turn on Beam</span><span class="state-on">Beam is on</span><span class="state-off">Beam is off</span></h1>
+            <p class="state-unknown">You can turn on Beam’s extension in Safari Extensions preferences.</p>
+            <p class="state-on">Beam’s extension is currently on. You can turn it off in Safari Extensions preferences.</p>
+            <p class="state-off">Beam’s extension is currently off. You can turn it on in Safari Extensions preferences.</p>
+        </div>
+    </div>
     <button class="open-preferences">Quit and Open Safari Extensions Preferences…</button>
 </body>
 </html>

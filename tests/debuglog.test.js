@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { report, mailto, SUPPORT_EMAIL } = require('../extension/lib/debuglog.js');
+const { report, body, mailto, SUPPORT_EMAIL } = require('../extension/lib/debuglog.js');
 
 const info = { version: '0.2.7', userAgent: 'Safari test', style: 'signal', now: Date.UTC(2026, 10, 8, 18, 0, 0) };
 
@@ -33,4 +33,8 @@ test('mailto puts what the user typed before the report', () => {
   const url = mailto('Beam debug log', '0.2.7', '  The menu item does nothing  ');
   const body = decodeURIComponent(url.split('&body=')[1]);
   assert.ok(body.startsWith('The menu item does nothing\n\nBeam debug log'));
+});
+
+test('the clipboard copy carries the note too, so it survives a mail app that never opens', () => {
+  assert.equal(body('Beam debug log', '  The menu item does nothing  '), 'The menu item does nothing\n\nBeam debug log\n');
 });

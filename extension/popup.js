@@ -53,7 +53,7 @@
     try { saved = await browser.storage.local.get([...BeamDebugLog.KEYS, BeamTheme.STORAGE_KEY]); } catch (e) { /* report what we have */ }
     const text = BeamDebugLog.report(saved, { version, userAgent: navigator.userAgent, style: BeamTheme.normalize(saved[BeamTheme.STORAGE_KEY]), now: Date.now() });
     let copied = false;
-    try { await navigator.clipboard.writeText(text); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
+    try { await navigator.clipboard.writeText(BeamDebugLog.body(text, problem.value)); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
     const url = BeamDebugLog.mailto(text, version, problem.value);
     try { await browser.tabs.create({ url }); } catch (e) { window.open(url); }
     showDraft('');

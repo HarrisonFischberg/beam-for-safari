@@ -32,12 +32,15 @@
     ].join('\n');
   }
 
-  // problem: what the user typed under "What went wrong?"; it leads the email.
-  function mailto(text, version, problem = '') {
-    const subject = `Beam ${version} debug logs`;
-    const body = `${problem.trim()}\n\n${text}\n`;
-    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  // problem: what the user typed under "What went wrong?"; it leads the email and the clipboard copy.
+  function body(text, problem = '') {
+    return `${problem.trim()}\n\n${text}\n`;
   }
 
-  return { SUPPORT_EMAIL, KEYS, report, mailto };
+  function mailto(text, version, problem = '') {
+    const subject = `Beam ${version} debug logs`;
+    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body(text, problem))}`;
+  }
+
+  return { SUPPORT_EMAIL, KEYS, report, body, mailto };
 });

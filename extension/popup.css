@@ -1,6 +1,14 @@
 html, body { margin: 0; background: var(--panel); }
 .gate-popup { width: 340px; border: 0; border-radius: 0; box-shadow: none; }
-#debug-logs { width: 100%; }
-#problem { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 8px 10px; min-height: 64px; resize: vertical; }
+/* Two sections. Gaps grow with the grouping level: 6-8 px inside a group, 20 px between the sections, which a rule also separates. */
+.gate-popup .gate-body { padding: var(--space-4); gap: 0; }
+.gate-group-label { margin-bottom: var(--space-2); }
+.gate-styles { margin-bottom: 20px; }
+#debug-label { border-top: 1px solid var(--line); padding-top: var(--space-4); }
+label.gate-detail { font: var(--text-strong); color: var(--ink); margin-bottom: 6px; }
+#problem { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 8px 10px; min-height: 56px; margin-bottom: var(--space-2); resize: vertical; transition: border-color var(--dur-state) var(--ease-out); }
+#problem:hover { border-color: var(--ink-sub); }
 #problem:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-#debug-logs:disabled { color: var(--ink-sub); cursor: not-allowed; }
+#debug-logs { width: 100%; min-height: var(--control); font-size: 13px; margin-bottom: var(--space-3); }
+#debug-status { font: var(--text-label); }
+@media (prefers-reduced-motion: reduce) { #problem { transition: none; } }

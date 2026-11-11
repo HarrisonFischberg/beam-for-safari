@@ -5,9 +5,10 @@
 (function (root) {
   let cssPromise = null, host = null, timer = null;
 
+  // go: the arrow. blocked: the same arrow stopped at a wall (the video stays here).
   const ICON = {
     go: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg>',
-    blocked: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.5v.01"/></svg>',
+    blocked: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h11M9.5 7l5 5-5 5M20.5 5v14"/></svg>',
   };
 
   function loadCss() {
@@ -18,7 +19,7 @@
     return cssPromise;
   }
 
-  // tone: 'go' (signal arrow tile) or 'blocked' (white warning tile). Text is set with textContent only.
+  // tone: 'go' (signal arrow field) or 'blocked' (white field, stopped arrow). Text is set with textContent only.
   // The style the user picked in the toolbar popup (lib/theme.js); unknown or unreadable means Signal Blue.
   function loadStyle() {
     return browser.storage.local.get(BeamTheme.STORAGE_KEY).then((s) => s[BeamTheme.STORAGE_KEY], () => undefined);

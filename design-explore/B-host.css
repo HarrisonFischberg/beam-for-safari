@@ -1,0 +1,10 @@
+/* Direction B host window: native and quiet. The state is said once, large, above the sentence. After Style.css.
+   shortcut: the headline is CSS-generated text, invisible to VoiceOver as a heading; move it into Main.html if B is chosen. */
+body { gap: 12px; }
+img { display: block; width: 96px; height: 96px; }
+p { margin: 0; max-width: 300px; color: #4A5470; }
+p::before { content: "Turn on Beam"; display: block; margin-bottom: 4px; color: #141A2B; font-size: 17px; font-weight: 600; }
+p.state-on::before { content: "Beam is on"; }
+p.state-off::before { content: "Beam is off"; }
+button { margin-top: 8px; }
+@media (prefers-color-scheme: dark) { p { color: #AEB8D4; } p::before { color: #F3F5FA; } }

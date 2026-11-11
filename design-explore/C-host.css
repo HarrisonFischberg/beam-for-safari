@@ -1,0 +1,7 @@
+/* Direction C host window: the band runs across the top and carries the state; chevrons when on, barrier stripes when off. After Style.css. */
+body { gap: 16px; padding-top: 56px; box-sizing: border-box; }
+img { display: block; width: 88px; height: 88px; }
+p { position: fixed; top: 0; left: 0; right: 0; margin: 0; display: flex; align-items: center; gap: 16px; min-height: 56px; padding-left: 20px; background: #141A2B; color: #fff; font-weight: 700; text-align: left; }
+p.state-on { background: #2F6BFF; }
+p::after { content: ""; flex: 1; align-self: stretch; min-width: 72px; background: repeating-linear-gradient(-45deg, rgba(255,255,255,.34) 0 6px, transparent 6px 12px); -webkit-mask: linear-gradient(90deg, transparent, #000 85%); mask: linear-gradient(90deg, transparent, #000 85%); }
+p.state-on::after { background: url(glyph-chevron.svg) right center / 14px 14px repeat-x; }

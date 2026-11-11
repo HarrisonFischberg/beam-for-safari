@@ -1,0 +1,65 @@
+/* Direction B, "Light Cone": Beam as a piece of macOS. A light material capsule in the corner of the page, carrying the
+   app icon's own picture: a screen lit by a cone of light from a point below it. Appended after tokens.css +
+   components.css (+ popup.css); no markup or script changes. Shape rule: capsule for the pill, 8 px groups, 6 px controls. */
+.gate-base {
+  --b-screen: #2F6BFF; --b-cone: #9DB9FF;
+  --b-mat: rgba(246,247,250,.86); --b-mat-ink: #141A2B; --b-mat-sub: #4A5470; --b-ring: rgba(0,0,0,.18);
+  --b-seg: 0%; /* how far the selected segment lifts off the panel colour */
+  --b-g-screen: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath fill-rule='evenodd' d='M6.5 3h15A2.5 2.5 0 0 1 24 5.500v8a2.500 2.500 0 0 1-2.500 2.500h-15A2.500 2.500 0 0 1 4 13.500v-8A2.500 2.500 0 0 1 6.500 3zM12 6.300v6.400l5.200-3.200z'/%3E%3Ccircle cx='14' cy='24.500' r='2.300'/%3E%3C/svg%3E");
+  --b-g-cone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M7.500 17.500h13L15.200 23h-2.400z'/%3E%3C/svg%3E");
+  /* no beam: an empty screen with a line through it, and the point of light alone */
+  --b-g-off: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect x='5' y='4' width='18' height='11' rx='2' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M9 17.500l10-16' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='14' cy='24.500' r='2.300'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) { .gate-base { --b-mat: rgba(34,38,52,.84); --b-mat-ink: #F3F5FA; --b-mat-sub: #AEB8D4; --b-ring: rgba(255,255,255,.24); --b-seg: 16%; } }
+[data-theme="dark"] .gate-base { --b-seg: 16%; }
+.beam-violet .gate-base, .gate-base.beam-violet { --b-screen: #8A63FF; --b-cone: #FFAF4D; --b-mat: rgba(31,26,46,.86); --b-mat-ink: #EDE9F7; --b-mat-sub: #B4A9D6; --b-ring: rgba(255,255,255,.24); --b-seg: 16%; }
+
+/* the glyph: screen and source point in one colour, the cone in another */
+.gate-pill .gate-tile, .gate-popup .gate-sign .gate-tile { background: none; border-radius: 0; }
+.gate-pill .gate-tile svg, .gate-popup .gate-sign .gate-tile > * { display: none; }
+.gate-tile::before, .gate-tile::after { content: ""; grid-area: 1 / 1; width: 100%; height: 100%; }
+.gate-tile::before { background: var(--b-screen); -webkit-mask: var(--b-g-screen) center / contain no-repeat; mask: var(--b-g-screen) center / contain no-repeat; }
+.gate-tile::after { background: var(--b-cone); -webkit-mask: var(--b-g-cone) center / contain no-repeat; mask: var(--b-g-cone) center / contain no-repeat; transform-origin: 50% 86%; animation: b-cone 320ms var(--ease-out) 120ms both; }
+.gate-tile.blocked::before { background: var(--b-mat-sub); -webkit-mask-image: var(--b-g-off); mask-image: var(--b-g-off); }
+.gate-tile.blocked::after { display: none; }
+.gate-popup .gate-tile::after { animation: none; } /* the popup opens often: the cone only draws itself in on the pill */
+@keyframes b-cone { from { opacity: 0; transform: scaleY(.2); } }
+
+/* pill: a material capsule in the top right corner, where macOS puts its own notices */
+.gate-pill { left: auto; right: var(--space-3); transform: none; transform-origin: 100% 0; max-width: min(calc(100% - 24px), 392px); min-height: 40px; padding: 6px 16px 6px 8px; gap: 8px; align-items: center; border: 0; border-radius: 20px; background: var(--b-mat); color: var(--b-mat-ink); -webkit-backdrop-filter: blur(24px) saturate(1.8); backdrop-filter: blur(24px) saturate(1.8); box-shadow: 0 0 0 .5px var(--b-ring), 0 8px 24px rgba(0,0,0,.22), 0 1px 2px rgba(0,0,0,.14); font: 500 13px/1.35 var(--font); animation-name: b-in; }
+.gate-pill .gate-tile { width: 28px; height: 28px; align-self: center; }
+.gate-pill > span:last-child { text-wrap: pretty; }
+@keyframes b-in { from { opacity: 0; transform: scale(.96); } }
+
+/* popup: a plain popover. No slab; the glyph and two lines of text. */
+.gate-popup .gate-sign { background: none; color: var(--ink); padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.gate-popup .gate-sign .gate-tile { width: 36px; height: 36px; }
+.gate-popup .gate-sign h3 { font: 600 15px/20px var(--font); }
+.gate-popup .gate-sign p { margin: 0; color: var(--ink-sub); font: var(--text-label); }
+.gate-popup .gate-body { padding: 14px 16px 16px; gap: 0; }
+.gate-group-label { text-transform: none; letter-spacing: 0; font: 500 12px/16px var(--font); margin-bottom: 6px; }
+
+/* style choice: a segmented control; the chosen style's description sits under it */
+.gate-list { position: relative; grid-template-columns: 1fr 1fr; gap: 0; padding: 2px; border-radius: 8px; background: color-mix(in srgb, var(--ink) 8%, transparent); margin-bottom: 42px; }
+.gate-item { min-height: 28px; padding: 0 8px; gap: 6px; justify-content: center; border: 0; border-radius: 6px; }
+.gate-item:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+.gate-item[aria-checked="true"] { background: color-mix(in srgb, var(--ink) var(--b-seg), var(--panel)); box-shadow: 0 0 0 .5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.18); }
+.gate-swatch { width: 10px; height: 10px; border: 0; border-radius: 50%; }
+.gate-swatch.signal { background: #2F6BFF; }
+.gate-swatch.violet { background: #8A63FF; }
+.gate-meta { flex: none; }
+.gate-meta b { font-weight: 500; }
+.gate-item[aria-checked="true"] .gate-meta b { font-weight: 600; }
+.gate-meta span { display: none; position: absolute; left: 2px; top: calc(100% + 6px); }
+.gate-item[aria-checked="true"] .gate-meta span { display: block; }
+.gate-radio { display: none; }
+
+/* debug logs */
+.gate-list + .gate-group-label { border-top: 1px solid var(--line); padding-top: 14px; }
+label.gate-detail { font: 500 13px/18px var(--font); color: var(--ink); margin-bottom: 6px; }
+#problem { min-height: 56px; border-radius: 6px; margin-bottom: 8px; }
+#debug-logs { width: auto; justify-self: end; min-height: 28px; padding: 0 12px; border-radius: 6px; font: 500 13px/1 var(--font); box-shadow: 0 .5px 1.5px rgba(0,0,0,.12); margin-bottom: 12px; }
+#debug-logs:disabled { border-style: solid; box-shadow: none; }
+#debug-status { font: var(--text-label); line-height: 16px; }
+
+@media (prefers-reduced-motion: reduce) { .gate-tile::after { animation: none; } }

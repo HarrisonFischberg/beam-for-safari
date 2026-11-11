@@ -1,0 +1,52 @@
+/* Direction A, "Wayfinder": Beam as a wayfinding sign. A dark slab with a flush arrow field in the signal colour,
+   the way a road or terminal sign carries its arrow. Appended after tokens.css + components.css (+ popup.css);
+   no markup or script changes. Shape rule: signs and controls 8 px, inner parts 4 px, nothing rounder. */
+.gate-base {
+  --a-go: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12h15M13 5l7 7-7 7'/%3E%3C/svg%3E");
+  /* the same arrow, stopped at a wall: the video stays here */
+  --a-stop: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h11M9.5 7l5 5-5 5M20.5 5v14'/%3E%3C/svg%3E");
+}
+.gate-arrow { animation-iteration-count: 2; } /* nudge twice on open, then rest */
+
+/* pill: a small sign. The tile becomes a full-height arrow field. */
+.gate-pill { padding: 0; gap: 0; align-items: stretch; overflow: hidden; border-radius: 8px; max-width: min(calc(100% - 24px), 420px); font: 700 13px/1.35 var(--font); box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+.gate-pill .gate-tile { width: 40px; height: auto; min-height: 38px; border-radius: 0; align-self: stretch; }
+.gate-pill .gate-tile svg { display: none; }
+.gate-pill .gate-tile::before { content: ""; width: 20px; height: 20px; background: currentColor; -webkit-mask: var(--a-go) center / contain no-repeat; mask: var(--a-go) center / contain no-repeat; }
+.gate-pill .gate-tile.blocked::before { -webkit-mask-image: var(--a-stop); mask-image: var(--a-stop); }
+.gate-pill > span:last-child { align-self: center; padding: 10px 14px 10px 12px; text-wrap: pretty; }
+
+/* popup header: the same sign, larger */
+.gate-popup .gate-sign { padding: 0; gap: 0; align-items: stretch; }
+.gate-popup .gate-sign .gate-tile { width: 64px; height: auto; min-height: 68px; border-radius: 0; }
+.gate-popup .gate-sign .gate-tile svg { width: 30px; height: 30px; }
+.gate-popup .gate-sign > div { align-self: center; padding: 12px 16px; }
+.gate-popup .gate-sign h3 { letter-spacing: -.01em; }
+
+/* popup body: two sections; gaps are 4-8 inside a group, 20 between sections */
+.gate-popup .gate-body { padding: 16px; gap: 0; }
+.gate-group-label { text-transform: none; letter-spacing: 0; font: 600 12px/16px var(--font); margin-bottom: 8px; }
+
+/* style choice: each option previews the sign you will get on the video */
+.gate-list { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.gate-item { display: grid; grid-template: "sw sw" auto "meta radio" auto / 1fr auto; gap: 8px 6px; align-items: start; min-height: 0; padding: 8px; }
+.gate-item[aria-checked="true"] { box-shadow: 0 0 0 1px var(--ink); }
+.gate-swatch { grid-area: sw; position: relative; width: 100%; height: 28px; border: 0; border-radius: 4px; overflow: hidden; }
+.gate-swatch::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 28px; background: currentColor; }
+.gate-swatch::after { content: ""; position: absolute; left: 7px; top: 7px; width: 14px; height: 14px; -webkit-mask: var(--a-go) center / contain no-repeat; mask: var(--a-go) center / contain no-repeat; }
+.gate-swatch.signal { color: #2F6BFF; background: linear-gradient(#fff, #fff) 38px 50% / 64px 4px no-repeat #141A2B; }
+.gate-swatch.signal::after { background: #fff; }
+.gate-swatch.violet { color: #FFAF4D; background: linear-gradient(#fff, #fff) 38px 50% / 64px 4px no-repeat #5B32D6; }
+.gate-swatch.violet::after { background: #2A1600; }
+.gate-meta { grid-area: meta; }
+.gate-meta b { white-space: normal; }
+.gate-meta span { display: block; margin-top: 2px; line-height: 16px; }
+.gate-radio { grid-area: radio; margin-top: 1px; }
+
+/* debug logs: quieter than the product, set apart by a rule */
+.gate-list + .gate-group-label { border-top: 1px solid var(--line); padding-top: 16px; }
+label.gate-detail { font: var(--text-strong); color: var(--ink); margin-bottom: 6px; }
+#problem { min-height: 56px; margin-bottom: 8px; }
+#debug-logs { min-height: 36px; font-size: 13px; margin-bottom: 12px; }
+#debug-logs:disabled { border-style: solid; background: var(--paper); }
+#debug-status { font: var(--text-label); line-height: 16px; }

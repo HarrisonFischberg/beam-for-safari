@@ -1,0 +1,100 @@
+<!doctype html>
+<!-- Design exploration stage (branch design/explore only; not shipped). Renders Beam's REAL surfaces with an optional
+     variant stylesheet appended, the way store/screenshots/page.html and shot.html do: `browser` is stubbed, the pill
+     comes from extension/lib/pill.js, the popup is extension/popup.html, the host window is Main.html.
+     ?view=context|matrix|popup|host  &variant=A|B|C (none = baseline)  &style=signal|violet  &draft=text  &theme=dark
+     The magenta ground is cropped away by make.sh. -->
+<html lang="en"><head><meta charset="utf-8"><title>Beam design stage</title>
+<style>
+html,body{margin:0;background:#f0f}
+body{font:13px/1.4 -apple-system,system-ui,sans-serif;color:#1c2330}
+#shot{display:inline-block;vertical-align:top}
+#shot.sheet{background:#E6E8EE;padding:24px;overflow:hidden}
+iframe{display:block;border:0;background:#fff}
+.pages{display:flex;gap:24px}
+.page{width:640px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 10px 30px rgba(20,26,43,.18)}
+.vid{position:relative;overflow:hidden}
+.vid video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#000}
+.page main{padding:14px 20px 18px;font-size:15px;line-height:1.5}
+.page h1{margin:0 0 4px;font-size:21px;line-height:1.2}
+.page p{margin:0;color:#56607a}
+.block+.block{margin-top:24px}
+.block h2{margin:0 0 8px;font-size:13px;font-weight:600;color:#4A5470}
+.grid{display:grid;grid-template-columns:repeat(3,420px);gap:12px}
+.grid .vid{height:132px;border-radius:6px;background-size:420px auto;background-position:top center}
+.cap{font-size:12px;color:#4A5470}
+</style></head>
+<body><div id="shot"></div>
+<script>
+const q = new URLSearchParams(location.search), shot = document.getElementById('shot');
+const variant = q.get('variant'), view = q.get('view') || 'context';
+const text = (p) => fetch(p).then((r) => r.text());
+const svg = (body) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">${body}</svg>`);
+const bar = (c) => `<rect x="24" y="334" width="592" height="4" rx="2" fill="${c}" opacity=".35"/><rect x="24" y="334" width="170" height="4" rx="2" fill="${c}"/>`;
+// Original artwork. ferry is the store demo frame (image-heavy); snow is a light frame; night is a dark one.
+const FRAMES = {
+  ferry: svg(`<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27356b"/><stop offset=".62" stop-color="#e98a5b"/><stop offset=".63" stop-color="#3b4f86"/><stop offset="1" stop-color="#141a2b"/></linearGradient></defs><rect width="640" height="360" fill="url(#s)"/><circle cx="430" cy="212" r="46" fill="#ffd9a0"/><rect y="226" width="640" height="134" fill="#22305c" opacity=".92"/><path d="M90 226h170l-18 22H112z" fill="#f3f5fa"/><rect x="140" y="204" width="76" height="22" fill="#f3f5fa"/><rect x="186" y="186" width="14" height="18" fill="#ff302f"/><circle cx="320" cy="180" r="34" fill="#000" opacity=".45"/><path d="M309 162v36l30-18z" fill="#fff"/>${bar('#fff')}`),
+  snow: svg(`<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4edf6"/><stop offset="1" stop-color="#ffffff"/></linearGradient></defs><rect width="640" height="360" fill="url(#s)"/><circle cx="500" cy="92" r="30" fill="#fff8e6"/><path d="M0 250l150-150 90 80 110-120 150 130 140-70v240H0z" fill="#f4f7fb"/><path d="M0 290l210-90 160 70 270-90v180H0z" fill="#ffffff"/><path d="M150 100l34 34-30-8-22 20z M350 60l40 46-36-12-30 26z" fill="#d5dfeb"/><path d="M96 262l10-34 10 34z M124 270l8-28 8 28z M520 250l10-34 10 34z" fill="#5f7a72"/><circle cx="300" cy="258" r="5" fill="#ff302f"/><path d="M290 268l24-6" stroke="#1c2330" stroke-width="2"/>${bar('#1c2330')}`),
+  night: svg(`<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05060a"/><stop offset="1" stop-color="#0e1224"/></linearGradient></defs><rect width="640" height="360" fill="url(#s)"/><circle cx="110" cy="70" r="1.5" fill="#fff"/><circle cx="260" cy="40" r="1" fill="#fff"/><circle cx="520" cy="96" r="1.5" fill="#fff"/><path d="M0 360V250h60v-40h50v70h40v-110h70v90h50v-50h60v80h40v-130h60v100h50v-60h70v90h40v-50h50v120z" fill="#0a0c15"/><g fill="#ffd9a0"><rect x="162" y="186" width="6" height="8"/><rect x="196" y="210" width="6" height="8"/><rect x="384" y="174" width="6" height="8"/><rect x="402" y="214" width="6" height="8"/><rect x="552" y="230" width="6" height="8"/><rect x="76" y="232" width="6" height="8"/></g>${bar('#fff')}`),
+};
+// The pill's two real strings: content.js shows GO on success; the others are lib/reasons.js messages (read below).
+const GO = 'Choose your Apple TV…';
+
+let style = 'signal';
+const css = () => Promise.all(['/extension/design/tokens.css', '/extension/design/components.css'].concat(variant ? [`/design-explore/${variant}.css`] : []).map(text)).then((p) => p.join('\n'));
+window.browser = { storage: { local: { get: async () => ({ beamStyle: style }), set: async () => {} } }, runtime: { id: 'stub', sendMessage: css } };
+const load = (s) => new Promise((r) => { const e = document.createElement('script'); e.src = '/extension/lib/' + s + '.js'; e.onload = r; document.body.append(e); });
+// Draws the real pill, then parks it inside `cell` so one page can hold several. pill.js removes the previous
+// pill on each show(); making remove() a no-op on the parked host keeps it.
+async function pill(cell, msg, tone, st) {
+  style = st || 'signal';
+  await BeamPill.show(msg, tone);
+  const host = document.documentElement.lastElementChild;
+  host.remove = () => {};
+  host.style.position = 'absolute';
+  cell.append(host);
+}
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html) e.innerHTML = html; return e; };
+
+const VIEWS = {
+  async context() {
+    shot.className = 'sheet';
+    const pages = shot.appendChild(el('div', 'pages'));
+    const add = (frame, h, p) => { const pg = pages.appendChild(el('div', 'page', `<div class="vid"><video poster="${FRAMES[frame]}"></video></div><main><h1>${h}</h1><p>${p}</p></main>`)); return pg.firstChild; };
+    await pill(add('ferry', 'Morning ferry, sped up', 'The 7:10 crossing, filmed from the top deck. Forty minutes in four.'), GO, 'go', q.get('style'));
+    await pill(add('snow', 'Snow line, episode 4', 'Included with your subscription. 42 minutes.'), BeamReasons.explain('protected').text, 'blocked', q.get('style'));
+  },
+  async matrix() {
+    shot.className = 'sheet';
+    const cases = [[GO, 'go'], [BeamReasons.explain('protected').text, 'blocked'], [BeamReasons.explain('media-source').text, 'blocked']];
+    for (const st of ['signal', 'violet']) {
+      const block = shot.appendChild(el('div', 'block', `<h2>${BeamTheme.STYLES[st].label}</h2>`)), grid = block.appendChild(el('div', 'grid'));
+      for (const frame of ['ferry', 'snow', 'night']) for (const [msg, tone] of cases) {
+        const cell = grid.appendChild(el('div', 'vid'));
+        cell.style.backgroundImage = `url("${FRAMES[frame]}")`;
+        await pill(cell, msg, tone, st);
+      }
+    }
+  },
+  async popup() {
+    const [html, ...sheets] = await Promise.all(['/extension/popup.html', '/extension/design/tokens.css', '/extension/design/components.css', '/extension/popup.css'].concat(variant ? [`/design-explore/${variant}.css`] : []).map(text));
+    const store = { beamStyle: q.get('style') || 'signal', supportDraft: q.get('draft') || '' };
+    const stub = `<base href="/extension/"><script>window.browser={storage:{local:{get:async()=>(${JSON.stringify(store)}),set:async()=>{},remove:async()=>{}}},runtime:{getManifest:()=>({version:''})},tabs:{create:async()=>{}}};<\/script>`;
+    const f = shot.appendChild(el('iframe'));
+    f.style.cssText = 'width:340px;height:0';
+    f.onload = () => { f.style.height = f.contentDocument.body.scrollHeight + 'px'; };
+    f.srcdoc = html.replace(/<link rel="stylesheet"[^>]*>/g, '').replace('<html lang="en">', `<html lang="en"${q.get('theme') ? ` data-theme="${q.get('theme')}"` : ''}>`).replace('<head>', `<head>${stub}<style>${sheets.join('\n')}</style>`);
+  },
+  async host() {
+    const f = shot.appendChild(el('iframe'));
+    f.style.cssText = 'width:425px;height:325px';
+    f.onload = () => {
+      f.contentWindow.show(q.get('state') === 'on', true);
+      f.contentDocument.body.style.font = '13px -apple-system, system-ui'; // Chrome lacks WebKit's -apple-system-short-body
+      if (variant) f.contentDocument.head.insertAdjacentHTML('beforeend', `<link rel="stylesheet" href="/design-explore/${variant}-host.css">`);
+    };
+    f.src = '/Beam/Beam/Beam/Resources/Base.lproj/Main.html';
+  },
+};
+(async () => { for (const s of ['theme', 'reasons', 'pill']) await load(s); await VIEWS[view](); })();
+</script></body></html>

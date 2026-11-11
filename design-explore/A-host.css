@@ -1,0 +1,7 @@
+/* Glyphs are files: the host page's Content-Security-Policy (default-src 'self') blocks data: images.
+   Direction A host window: the on/off state is a sign with the arrow field (go when on, stopped when off). After Style.css. */
+body { gap: 16px; }
+img { display: block; width: 88px; height: 88px; }
+p { position: relative; margin: 0; max-width: 300px; padding: 10px 14px 10px 58px; border-radius: 8px; overflow: hidden; background: #141A2B; color: #fff; font-weight: 600; text-align: left; border: 1px solid #141A2B; }
+p::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 44px; background: #fff url(glyph-stop.svg) center / 22px no-repeat; }
+p.state-on::before { background: #2F6BFF url(glyph-arrow.svg) center / 22px no-repeat; }

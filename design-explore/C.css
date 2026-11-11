@@ -1,0 +1,58 @@
+/* Direction C, "Tracer": the beam itself, drawn as a band of colour running off to the right behind a trail of chevrons.
+   The pill becomes a ribbon fixed to the top edge of the page; the popup opens with the same band. Appended after
+   tokens.css + components.css (+ popup.css); no markup or script changes. Shape rule: bands are square, controls 4 px. */
+.gate-base {
+  --c-band: #2F6BFF; --c-stop: #141A2B;
+  --c-chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='white' stroke-width='2.500' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2l5 5-5 5'/%3E%3C/svg%3E");
+  --c-go: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12h15M13 5l7 7-7 7'/%3E%3C/svg%3E");
+  --c-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2.200' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.500 6.300l2.300 2.300 4.700-5'/%3E%3C/svg%3E");
+  --c-fade: linear-gradient(90deg, transparent, #000 85%);
+}
+.beam-violet .gate-base, .gate-base.beam-violet {
+  --c-band: #5B32D6; --c-stop: #2A2145;
+  --c-chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='%23FFAF4D' stroke-width='2.500' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2l5 5-5 5'/%3E%3C/svg%3E");
+}
+
+/* pill: a ribbon across the top edge. Go is the band colour with chevrons; blocked is dark with barrier stripes. */
+.gate-pill { top: 0; left: 0; right: 0; transform: none; width: auto; max-width: none; min-height: 36px; padding: 0 0 0 16px; gap: 10px; align-items: center; overflow: hidden; border: 0; border-bottom: var(--edge-on-dark); border-radius: 0; background: var(--c-band); color: #fff; font: 700 13px/1.35 var(--font); box-shadow: 0 2px 10px rgba(0,0,0,.3); animation-name: c-drop; }
+.gate-pill:has(.gate-tile.blocked) { background: var(--c-stop); }
+.gate-pill .gate-tile, .gate-pill .gate-tile.blocked { width: 18px; height: 18px; align-self: center; border-radius: 0; background: none; color: #fff; }
+.gate-pill .gate-tile svg { width: 18px; height: 18px; }
+.gate-pill > span:last-child { padding: 9px 0; text-wrap: pretty; }
+.gate-pill::after, .gate-popup .gate-sign::after { content: ""; flex: 1; align-self: stretch; min-width: 56px; background: var(--c-chev) right center / 14px 14px repeat-x; -webkit-mask: var(--c-fade); mask: var(--c-fade); }
+.gate-pill:has(.gate-tile.blocked)::after { background: repeating-linear-gradient(-45deg, rgba(255,255,255,.34) 0 6px, transparent 6px 12px); }
+@keyframes c-drop { from { transform: translateY(-100%); } }
+
+/* popup header: the band, with the name set large */
+.gate-popup .gate-sign { background: var(--c-band); padding: 14px 0 14px 16px; gap: 16px; align-items: stretch; }
+.gate-popup .gate-sign .gate-tile { display: none; }
+.gate-popup .gate-sign > div { flex: none; }
+.gate-popup .gate-sign h3 { font: 700 20px/24px var(--font); letter-spacing: -.02em; }
+.gate-popup .gate-sign p { margin: 2px 0 0; color: #fff; }
+.gate-popup .gate-sign::after { background-size: 18px 18px; margin-right: 12px; }
+
+.gate-popup .gate-body { padding: 16px; gap: 0; }
+.gate-group-label { text-transform: none; letter-spacing: 0; font: 700 12px/16px var(--font); color: var(--ink); margin-bottom: 8px; }
+
+/* style choice: two bands in their own colours; the chosen one gets a ring and a check */
+.gate-list { gap: 10px; margin-bottom: 24px; }
+.gate-item, .gate-item:hover, .gate-item[aria-checked="true"] { min-height: 48px; padding: 6px 12px; gap: 12px; border: 0; border-radius: 4px; background: #2F6BFF; color: #fff; }
+#style-violet { background: #5B32D6; }
+.gate-item:hover { box-shadow: inset 0 0 0 99px rgba(0,0,0,.1); }
+.gate-item[aria-checked="true"] { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--ink); }
+.gate-meta b { font-weight: 700; }
+.gate-meta span { color: #fff; }
+.gate-swatch { order: 2; width: 42px; height: 14px; border: 0; border-radius: 0; }
+.gate-swatch.signal { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='white' stroke-width='2.500' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2l5 5-5 5'/%3E%3C/svg%3E") 0 0 / 14px 14px repeat-x; }
+.gate-swatch.violet { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='%23FFAF4D' stroke-width='2.500' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 2l5 5-5 5'/%3E%3C/svg%3E") 0 0 / 14px 14px repeat-x; }
+.gate-radio { order: 3; width: 20px; height: 20px; border-color: #fff; }
+.gate-item[aria-checked="true"] .gate-radio { background: #fff; }
+.gate-item[aria-checked="true"] .gate-radio::after { width: 12px; height: 12px; border-radius: 0; background: #141A2B; -webkit-mask: var(--c-check) center / contain no-repeat; mask: var(--c-check) center / contain no-repeat; }
+
+/* debug logs: one dark button that carries the arrow */
+label.gate-detail { font: var(--text-strong); color: var(--ink); margin-bottom: 6px; }
+#problem { min-height: 56px; border-radius: 4px; border-color: var(--ink-sub); margin-bottom: 8px; }
+#debug-logs { min-height: 36px; justify-content: space-between; padding: 0 12px; border: 0; border-radius: 4px; background: var(--ink); color: var(--panel); font: 700 13px/1 var(--font); margin-bottom: 12px; }
+#debug-logs::after { content: ""; width: 16px; height: 16px; background: currentColor; -webkit-mask: var(--c-go) center / contain no-repeat; mask: var(--c-go) center / contain no-repeat; }
+#debug-logs:disabled { background: var(--line); color: var(--ink-sub); }
+#debug-status { font: var(--text-label); line-height: 16px; }

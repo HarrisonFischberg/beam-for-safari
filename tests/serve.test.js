@@ -51,6 +51,11 @@ test('HLS playlist gets the Apple MIME type', async () => {
   assert.equal((await fetch(`${base}/x.m3u8`)).headers.get('content-type'), 'application/vnd.apple.mpegurl');
 });
 
+test('a malformed path gets 400 and the server keeps running', async () => {
+  assert.equal((await fetch(`${base}/%`)).status, 400);
+  assert.equal((await fetch(`${base}/a.mp4`)).status, 200);
+});
+
 test('missing file 404; path traversal never reaches files outside the root', async () => {
   assert.equal((await fetch(`${base}/nope.mp4`)).status, 404);
   const http = require('node:http');

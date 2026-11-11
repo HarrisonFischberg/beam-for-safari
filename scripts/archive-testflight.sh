@@ -9,7 +9,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 TEAM="${BEAM_TEAM:-KTV2G3Z883}"
 N="$(cat BUILD_NUMBER)"
-VERSION="$(node -p "require('./extension/manifest.json').version" 2>/dev/null || echo 1.0)"
+VERSION="$(node -p "require('./extension/manifest.json').version")"
 auth=()
 [ -n "${ASC_KEY_PATH:-}" ] && auth=(-authenticationKeyPath "${ASC_KEY_PATH/#\~/$HOME}" \
   -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
@@ -23,8 +23,8 @@ xcodebuild -project Beam/Beam/Beam.xcodeproj -scheme Beam -configuration Release
   -allowProvisioningUpdates ${auth[@]+"${auth[@]}"} DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic \
   MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$N" archive > "$tmp/archive.log" 2>&1 || {
   grep -E ' error:' "$tmp/archive.log" >&2 || tail -n 30 "$tmp/archive.log" >&2
-  echo "archive failed (full log: rerun without 2>&1 redirect, or see $tmp/archive.log before exit)" >&2
-  cp "$tmp/archive.log" build/archive-failed.log 2>/dev/null || true
+  mkdir -p build && cp "$tmp/archive.log" build/archive-failed.log || true
+  echo "archive failed (full log: build/archive-failed.log)" >&2
   exit 1
 }
 echo "archived: $archive"

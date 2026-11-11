@@ -22,7 +22,9 @@ export function createServer(root) {
   const base = path.resolve(root);
   return http.createServer((req, res) => {
     const url = new URL(req.url, 'http://x');
-    const file = path.resolve(base, '.' + decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname));
+    let pathname;
+    try { pathname = decodeURIComponent(url.pathname); } catch (e) { res.writeHead(400).end('bad request'); return; } // a stray "%" must not crash the server
+    const file = path.resolve(base, '.' + (pathname === '/' ? '/index.html' : pathname));
     if (file !== base && !file.startsWith(base + path.sep)) { res.writeHead(403).end('forbidden'); return; }
     fs.stat(file, (err, st) => {
       if (err || !st.isFile()) { res.writeHead(404).end('not found'); return; }

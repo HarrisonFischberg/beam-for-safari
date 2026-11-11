@@ -196,14 +196,15 @@ Square and sturdy. Signs, rows and controls are 8 px; parts inside them (the swa
 - Line border, 8 px radius; Ink Sub border on hover; 3 px Focus ring.
 
 ### In-page sign
-- Enters with a 240 ms rise; under Reduce Motion it appears instantly. Drawn in a closed Shadow DOM, so page styles cannot reach it and Beam's cannot leak.
+- Enters with a 240 ms rise and leaves with a 190 ms fade; under Reduce Motion it appears and disappears instantly. Stays 4 s, longer for long messages (up to about 7 s); Escape dismisses it without taking the key from the page. Drawn in a closed Shadow DOM, so page styles cannot reach it and Beam's cannot leak.
 - A Try again or Try anyway link, when a state has one, sits at the right edge in signal-on-sign and never wraps.
 
 ## Accessibility
 
 - Measured contrast: sign text 17.3:1 (Signal Blue) and 7.3:1 (Night Violet); status line 11.5:1 and 5.8:1; secondary text at least 6.4:1 on every surface it sits on; focus ring at least 5.8:1. The arrow on the Signal Blue field is 4.498:1, which is why it is a glyph and never small text.
 - Increase Contrast: borders move to Ink, secondary text to near-Ink, the sign's edge becomes solid.
-- Reduce Motion: the arrow nudge, the sign's rise and all transitions are removed.
+- Reduce Motion: the arrow nudge, the sign's rise and exit, the press scale and all transitions are removed.
+- Motion tokens (`tokens.css`): state 150 ms, press 90 ms at scale .97, enter 240 ms ease-out, exit 190 ms ease-in. Full list of interactions: `docs/interaction-matrix.md`.
 - State is never colour alone: the field changes colour and glyph, and the words say it.
 
 ## Do's and Don'ts

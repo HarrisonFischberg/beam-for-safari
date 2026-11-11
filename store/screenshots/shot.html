@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- One Mac App Store screenshot per ?n=1..5, drawn at 1440x900 and captured at 2x by make.sh.
+     The caption is ours; everything on the right is Beam's own UI: the pill from extension/lib/pill.js on page.html,
+     extension/popup.html, and the host app's Main.html. Safari itself is not in any shot. -->
+<html lang="en"><head><meta charset="utf-8"><title>Beam store screenshot</title>
+<link rel="stylesheet" href="/extension/design/tokens.css">
+<style>
+html,body{margin:0;width:1440px;height:900px;overflow:hidden}
+body{display:grid;grid-template-columns:520px 1fr;background:var(--paper);color:var(--ink);font-family:var(--font)}
+body.dark{background:#15121F;color:#EDE9F7}
+.words{align-self:center;padding-left:88px}
+h1{margin:0;font-size:58px;line-height:1.06;letter-spacing:-.02em}
+.words p{margin:24px 0 0;font-size:23px;line-height:1.4;color:var(--ink-sub)}
+body.dark .words p{color:#B4A9D6}
+.stage{position:relative}
+iframe{position:absolute;border:0;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(20,26,43,.28),0 2px 6px rgba(20,26,43,.18)}
+</style></head>
+<body>
+<div class="words"><h1 id="h"></h1><p id="sub"></p></div>
+<div class="stage" id="stage"></div>
+<script>
+const SHOTS = [
+  { h: 'Right-click a video to send it to your Apple TV', sub: 'Choose Beam to Apple TV from the menu, then pick your TV in Safari’s AirPlay list.', page: 'case=go' },
+  { h: 'Beam tells you when a video can’t be sent', sub: 'Protected video only plays in Safari. When a site streams in a way AirPlay can’t send, Beam points you to Screen Mirroring.', page: 'case=protected' },
+  { h: 'Pick blue or violet', sub: 'Signal Blue follows your Mac’s light or dark mode. Night Violet is always dark.', page: 'case=go&style=violet', popup: { beamStyle: 'violet' }, dark: true },
+  { h: 'Beam collects no data', sub: 'There is no account. If something breaks, you can email the debug logs yourself, and they never include the pages you visit.', popup: { supportDraft: 'The picker opened, but my Apple TV was not in the list.' } },
+  { h: 'Turn Beam on in Safari settings', sub: 'Then allow it on websites, or the menu item won’t do anything.', host: true },
+];
+const s = SHOTS[(new URLSearchParams(location.search).get('n') || 1) - 1], stage = document.getElementById('stage');
+document.getElementById('h').textContent = s.h;
+document.getElementById('sub').textContent = s.sub;
+document.body.classList.toggle('dark', Boolean(s.dark));
+const frame = (css) => { const f = document.createElement('iframe'); f.style.cssText = css; stage.append(f); return f; };
+
+// One frame at a time: python's http.server drops requests when both load at once.
+const page = s.page && frame(s.popup ? 'left:0;top:330px;width:520px;height:376px;zoom:1.1' : 'left:60px;top:168px;width:520px;height:376px;zoom:1.5');
+const pageLoaded = page ? new Promise((r) => { page.onload = r; page.src = 'page.html?' + s.page; }) : Promise.resolve();
+
+// The real popup, with `browser` stubbed before its scripts run (Safari provides it in the extension).
+// Its stylesheets are inlined, because links inside a srcdoc frame sometimes had not loaded when the shot was taken.
+const text = (f) => fetch('/extension/' + f).then((r) => r.text());
+if (s.popup) pageLoaded.then(() => Promise.all(['popup.html', 'design/tokens.css', 'design/components.css', 'popup.css'].map(text))).then(([html, ...css]) => {
+  const stub = `<base href="/extension/"><script>window.browser={storage:{local:{get:async()=>(${JSON.stringify(s.popup)}),set:async()=>{},remove:async()=>{}}},runtime:{getManifest:()=>({version:''})},tabs:{create:async()=>{}}};<\/script>`;
+  const f = frame(s.page ? 'right:48px;top:150px;width:340px;height:0;zoom:1.25' : 'left:180px;top:44px;width:340px;height:0;zoom:1.5');
+  f.onload = () => { f.style.height = f.contentDocument.body.scrollHeight + 'px'; };
+  f.srcdoc = html.replace(/<link rel="stylesheet"[^>]*>/g, '').replace('<head>', `<head>${stub}<style>${css.join('\n')}</style>`);
+});
+
+// The host app is a window holding this one page; show(false, true) is what it runs when the extension is off.
+if (s.host) {
+  const f = frame('left:170px;top:200px;width:425px;height:325px;zoom:1.3');
+  f.onload = () => { f.contentWindow.show(false, true); f.contentDocument.body.style.font = '13px -apple-system, system-ui'; }; // Chrome lacks WebKit's -apple-system-short-body
+  f.src = '/Beam/Beam/Beam/Resources/Base.lproj/Main.html';
+}
+</script></body></html>

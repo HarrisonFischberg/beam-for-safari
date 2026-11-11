@@ -1,0 +1,21 @@
+Beam adds one item to Safari's right-click menu on your Mac: Beam to Apple TV. Right-click a video on a web page and choose it, and Safari's AirPlay list opens for that video. Pick your Apple TV and the video plays there.
+
+It is for sites that hide their AirPlay button or don't have one. Beam works on videos inside embedded players and on players that block the right-click menu. If a site has turned AirPlay off for a video, Beam turns it back on for that one video before it opens the list.
+
+Some video can't be sent, and Beam says why in a short message on the page. Protected video only plays in Safari, and Beam does not try to get around the protection. Some sites stream in a way AirPlay can't send, and for those Beam suggests Screen Mirroring in Control Center. If the video hasn't loaded yet, Beam asks you to press play and try again.
+
+Setting up
+
+After you install Beam, open Safari Settings, go to Extensions, turn Beam on and allow it on websites. Without the website permission the menu item still appears, but it does nothing.
+
+You need an Apple TV on the same Wi-Fi network as your Mac.
+
+Privacy
+
+Beam has no account and collects no data. It makes no network connections of its own. The video goes from Safari to your Apple TV over AirPlay.
+
+If something breaks, Beam's toolbar button has a short form that opens an email to support with Beam's version and error codes filled in. The email never includes the pages you visit, and nothing is sent until you press Send.
+
+Looks
+
+Beam's messages and its toolbar panel come in two styles, Signal Blue and Night Violet. You choose one from the toolbar button.

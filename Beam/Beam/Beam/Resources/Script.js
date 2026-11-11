@@ -16,7 +16,12 @@ function show(enabled, useSettingsInsteadOfPreferences) {
 }
 
 function openPreferences() {
+    const button = document.querySelector("button.open-preferences");
+    if (button.disabled) return; // one request: the app quits as soon as Safari answers
+    button.disabled = true;
     webkit.messageHandlers.controller.postMessage("open-preferences");
 }
 
 document.querySelector("button.open-preferences").addEventListener("click", openPreferences);
+// The window's only action is its default button, so Return presses it.
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target === document.body) openPreferences(); });

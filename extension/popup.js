@@ -47,16 +47,21 @@
     showDraft(problem.value);
     browser.storage.local.set({ [DRAFT_KEY]: problem.value }).catch(() => {});
   });
+  // Command-Return sends from the note field, the Mac convention for a multi-line field.
+  problem.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.metaKey) { e.preventDefault(); btn.click(); } });
   btn.addEventListener('click', async () => {
+    btn.disabled = true; // a second click while this runs would open a second email
+    const note = problem.value;
     const version = browser.runtime.getManifest().version;
     let saved = {};
     try { saved = await browser.storage.local.get([...BeamDebugLog.KEYS, BeamTheme.STORAGE_KEY]); } catch (e) { /* report what we have */ }
     const text = BeamDebugLog.report(saved, { version, userAgent: navigator.userAgent, style: BeamTheme.normalize(saved[BeamTheme.STORAGE_KEY]), now: Date.now() });
     let copied = false;
-    try { await navigator.clipboard.writeText(BeamDebugLog.body(text, problem.value)); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
-    const url = BeamDebugLog.mailto(text, version, problem.value);
+    try { await navigator.clipboard.writeText(BeamDebugLog.body(text, note)); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
+    const url = BeamDebugLog.mailto(text, version, note);
     try { await browser.tabs.create({ url }); } catch (e) { window.open(url); }
     showDraft('');
+    problem.focus(); // the button is disabled again; keep keyboard focus somewhere real
     browser.storage.local.remove(DRAFT_KEY).catch(() => {});
     status.textContent = copied
       ? 'Logs copied. Your mail app is opening with them filled in: press Send. If it does not open, paste them into an email to support@rarecreatures.app.'

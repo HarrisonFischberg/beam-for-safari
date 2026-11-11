@@ -3,7 +3,12 @@
 // and the remaining states. Styles come from the design system via the background script (it can read the
 // extension's own files; page-injected links cannot, without exposing them to every site).
 (function (root) {
-  let cssPromise = null, host = null, timer = null;
+  let cssPromise = null, host = null, pill = null, timer = null;
+  const EXIT_MS = 190; // --dur-exit in design/tokens.css
+
+  // Long enough to read: 4 s, or more for the longer failure messages (about 60 ms a character after a 2 s base).
+  const displayMs = (text) => Math.max(4000, 2000 + 60 * String(text).length);
+  const onKey = (e) => { if (e.key === 'Escape') hide(); }; // not cancelled: the page still gets its Escape
 
   // go: the arrow. blocked: the same arrow stopped at a wall (the video stays here).
   const ICON = {
@@ -25,7 +30,7 @@
     return browser.storage.local.get(BeamTheme.STORAGE_KEY).then((s) => s[BeamTheme.STORAGE_KEY], () => undefined);
   }
 
-  async function show(text, tone, ms = 4000) {
+  async function show(text, tone, ms = displayMs(text)) {
     const [css, style] = await Promise.all([loadCss(), loadStyle()]);
     hide();
     host = document.createElement('div');
@@ -36,7 +41,7 @@
     const wrap = document.createElement('div');
     wrap.className = 'gate-base';
     BeamTheme.apply(wrap, style);
-    const pill = document.createElement('div');
+    pill = document.createElement('div');
     pill.className = 'gate-pill';
     pill.setAttribute('role', 'status');
     const tile = document.createElement('span');
@@ -48,13 +53,20 @@
     wrap.append(pill);
     shadow.append(sheet, wrap);
     document.documentElement.append(host);
+    document.addEventListener('keydown', onKey, true);
     timer = setTimeout(hide, ms);
   }
 
   function hide() {
     clearTimeout(timer);
-    if (host) { host.remove(); host = null; }
+    if (!host) return;
+    document.removeEventListener('keydown', onKey, true);
+    const leaving = host;
+    host = null;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { leaving.remove(); return; }
+    pill.classList.add('leaving'); // a new sign may rise over this one while it fades
+    setTimeout(() => leaving.remove(), EXIT_MS);
   }
 
-  root.BeamPill = { show, hide };
+  root.BeamPill = { show, hide, displayMs };
 })(typeof self !== 'undefined' ? self : this);

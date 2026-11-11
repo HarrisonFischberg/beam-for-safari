@@ -28,11 +28,11 @@
 
 /* list item (radio row): default, hover, selected, focus, disabled */
 .gate-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.gate-item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: var(--space-1) var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-md); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out); }
+.gate-item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: var(--space-1) var(--space-2); border: 1px solid var(--line); border-radius: var(--radius-md); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
 .gate-item:hover { border-color: var(--ink-sub); background-image: linear-gradient(var(--hover), var(--hover)); }
-.gate-item:active { background-image: linear-gradient(var(--press), var(--press)); }
+.gate-item:active { background-image: linear-gradient(var(--press), var(--press)); transform: scale(var(--press-scale)); }
 .gate-item[aria-checked="true"] { background-color: var(--selected); border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
-.gate-item:disabled { color: var(--ink-sub); cursor: not-allowed; border-style: dashed; background-image: none; }
+.gate-item:disabled { color: var(--ink-sub); cursor: not-allowed; border-style: dashed; background-image: none; transform: none; }
 .gate-thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); display: grid; place-items: center; flex: none; background: var(--thumb-1); color: var(--thumb-ink); }
 li:nth-child(2) > .gate-item .gate-thumb { background: var(--thumb-2); }
 li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
@@ -41,19 +41,20 @@ li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
 .gate-meta b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gate-meta span { display: block; color: var(--ink-sub); font: var(--text-label); }
 .gate-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--ink); flex: none; display: grid; place-items: center; }
-.gate-item[aria-checked="true"] .gate-radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.gate-radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); transform: scale(0); transition: transform var(--dur-state) var(--ease-out); }
+.gate-item[aria-checked="true"] .gate-radio::after { transform: none; }
 
 /* buttons: primary (signal), ghost, link. Primary busy shows a ring and keeps its label. */
 .gate-btn { font: var(--text-button); min-height: var(--target); min-width: var(--target); padding: 0 var(--space-4); border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); transition: background-color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
 .gate-btn.primary { background: var(--signal); color: var(--signal-ink); width: 100%; }
 .gate-btn.primary:hover { background: var(--signal-hover); }
-.gate-btn.primary:active { transform: scale(.985); }
+.gate-btn.primary:active { transform: scale(var(--press-scale)); }
 .gate-btn.primary:disabled { background: var(--line); color: var(--ink-sub); cursor: not-allowed; transform: none; }
 .gate-btn.primary[aria-busy="true"]::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; animation: gate-spin 900ms linear infinite; }
 @keyframes gate-spin { to { transform: rotate(360deg); } }
 .gate-btn.ghost { background: transparent; border-color: var(--line); color: var(--ink); font-weight: 600; }
 .gate-btn.ghost:hover { border-color: var(--ink); background-image: linear-gradient(var(--hover), var(--hover)); }
-.gate-btn.ghost:active { background-image: linear-gradient(var(--press), var(--press)); transform: scale(.985); }
+.gate-btn.ghost:active { background-image: linear-gradient(var(--press), var(--press)); transform: scale(var(--press-scale)); }
 .gate-btn.ghost:disabled { background: var(--paper); border-color: var(--line); color: var(--ink-sub); cursor: not-allowed; transform: none; } /* a solid fill, never a dashed outline or opacity */
 .gate-sign .gate-btn.ghost { border-color: #6A6A70; color: #fff; }
 .gate-sign .gate-btn.ghost:hover { border-color: #fff; }
@@ -85,6 +86,8 @@ li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
 .gate-pill button { background: none; border: 0; color: var(--signal-on-sign); font: 700 13px/1.2 var(--font); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; flex: none; align-self: center; white-space: nowrap; min-height: 24px; margin-right: 10px; padding: 0 var(--space-1); position: relative; }
 .gate-pill button::after { content: ""; position: absolute; inset: -10px -6px; } /* 44 px hit area without growing the pill */
 @keyframes gate-rise { from { opacity: 0; transform: translate(-50%, 6px); } }
+.gate-pill.leaving { animation: gate-leave var(--dur-exit) var(--ease-in) forwards; } /* keeps travelling the way it rose */
+@keyframes gate-leave { to { opacity: 0; transform: translate(-50%, -4px); } }
 
 /* host window: step tiles. done uses a solid colour, never opacity. */
 .gate-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); counter-reset: s; }
@@ -99,5 +102,6 @@ li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
 }
 @media (prefers-reduced-motion: reduce) {
   .gate-arrow, .gate-pill, .gate-btn.primary[aria-busy="true"]::before { animation: none; }
-  .gate-btn, .gate-item { transition: none; }
+  .gate-btn, .gate-item, .gate-radio::after { transition: none; }
+  .gate-btn:active, .gate-item:active { transform: none; }
 }

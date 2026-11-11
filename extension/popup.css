@@ -1,4 +1,6 @@
 html, body { margin: 0; background: var(--panel); }
+/* Switching style crossfades the two big surfaces instead of flashing from light to dark. */
+body, .gate-popup, .gate-sign, .gate-sign > .gate-tile { transition: background-color var(--dur-enter) var(--ease-out), color var(--dur-enter) var(--ease-out); }
 .gate-popup { width: 340px; border: 0; border-radius: 0; box-shadow: none; }
 /* Two sections. Gaps grow with the grouping level: 6-8 px inside a group, 20 px between the sections, which a rule also separates. */
 .gate-popup .gate-body { padding: var(--space-4); gap: 0; }
@@ -11,4 +13,4 @@ label.gate-detail { font: var(--text-strong); color: var(--ink); margin-bottom: 
 #problem:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 #debug-logs { width: 100%; min-height: var(--control); font-size: 13px; margin-bottom: var(--space-3); }
 #debug-status { font: var(--text-label); }
-@media (prefers-reduced-motion: reduce) { #problem { transition: none; } }
+@media (prefers-reduced-motion: reduce) { #problem, body, .gate-popup, .gate-sign, .gate-sign > .gate-tile { transition: none; } }

@@ -9,7 +9,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 TEAM="${BEAM_TEAM:-KTV2G3Z883}"
 N="$(cat BUILD_NUMBER)"
-VERSION="$(node -p "require('./extension/manifest.json').version" 2>/dev/null || echo 1.0)"
+VERSION="$(node -p "require('./extension/manifest.json').version")"
 auth=()
 [ -n "${ASC_KEY_PATH:-}" ] && auth=(-authenticationKeyPath "${ASC_KEY_PATH/#\~/$HOME}" \
   -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")

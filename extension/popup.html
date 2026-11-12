@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beam to Apple TV</title>
+<link rel="stylesheet" href="design/tokens.css">
+<link rel="stylesheet" href="design/components.css">
+<link rel="stylesheet" href="popup.css">
+<script src="lib/theme.js"></script>
+<script src="lib/debuglog.js"></script>
+</head>
+<body class="gate-base">
+  <article class="gate-popup" aria-label="Beam">
+    <div class="gate-sign">
+      <span class="gate-tile"><span class="gate-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg></span></span>
+      <div><h3 id="headline">Beam to Apple TV</h3><p id="status">Right-click a video to start.</p></div>
+    </div>
+    <div class="gate-body">
+      <p class="gate-group-label" id="style-label">Style</p>
+      <ul class="gate-list gate-styles" role="radiogroup" aria-labelledby="style-label">
+        <li><button type="button" class="gate-item" role="radio" aria-checked="true" data-style="signal" id="style-signal"><span class="gate-swatch signal" aria-hidden="true"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg></span></span><span class="gate-meta"><b>Signal Blue</b><span>Blue arrow, light or dark with your Mac</span></span><span class="gate-radio" aria-hidden="true"></span></button></li>
+        <li><button type="button" class="gate-item" role="radio" aria-checked="false" data-style="violet" id="style-violet"><span class="gate-swatch violet" aria-hidden="true"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg></span></span><span class="gate-meta"><b>Night Violet</b><span>Dark, with an amber arrow</span></span><span class="gate-radio" aria-hidden="true"></span></button></li>
+      </ul>
+      <p class="gate-group-label" id="debug-label">Send Debug Logs to support@rarecreatures.app</p>
+      <label class="gate-detail" for="problem">What went wrong?</label>
+      <textarea id="problem" rows="3"></textarea>
+      <button type="button" class="gate-btn ghost" id="debug-logs" disabled>Send Debug Logs</button>
+      <p class="gate-detail" id="debug-status" role="status">Opens your mail app with what you wrote and the logs filled in. They hold Beam's version and error codes, never the pages you visit. Nothing is sent until you press Send.</p>
+    </div>
+  </article>
+  <script src="popup.js"></script>
+</body>
+</html>

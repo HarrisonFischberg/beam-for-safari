@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- Demo web page for the store screenshots. It loads the extension's real content scripts (the list comes from
+     manifest.json) with a stubbed `browser` API and AirPlay picker, the same way tests/harness/content.html does,
+     then sends the 'beam' message so the real pill is drawn. ?case=go|protected  ?style=signal|violet -->
+<html lang="en"><head><meta charset="utf-8"><title>Morning ferry</title>
+<style>
+body{margin:0;font:15px/1.5 -apple-system,system-ui,sans-serif;color:#1c2330;background:#fff}
+video{display:block;width:100%;aspect-ratio:16/9;background:#000;object-fit:cover}
+main{padding:14px 20px}
+h1{margin:0 0 4px;font-size:21px;line-height:1.2}
+p{margin:0;color:#56607a}
+</style></head>
+<body>
+<video id="v" preload="auto" muted src="/build/store-shots/demo.webm"></video>
+<main><h1>Morning ferry, sped up</h1><p>The 7:10 crossing, filmed from the top deck. Forty minutes in four.</p></main>
+<script>
+const q = new URLSearchParams(location.search), v = document.getElementById('v');
+// Original artwork for the video frame: dawn sky, sun, water, a play button and a progress bar.
+v.poster = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27356b"/><stop offset=".62" stop-color="#e98a5b"/><stop offset=".63" stop-color="#3b4f86"/><stop offset="1" stop-color="#141a2b"/></linearGradient></defs><rect width="640" height="360" fill="url(#s)"/><circle cx="430" cy="212" r="46" fill="#ffd9a0"/><rect y="226" width="640" height="134" fill="#22305c" opacity=".92"/><path d="M90 226h170l-18 22H112z" fill="#f3f5fa"/><rect x="140" y="204" width="76" height="22" fill="#f3f5fa"/><rect x="186" y="186" width="14" height="18" fill="#ff302f"/><circle cx="320" cy="180" r="34" fill="#000" opacity=".45"/><path d="M309 162v36l30-18z" fill="#fff"/><rect x="24" y="334" width="592" height="4" rx="2" fill="#fff" opacity=".35"/><rect x="24" y="334" width="170" height="4" rx="2" fill="#fff"/></svg>`);
+if (q.get('case') === 'protected') Object.defineProperty(v, 'mediaKeys', { value: {} });
+HTMLVideoElement.prototype.webkitShowPlaybackTargetPicker = function () {};
+let handler = null;
+const css = () => Promise.all(['tokens', 'components'].map((f) => fetch(`/extension/design/${f}.css`).then((r) => r.text()))).then((p) => p.join('\n'));
+window.browser = { storage: { local: { get: async () => ({ beamStyle: q.get('style') }), set: async () => {} } }, runtime: { id: 'stub', sendMessage: css, onMessage: { addListener: (fn) => { handler = fn; } } } };
+const load = (s) => new Promise((r) => { const e = document.createElement('script'); e.src = '/extension/' + s; e.onload = r; document.body.append(e); });
+(async () => {
+  const manifest = await (await fetch('/extension/manifest.json')).json();
+  for (const f of manifest.content_scripts[0].js) await load(f);
+  if (q.get('case') === 'protected') v.dispatchEvent(new Event('encrypted'));
+  if (v.readyState < 1) await new Promise((r) => v.addEventListener('loadedmetadata', r, { once: true }));
+  handler({ type: 'beam' }, { id: 'stub' });
+})();
+</script></body></html>

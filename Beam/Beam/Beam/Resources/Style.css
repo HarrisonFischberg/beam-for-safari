@@ -1,0 +1,180 @@
+/* Host window, "Wayfinder": the extension's on/off state is a sign with an arrow field, as in the popup and the
+   in-page sign. The colours mirror extension/design/tokens.css (the host app cannot load the extension's files). */
+* {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    cursor: default;
+}
+
+:root {
+    color-scheme: light dark;
+
+    --spacing: 16px;
+    --signal: #2F6BFF;
+    --action: #1F5AEB;      /* button fill: white text is 5.6:1 here, and only 4.498:1 on --signal */
+    --action-hover: #184BCB;
+    --sign: #141A2B;
+    --sign-sub: #C9D2EA;
+    --sign-edge: #141A2B;   /* the white stopped-arrow field needs an edge on a white window */
+    --ink: #141A2B;
+    --line: #D5DAE6;
+    --focus: #0A5FD6;
+    --hover: rgba(20, 26, 43, .05);
+    --press: rgba(20, 26, 43, .10);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --sign-edge: rgba(255, 255, 255, .3);   /* anything dark on a dark ground gets a light edge */
+        --ink: #F3F5FA;
+        --line: #343B52;
+        --focus: #8FB0FF;
+        --hover: rgba(255, 255, 255, .06);
+        --press: rgba(255, 255, 255, .12);
+    }
+}
+
+@media (prefers-contrast: more) {
+    :root { --sign-sub: #FFFFFF; --line: #141A2B; }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+    :root { --sign-edge: #FFFFFF; --line: #C9D2EA; }
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    gap: var(--spacing);
+    margin: 0 calc(var(--spacing) * 2);
+    height: 100%;
+
+    font: -apple-system-short-body;
+    text-align: center;
+}
+
+body:not(.state-on, .state-off) :is(.state-on, .state-off) {
+    display: none;
+}
+
+body.state-on :is(.state-off, .state-unknown) {
+    display: none;
+}
+
+body.state-off :is(.state-on, .state-unknown) {
+    display: none;
+}
+
+img {
+    display: block;
+}
+
+.sign {
+    display: flex;
+    align-items: stretch;
+    max-width: 348px;
+    overflow: hidden;
+    border: 1px solid var(--sign-edge);
+    border-radius: 8px;
+    background: var(--sign);
+    color: #FFFFFF;
+    text-align: left;
+}
+
+/* Arrow field: white with the stopped arrow until the extension is on, then the signal colour with the go arrow. */
+.field {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    background: #FFFFFF;
+    color: #141A2B;
+}
+
+.field svg {
+    width: 24px;
+    height: 24px;
+}
+
+.field .go,
+body.state-on .field .stop {
+    display: none;
+}
+
+body.state-on .field {
+    background: var(--signal);
+    color: #FFFFFF;
+}
+
+body.state-on .field .go {
+    display: block;
+}
+
+.sign > div {
+    padding: 10px 14px 12px;
+}
+
+h1 {
+    margin: 0 0 2px;
+    font-size: 17px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+p {
+    margin: 0;
+    color: var(--sign-sub);
+}
+
+/* The one action. Signal-coloured while there is something to turn on; a plain push button once Beam is on. */
+button {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 28px;
+    padding: 0 14px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background-color: var(--action);
+    color: #FFFFFF;
+    font: inherit;
+    font-weight: 500;
+    box-shadow: 0 1px 1.5px rgba(0, 0, 0, .2);
+    transition: background-color 150ms cubic-bezier(.16, 1, .3, 1), transform 90ms cubic-bezier(.16, 1, .3, 1);
+}
+
+button:hover {
+    background-color: var(--action-hover);
+}
+
+button:active {
+    background-image: linear-gradient(var(--press), var(--press));
+    transform: scale(.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button { transition: none; }
+    button:active { transform: none; }
+}
+
+button:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+}
+
+body.state-on button {
+    border-color: var(--line);
+    background-color: transparent;
+    color: var(--ink);
+    box-shadow: none;
+}
+
+body.state-on button:hover {
+    background-color: var(--hover);
+}

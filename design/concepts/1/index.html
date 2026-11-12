@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beam: Gate preview</title>
+<link rel="stylesheet" href="../../system/tokens.css">
+<link rel="stylesheet" href="../../system/components.css">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); }
+main { max-width: 1440px; margin: 0 auto; padding: 32px 40px 48px; display: grid; gap: 40px; }
+h2 { font: var(--text-title); margin: 0 0 14px; }
+.sample { color: var(--ink-sub); font: var(--text-label); margin: 0 0 10px; }
+.row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.frame { position: relative; width: 340px; height: 200px; border-radius: 10px; background: #26282D; overflow: hidden; }
+.frame i { position: absolute; left: 12px; right: 12px; bottom: 12px; height: 4px; border-radius: 2px; background: #5A5D66; }
+.frame i::before { content: ""; position: absolute; inset: 0 60% 0 0; background: #fff; border-radius: 2px; }
+.win { width: 560px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-surface); }
+.bar { height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid var(--line); }
+.bar span { width: 12px; height: 12px; border-radius: 50%; background: #FF5F57; } .bar span:nth-child(2) { background: #FEBC2E; } .bar span:nth-child(3) { background: #28C840; }
+.hostbody { padding: var(--space-5); display: grid; gap: var(--space-4); }
+.hostbody header { display: flex; gap: 14px; align-items: center; }
+.hostbody .gate-tile { width: 56px; height: 56px; border-radius: var(--radius-lg); }
+.hostbody h3 { margin: 0; font: var(--text-host); } .hostbody p { margin: 2px 0 0; color: var(--ink-sub); }
+.hostbody .gate-btn.primary { width: auto; justify-self: start; }
+</style>
+</head>
+<body class="gate-base">
+<main>
+  <section><h2>Toolbar popup</h2><p class="sample">Sample data only. Five states.</p><div class="row" id="popups"></div></section>
+  <section><h2>In-page status</h2><p class="sample">Shown over the video that was chosen.</p><div class="row" id="pills"></div></section>
+  <section><h2>Host app window</h2><div class="row" id="hosts"></div></section>
+</main>
+<script type="module">
+import { POPUP_STATES, PILL_STATES, HOST_STATES, HOST_STEPS } from '../shared/data.js';
+const q = new URLSearchParams(location.search).get('theme'); if (q) document.documentElement.dataset.theme = q;
+const S = (d, w = 3) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ico = { arrow: S('<path d="M4 12h15M13 5l7 7-7 7"/>'), check: S('<path d="M4 12l6 6L20 6"/>'), warn: S('<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.5v.01"/>', 2.5),
+  play: '<svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3 1.5l9 5.5-9 5.5z"/></svg>' };
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BLOCKED = ['noVideo', 'siteOff', 'noTarget'];
+function popup(key) {
+  const s = POPUP_STATES[key], on = !!s.onTV, bad = BLOCKED.includes(key), sel = s.onTV || s.blocked || (s.videos[0] && s.videos[0].id);
+  const items = s.videos.map(v => `<li><button class="gate-item" role="radio" aria-checked="${v.id === sel}"><span class="gate-thumb">${ico.play}</span><span class="gate-meta"><b>${esc(v.title)}</b><span>${esc(v.site)} · ${v.duration}${v.playing ? ' · playing' : ''}</span></span><span class="gate-radio"></span></button></li>`).join('');
+  const list = s.videos.length ? `<ul class="gate-list" role="radiogroup" aria-label="Videos on this page">${items}</ul>` : `<div class="gate-empty">Nothing to beam</div>`;
+  const action = on ? '' : key === 'siteOff' ? '<button class="gate-btn primary">Try anyway</button>' : `<button class="gate-btn primary"${s.videos.length && key !== 'noTarget' ? '' : ' disabled'}>Beam to Apple TV</button>`;
+  const tile = on ? `<span class="gate-tile">${ico.check}</span>` : bad ? `<span class="gate-tile blocked">${ico.warn}</span>` : `<span class="gate-tile"><span class="gate-arrow">${ico.arrow}</span></span>`;
+  return `<article class="gate-popup" aria-label="${esc(s.label)}"><div class="gate-sign">${tile}<div><h3>${esc(s.headline)}</h3><p>Apple TV · ${esc(s.label)}</p></div>${on ? '<button class="gate-btn ghost">Stop</button>' : ''}</div><div class="gate-body"><p class="gate-detail">${esc(s.detail)}</p>${list}${action}</div></article>`;
+}
+function pill(key) {
+  const on = key === 'onTV', bad = ['notReady', 'siteOff', 'protected'].includes(key), retry = key === 'notReady' ? '<button>Try again</button>' : key === 'siteOff' ? '<button>Try anyway</button>' : '';
+  return `<div class="frame"><i></i><div class="gate-pill" role="status"><span class="gate-tile${bad ? ' blocked' : ''}">${on ? ico.check : bad ? ico.warn : ico.arrow}</span><span>${esc(PILL_STATES[key])}</span>${retry}</div></div>`;
+}
+function host(key) {
+  const h = HOST_STATES[key], done = key === 'on';
+  const steps = HOST_STEPS.map(t => `<li class="${done ? 'done' : ''}">${esc(t)}</li>`).join('');
+  return `<article class="win" aria-label="Beam window"><div class="bar"><span></span><span></span><span></span></div><div class="hostbody"><header><span class="gate-tile">${ico.arrow}</span><div><h3>${esc(h.headline)}</h3><p>${esc(h.detail)}</p></div></header><ol class="gate-steps">${steps}</ol><button class="gate-btn primary">${esc(h.action)}</button></div></article>`;
+}
+document.getElementById('popups').innerHTML = Object.keys(POPUP_STATES).map(popup).join('');
+document.getElementById('pills').innerHTML = Object.keys(PILL_STATES).map(pill).join('');
+document.getElementById('hosts').innerHTML = Object.keys(HOST_STATES).map(host).join('');
+document.querySelectorAll('.gate-item').forEach(b => b.addEventListener('click', () => { b.closest('[role=radiogroup]').querySelectorAll('.gate-item').forEach(x => x.setAttribute('aria-checked', x === b)); }));
+</script>
+</body>
+</html>

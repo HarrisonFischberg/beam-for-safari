@@ -1,0 +1,52 @@
+{
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "srgb:1.00000,1.00000,1.00000,1.00000",
+          "srgb:0.88627,0.90980,0.96078,1.00000"
+        ],
+        "orientation" : { "start" : { "x" : 0.5, "y" : 0 }, "stop" : { "x" : 0.5, "y" : 1 } }
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
+          "srgb:0.11765,0.14118,0.25098,1.00000",
+          "srgb:0.05490,0.06667,0.11373,1.00000"
+        ],
+        "orientation" : { "start" : { "x" : 0.5, "y" : 0 }, "stop" : { "x" : 0.5, "y" : 1 } }
+      }
+    }
+  ],
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "name" : "lens",
+          "image-name-specializations" : [
+            { "value" : "lens-light.svg" },
+            { "appearance" : "dark", "value" : "lens-dark.svg" }
+          ]
+        },
+        {
+          "name" : "screen",
+          "image-name-specializations" : [
+            { "value" : "screen-light.svg" },
+            { "appearance" : "dark", "value" : "screen-dark.svg" }
+          ]
+        },
+        {
+          "name" : "cone",
+          "image-name" : "cone.svg"
+        }
+      ],
+      "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+      "translucency" : { "enabled" : false, "value" : 0.5 }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : [ "macOS" ]
+  }
+}

@@ -30,6 +30,7 @@
           ],
         },
         { "path": "Assets.xcassets", "target-membership": [ "Beam/resources" ] },
+        { "path": "AppIcon.icon", "target-membership": [ "Beam/resources" ] },
         { "path": "Info.plist" },
         {
           "kind": "group",

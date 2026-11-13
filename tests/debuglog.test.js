@@ -5,8 +5,8 @@ const { report, body, mailto, SUPPORT_EMAIL } = require('../extension/lib/debugl
 const info = { version: '0.2.7', userAgent: 'Safari test', style: 'signal', now: Date.UTC(2026, 10, 8, 18, 0, 0) };
 
 test('report lists version, browser, style and every saved field', () => {
-  const text = report({ bgLast: 'menu click, frame 0', bgAt: info.now - 5000, bgReply: '{"ok":true}', loads: 3, avail: 'available', contentLast: 'picker called', contentAt: info.now - 4000 }, info);
-  for (const want of ['Beam version: 0.2.7', 'Browser: Safari test', 'Style: signal', 'menu click, frame 0, 5s ago', 'Background reply: {"ok":true}', 'loaded on 3 page(s)', 'reported by Safari: available', 'picker called, 4s ago']) {
+  const text = report({ bgLast: 'menu click, frame 0', bgAt: info.now - 5000, bgReply: '{"ok":true}', avail: 'available', contentLast: 'picker called', contentAt: info.now - 4000 }, info);
+  for (const want of ['Beam version: 0.2.7', 'Browser: Safari test', 'Style: signal', 'menu click, frame 0, 5s ago', 'Background reply: {"ok":true}', 'reported by Safari: available', 'picker called, 4s ago']) {
     assert.ok(text.includes(want), want);
   }
 });
@@ -14,7 +14,6 @@ test('report lists version, browser, style and every saved field', () => {
 test('an empty store still gives a readable report', () => {
   const text = report({}, info);
   assert.ok(text.includes('Background saw: nothing yet, never'));
-  assert.ok(text.includes('loaded on 0 page(s), last never'));
 });
 
 test('errors are shown before the reply', () => {

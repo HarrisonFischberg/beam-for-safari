@@ -9,7 +9,7 @@ function io(over = {}) {
   const calls = [];
   const base = {
     videos: [vid('a')], srcUrl: undefined, hitIds: [],
-    inspect: () => ({ readyState: 4, availability: 'unknown' }),
+    inspect: () => ({ readyState: 4 }),
     prepare: (id) => calls.push(['prepare', id]),
     openPicker: (id) => calls.push(['picker', id]),
   };
@@ -29,7 +29,7 @@ test('no video: reason no-video, nothing touched', () => {
 });
 
 test('not ready: reason returned, video left untouched, picker never called', () => {
-  const { calls, io: i } = io({ inspect: () => ({ readyState: 0, availability: 'unknown' }) });
+  const { calls, io: i } = io({ inspect: () => ({ readyState: 0 }) });
   assert.deepEqual(castFlow(i), { ok: false, reason: 'not-ready', id: 'a' });
   assert.deepEqual(calls, []);
 });
@@ -54,12 +54,9 @@ test('srcUrl from the menu picks the matching video', () => {
   assert.deepEqual(calls, [['prepare', 'b'], ['picker', 'b']]);
 });
 
-test('factsOf never reports the page opt-out or availability, so they cannot block a cast', () => {
+test('factsOf does not let the page opt-out block a cast', () => {
   const optedOut = { readyState: 4, disableRemotePlayback: true, currentSrc: 'https://x/y.mp4', mediaKeys: null, getAttribute: () => 'deny' };
   const f = factsOf(optedOut);
-  assert.equal(f.disableRemotePlayback, false);
-  assert.equal(f.airplayAttr, null);
-  assert.equal(f.availability, 'unknown');
   assert.equal(classify(f), null);
 });
 

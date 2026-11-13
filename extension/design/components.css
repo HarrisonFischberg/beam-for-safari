@@ -33,10 +33,6 @@
 .gate-item:active { background-image: linear-gradient(var(--press), var(--press)); transform: scale(var(--press-scale)); }
 .gate-item[aria-checked="true"] { background-color: var(--selected); border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
 .gate-item:disabled { color: var(--ink-sub); cursor: not-allowed; border-style: dashed; background-image: none; transform: none; }
-.gate-thumb { width: 40px; height: 40px; border-radius: var(--radius-sm); display: grid; place-items: center; flex: none; background: var(--thumb-1); color: var(--thumb-ink); }
-li:nth-child(2) > .gate-item .gate-thumb { background: var(--thumb-2); }
-li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
-.gate-thumb svg { width: 14px; height: 14px; }
 .gate-meta { min-width: 0; flex: 1; }
 .gate-meta b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gate-meta span { display: block; color: var(--ink-sub); font: var(--text-label); }
@@ -44,22 +40,19 @@ li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
 .gate-radio::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); transform: scale(0); transition: transform var(--dur-state) var(--ease-out); }
 .gate-item[aria-checked="true"] .gate-radio::after { transform: none; }
 
-/* buttons: primary (signal), ghost, link. Primary busy shows a ring and keeps its label. */
+/* buttons: primary (signal), ghost */
 .gate-btn { font: var(--text-button); min-height: var(--target); min-width: var(--target); padding: 0 var(--space-4); border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); transition: background-color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
 .gate-btn.primary { background: var(--signal); color: var(--signal-ink); width: 100%; }
 .gate-btn.primary:hover { background: var(--signal-hover); }
 .gate-btn.primary:active { transform: scale(var(--press-scale)); }
 .gate-btn.primary:disabled { background: var(--line); color: var(--ink-sub); cursor: not-allowed; transform: none; }
-.gate-btn.primary[aria-busy="true"]::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; animation: gate-spin 900ms linear infinite; }
-@keyframes gate-spin { to { transform: rotate(360deg); } }
 .gate-btn.ghost { background: transparent; border-color: var(--line); color: var(--ink); font-weight: 600; }
 .gate-btn.ghost:hover { border-color: var(--ink); background-image: linear-gradient(var(--hover), var(--hover)); }
 .gate-btn.ghost:active { background-image: linear-gradient(var(--press), var(--press)); transform: scale(var(--press-scale)); }
 .gate-btn.ghost:disabled { background: var(--paper); border-color: var(--line); color: var(--ink-sub); cursor: not-allowed; transform: none; } /* a solid fill, never a dashed outline or opacity */
 .gate-sign .gate-btn.ghost { border-color: #6A6A70; color: #fff; }
 .gate-sign .gate-btn.ghost:hover { border-color: #fff; }
-.gate-link { background: none; border: 0; color: var(--ink); font: var(--text-strong); text-decoration: underline; text-underline-offset: 3px; min-height: var(--target); cursor: pointer; justify-self: start; padding: 0; }
-:is(.gate-btn, .gate-item, .gate-link):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+:is(.gate-btn, .gate-item):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .gate-sign :is(.gate-btn):focus-visible, .gate-pill :is(button):focus-visible { outline-color: #fff; }
 
 /* style switcher (toolbar popup): two cards side by side; each swatch is a small copy of the sign that style puts on a
@@ -89,19 +82,12 @@ li:nth-child(3) > .gate-item .gate-thumb { background: var(--thumb-3); }
 .gate-pill.leaving { animation: gate-leave var(--dur-exit) var(--ease-in) forwards; } /* keeps travelling the way it rose */
 @keyframes gate-leave { to { opacity: 0; transform: translate(-50%, -4px); } }
 
-/* host window: step tiles. done uses a solid colour, never opacity. */
-.gate-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); counter-reset: s; }
-.gate-steps li { counter-increment: s; display: flex; align-items: center; gap: var(--space-3); padding: 10px var(--space-3); background: var(--sign); color: var(--sign-ink); border-radius: var(--radius-md); font: var(--text-strong); }
-.gate-steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: var(--radius-sm); background: var(--signal); color: var(--signal-ink); display: grid; place-items: center; font-weight: 800; }
-.gate-steps li.done { background: var(--sign-done); }
-.gate-steps li.done::before { content: "\2713"; background: var(--ok); color: #fff; }
-
 @media (prefers-contrast: more) {
   .gate-item[aria-checked="true"] { box-shadow: 0 0 0 2px var(--ink); }
   .gate-item, .gate-btn.ghost { border-color: var(--ink); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .gate-arrow, .gate-pill, .gate-btn.primary[aria-busy="true"]::before { animation: none; }
+  .gate-arrow, .gate-pill { animation: none; }
   .gate-btn, .gate-item, .gate-radio::after { transition: none; }
   .gate-btn:active, .gate-item:active { transform: none; }
 }

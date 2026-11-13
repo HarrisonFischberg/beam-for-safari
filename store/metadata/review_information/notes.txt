@@ -7,4 +7,4 @@ To test it you need an Apple TV (or another AirPlay video receiver) on the same 
 3. Open a page with an ordinary HTML video and start playing it.
 4. Right-click the page and choose "Beam to Apple TV". Safari's AirPlay list opens; pick the Apple TV.
 
-Protected (DRM) video cannot be sent by AirPlay from an extension. On those pages Beam shows a short message that says so and points to Screen Mirroring.
+Protected (DRM) video cannot be sent by AirPlay from an extension. On those pages Beam shows a short message: "This video is protected, so it can only play here."

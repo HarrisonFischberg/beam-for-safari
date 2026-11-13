@@ -16,10 +16,18 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId !== MENU_ID || !tab) return;
   diag({ bgLast: `menu click, frame ${info.frameId || 0}`, bgAt: Date.now(), bgErr: '', bgReply: 'waiting' });
   browser.tabs.sendMessage(tab.id, { type: 'beam', srcUrl: info.srcUrl }, { frameId: info.frameId || 0 }).then(
-    (r) => diag({ bgReply: r === undefined ? 'no answer (nothing in the page handled it)' : JSON.stringify(r) }),
-    (e) => diag({ bgReply: '', bgErr: `send failed: ${e && e.message ? e.message : e}` })
+    (r) => {
+      setBadge(tab.id, r === undefined ? '!' : ''); // no answer means no Beam script there either; a real answer clears the warning
+      return diag({ bgReply: r === undefined ? 'no answer (nothing in the page handled it)' : JSON.stringify(r) });
+    },
+    // No Beam script in that frame (page opened before Beam was on, website access not granted): say so on the toolbar button; the popup explains.
+    (e) => { setBadge(tab.id, '!'); return diag({ bgReply: '', bgErr: `send failed: ${e && e.message ? e.message : e}` }); }
   );
 });
+
+// Per-tab toolbar badge. A navigation loads a fresh page that may have the script, so it clears the warning.
+const setBadge = (tabId, text) => browser.action.setBadgeText({ tabId, text }).catch(() => {});
+browser.tabs.onUpdated.addListener((tabId, change) => { if (change.status === 'loading') setBadge(tabId, ''); });
 
 // Content scripts cannot read the extension's stylesheets directly, so they ask for the pill styles here.
 let cssText = null;

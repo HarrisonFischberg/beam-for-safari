@@ -60,9 +60,11 @@
     try { await navigator.clipboard.writeText(BeamDebugLog.body(text, note)); copied = true; } catch (e) { /* clipboard refused; the email still carries it */ }
     const url = BeamDebugLog.mailto(text, version, note);
     try { await browser.tabs.create({ url }); } catch (e) { window.open(url); }
-    showDraft('');
-    problem.focus(); // the button is disabled again; keep keyboard focus somewhere real
-    browser.storage.local.remove(DRAFT_KEY).catch(() => {});
+    if (copied) { // only a note that reached the clipboard is safe to clear; otherwise the user may still need it
+      showDraft('');
+      browser.storage.local.remove(DRAFT_KEY).catch(() => {});
+    } else btn.disabled = !problem.value.trim();
+    problem.focus(); // keep keyboard focus somewhere real
     status.textContent = copied
       ? 'Logs copied. Your mail app is opening with them filled in: press Send. If it does not open, paste them into an email to support@rarecreatures.app.'
       : 'Your mail app is opening with the logs filled in: press Send.';

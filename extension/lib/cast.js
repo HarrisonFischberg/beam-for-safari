@@ -18,23 +18,17 @@
     return Array.prototype.some.call(el.querySelectorAll('source'), (s) => /mpegurl/i.test(s.type || '') || /\.m3u8(\?|#|$)/i.test(s.src || ''));
   }
 
-  // What classify() needs to know about one video. Two deliberate omissions (docs/spike-T002.md):
-  //  - the page's AirPlay opt-out (disableRemotePlayback / x-webkit-airplay="deny") is never reported, because
-  //    Beam overrides it instead of refusing (owner decision, 2026-10-31);
-  //  - the AirPlay availability event is never reported as "not-available": it flaps before it settles and the
-  //    system picker already says so itself, so blocking on it would refuse casts that would have worked.
+  // What classify() needs to know about one video. The page's AirPlay opt-out is not reported because Beam
+  // overrides it (prepare, owner decision 2026-10-31), and neither is AirPlay availability: it flaps before it
+  // settles and the system picker already says so itself (docs/spike-T002.md).
   // "Protected" needs both signals (MediaKeys attached AND an `encrypted` event seen) so a site that merely
   // probes for DRM does not get its clear video refused. Beam never tries to get past real DRM.
   function factsOf(el, { encryptedSeen = false } = {}) {
     return {
       readyState: el.readyState,
-      disableRemotePlayback: false,
-      airplayAttr: null,
       hasMediaKeys: Boolean(el.mediaKeys) && encryptedSeen,
-      encrypted: false,
       srcIsBlob: typeof el.currentSrc === 'string' && el.currentSrc.indexOf('blob:') === 0,
       hasAirPlayAlternate: hasAirPlayAlternate(el),
-      availability: 'unknown',
     };
   }
 

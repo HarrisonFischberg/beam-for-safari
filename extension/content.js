@@ -6,18 +6,17 @@
   let lastPoint = null;
   const encryptedSeen = new WeakSet();
 
-  // Debug log fields (lib/debuglog.js): counts and timestamps only.
-  if (window === window.top) browser.storage.local.get('loads').then(({ loads = 0 }) => browser.storage.local.set({ loads: loads + 1, loadAt: Date.now() })).catch(() => {});
-
   // Listening for these two events is what makes Safari watch for AirPlay devices on this page. The T002 spike
   // had these listeners and opened the picker on MediaSource video; the first real build did not and failed
   // there. Kept even though nothing blocks on the values: T005 uses them for the "Playing on Apple TV" state.
-  let availability = 'unknown', onWireless = false;
+  // The value is only saved for the debug log (lib/debuglog.js), and only when it changes.
+  let lastAvail = null;
   document.addEventListener('webkitplaybacktargetavailabilitychanged', (e) => {
-    availability = e.availability;
-    browser.storage.local.set({ avail: `${e.availability}` }).catch(() => {}); // debug log field
+    if (e.availability === lastAvail) return;
+    lastAvail = e.availability;
+    browser.storage.local.set({ avail: `${e.availability}` }).catch(() => {});
   }, true);
-  document.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', (e) => { onWireless = Boolean(e.target.webkitCurrentPlaybackTargetIsWireless); }, true);
+  document.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', () => {}, true);
 
   // Some players cancel the right-click so Safari never shows its menu, and Beam's item lives in that menu.
   // BitChute's Video.js/Nuevo player sets `oncontextmenu = e => e.preventDefault()` on its wrapper. Over a video,

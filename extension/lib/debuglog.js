@@ -7,7 +7,7 @@
   else root.BeamDebugLog = api;
 })(typeof self !== 'undefined' ? self : this, function () {
   const SUPPORT_EMAIL = 'support@rarecreatures.app';
-  const KEYS = ['bgLast', 'bgAt', 'bgErr', 'bgReply', 'contentLast', 'contentAt', 'loads', 'loadAt', 'msgAt', 'avail'];
+  const KEYS = ['bgLast', 'bgAt', 'bgErr', 'bgReply', 'contentLast', 'contentAt', 'msgAt', 'avail'];
 
   function ago(t, now) {
     return t ? `${Math.round((now - t) / 1000)}s ago` : 'never';
@@ -25,7 +25,6 @@
       '',
       `Background saw: ${s.bgLast || 'nothing yet'}, ${ago(s.bgAt, now)}`,
       `Background reply: ${s.bgErr ? 'ERROR ' + s.bgErr : s.bgReply || 'none'}`,
-      `Page script loaded on ${s.loads || 0} page(s), last ${ago(s.loadAt, now)}`,
       `A message last reached a page ${ago(s.msgAt, now)}`,
       `AirPlay devices reported by Safari: ${s.avail || 'no event received'}`,
       `Page script result: ${s.contentLast || 'none yet'}, ${ago(s.contentAt, now)}`,

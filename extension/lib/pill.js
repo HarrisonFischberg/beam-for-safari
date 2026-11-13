@@ -48,11 +48,14 @@
     tile.className = tone === 'blocked' ? 'gate-tile blocked' : 'gate-tile';
     tile.innerHTML = ICON[tone === 'blocked' ? 'blocked' : 'go']; // static trusted markup, no page data
     const label = document.createElement('span');
-    label.textContent = text;
     pill.append(tile, label);
     wrap.append(pill);
     shadow.append(sheet, wrap);
-    document.documentElement.append(host);
+    // The fullscreen element sits in the top layer above everything else, so the pill goes inside it (a <video> cannot hold children).
+    const fs = document.fullscreenElement || document.webkitFullscreenElement;
+    (fs && fs.localName !== 'video' ? fs : document.documentElement).append(host);
+    // Text arrives a frame after the empty live region is in the page, so screen readers announce it.
+    requestAnimationFrame(() => { label.textContent = text; });
     document.addEventListener('keydown', onKey, true);
     timer = setTimeout(hide, ms);
   }

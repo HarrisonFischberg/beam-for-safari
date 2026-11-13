@@ -17,7 +17,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   diag({ bgLast: `menu click, frame ${info.frameId || 0}`, bgAt: Date.now(), bgErr: '', bgReply: 'waiting' });
   browser.tabs.sendMessage(tab.id, { type: 'beam', srcUrl: info.srcUrl }, { frameId: info.frameId || 0 }).then(
     (r) => {
-      setBadge(tab.id, ''); // the page answered: any earlier warning is stale
+      setBadge(tab.id, r === undefined ? '!' : ''); // no answer means no Beam script there either; a real answer clears the warning
       return diag({ bgReply: r === undefined ? 'no answer (nothing in the page handled it)' : JSON.stringify(r) });
     },
     // No Beam script in that frame (page opened before Beam was on, website access not granted): say so on the toolbar button; the popup explains.

@@ -53,6 +53,12 @@ test('rule 3: several visible videos and none watched is ambiguous: null', () =>
   assert.equal(resolveTarget({ videos }), null);
 });
 
+test('rule 3: watching muted (captions): the one started video wins when nobody is unmuted', () => {
+  const main = vid('main', { playing: true, currentTime: 30, muted: true });
+  assert.equal(resolveTarget({ videos: [main, vid('other')] }), 'main');
+  assert.equal(resolveTarget({ videos: [main, vid('ad', { playing: true, currentTime: 2, muted: true })] }), null);
+});
+
 test('rule 3: a hidden video does not count', () => {
   const videos = [vid('hidden', { playing: true, currentTime: 9, visible: false }), vid('shown', { rect: { width: 400, height: 225 } })];
   assert.equal(resolveTarget({ videos }), 'shown');

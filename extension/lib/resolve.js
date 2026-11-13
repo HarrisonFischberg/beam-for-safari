@@ -35,7 +35,10 @@
     const watched = visible.filter((v) => v.currentTime > 0 && !v.muted);
     if (watched.length === 1) return watched[0].id;
     const playing = watched.filter((v) => v.playing);
-    return playing.length === 1 ? playing[0].id : null;
+    if (playing.length === 1) return playing[0].id;
+    // Nobody unmuted: someone watching muted with captions still has exactly one video that has started.
+    const started = visible.filter((v) => v.currentTime > 0);
+    return !watched.length && started.length === 1 ? started[0].id : null;
   }
 
   // True when a video sits anywhere under the right-click point. `stack` is document.elementsFromPoint(x, y):

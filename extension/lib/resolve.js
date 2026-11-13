@@ -1,6 +1,6 @@
 // Picks which video a Beam action targets. Pure: the content script gathers plain facts about the page's
 // videos and passes them in, so this runs unchanged in Safari and in `node --test`.
-// videos: [{ id, currentSrc, playing, visible, rect: { width, height } }]
+// videos: [{ id, currentSrc, playing, muted, currentTime, visible, rect: { width, height } }]
 // hitIds: ids of videos under the last right-click point, topmost first (from document.elementsFromPoint).
 (function (root, factory) {
   const api = factory();
@@ -28,12 +28,14 @@
     const hit = hits.find((id) => videos.some((v) => v.id === id));
     if (hit !== undefined) return hit;
 
-    // 3. The one visible playing video, else the largest visible video.
-    const playing = videos.filter((v) => v.playing && v.visible);
-    if (playing.length === 1) return playing[0].id;
+    // 3. Nothing under the pointer: the only visible video, else the one that has been watched (started, not muted;
+    // a muted autoplay preview or ad is not it), narrowed to the playing one. Still ambiguous means no video.
     const visible = videos.filter((v) => v.visible && area(v) > 0);
-    if (visible.length === 0) return null; // 4.
-    return visible.reduce((best, v) => (area(v) > area(best) ? v : best)).id;
+    if (visible.length <= 1) return visible.length ? visible[0].id : null; // 4.
+    const watched = visible.filter((v) => v.currentTime > 0 && !v.muted);
+    if (watched.length === 1) return watched[0].id;
+    const playing = watched.filter((v) => v.playing);
+    return playing.length === 1 ? playing[0].id : null;
   }
 
   // True when a video sits anywhere under the right-click point. `stack` is document.elementsFromPoint(x, y):

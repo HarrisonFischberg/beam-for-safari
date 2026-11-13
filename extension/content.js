@@ -35,7 +35,7 @@
     const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
     const visible = r.width > 0 && r.height > 0 && cs.display !== 'none' && cs.visibility !== 'hidden'
       && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth;
-    return { id, currentSrc: el.currentSrc, playing: !el.paused && !el.ended && el.readyState > 2, visible, rect: { width: r.width, height: r.height } };
+    return { id, currentSrc: el.currentSrc, playing: !el.paused && !el.ended && el.readyState > 2, muted: el.muted, currentTime: el.currentTime, visible, rect: { width: r.width, height: r.height } };
   }
 
   // Only plain <video> elements in this frame's light DOM are found; videos inside shadow roots are not.

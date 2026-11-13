@@ -31,24 +31,31 @@ test('rule 2: topmost hit wins and ids that are not videos are ignored', () => {
   assert.equal(resolveTarget({ videos, hitIds: ['not-a-video', 'b', 'a'] }), 'b');
 });
 
-test('rule 3: the single visible playing video wins without a pointer hit', () => {
-  const videos = [vid('big', { rect: { width: 1280, height: 720 } }), vid('p', { playing: true, rect: { width: 300, height: 170 } })];
-  assert.equal(resolveTarget({ videos }), 'p');
+test('rule 3: the only visible video wins without a pointer hit', () => {
+  assert.equal(resolveTarget({ videos: [vid('a'), vid('hidden', { visible: false })] }), 'a');
 });
 
-test('rule 3: two playing videos fall back to the largest visible', () => {
-  const videos = [vid('a', { playing: true }), vid('b', { playing: true, rect: { width: 1000, height: 600 } })];
-  assert.equal(resolveTarget({ videos }), 'b');
+test('rule 3: a watched (started, unmuted) video beats a muted autoplay preview', () => {
+  const main = vid('main', { currentTime: 42, muted: false, rect: { width: 1280, height: 720 } });
+  const preview = vid('preview', { playing: true, currentTime: 3, muted: true, rect: { width: 300, height: 170 } });
+  assert.equal(resolveTarget({ videos: [main, preview] }), 'main');
+  assert.equal(resolveTarget({ videos: [preview, main] }), 'main');
 });
 
-test('rule 3: a playing video that is not visible (audio-only, offscreen) does not count', () => {
-  const videos = [vid('hidden', { playing: true, visible: false }), vid('shown', { rect: { width: 400, height: 225 } })];
+test('rule 3: two watched videos narrow to the playing one, else no video', () => {
+  const a = vid('a', { currentTime: 5, playing: true }), b = vid('b', { currentTime: 9 });
+  assert.equal(resolveTarget({ videos: [a, b] }), 'a');
+  assert.equal(resolveTarget({ videos: [{ ...a, playing: false }, b] }), null);
+});
+
+test('rule 3: several visible videos and none watched is ambiguous: null', () => {
+  const videos = [vid('a', { playing: true, muted: true }), vid('b', { rect: { width: 1000, height: 600 } })];
+  assert.equal(resolveTarget({ videos }), null);
+});
+
+test('rule 3: a hidden video does not count', () => {
+  const videos = [vid('hidden', { playing: true, currentTime: 9, visible: false }), vid('shown', { rect: { width: 400, height: 225 } })];
   assert.equal(resolveTarget({ videos }), 'shown');
-});
-
-test('rule 3: with nothing playing the largest visible video is chosen', () => {
-  const videos = [vid('a', { rect: { width: 320, height: 180 } }), vid('b', { rect: { width: 960, height: 540 } }), vid('c', { visible: false, rect: { width: 4000, height: 3000 } })];
-  assert.equal(resolveTarget({ videos }), 'b');
 });
 
 test('rule 4: no videos, none visible, or zero area gives null', () => {

@@ -68,3 +68,11 @@
       : 'Your mail app is opening with the logs filled in: press Send.';
   });
 })();
+
+// A '!' badge on this tab means the last Beam click found no Beam script in the page (background.js).
+(async () => {
+  try {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tab && await browser.action.getBadgeText({ tabId: tab.id }) === '!') document.getElementById('status').textContent = 'Reload this page, or allow Beam on this website.';
+  } catch (e) { /* keep the default text */ }
+})();

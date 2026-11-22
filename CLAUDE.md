@@ -39,6 +39,10 @@ loop, Impeccable. Verify each before claiming use: `docs/tool-environment.md`.
 
 Gate A (engineering complete) is not Gate B (ready for release).
 
+## Status notes (vault)
+
+This app's status note is `Apps/Beam for Safari.md` in the Obsidian vault at `~/projects/vault` (private repo `HarrisonFischberg/vault`; cloud sessions can clone it). Read it, and the vault's `CLAUDE.md`, for current state, builds, open PRs and past decisions before starting work. After a release or TestFlight upload, an App Review change or a notable decision, update that note following the vault's `CLAUDE.md` and commit to the vault. This repo stays the source of truth for code.
+
 ## Model Routing and Sub-Agents
 
 The main session is the orchestrator. It plans, makes judgment calls, edits small things itself, and merges results. Sub-agents live in `.claude/agents/`.
